@@ -1,0 +1,684 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "Express API",
+        "description": "Express API to automate bulk creation, export renditions and various other use cases.",
+        "version": "alpha",
+        "contact": {
+            "name": "Express API support",
+            "email": "express-api-support@adobe.com"
+        }
+    },
+    "servers": [
+        {
+            "url": "https://express-api.adobe.io",
+            "description": "Prod endpoint"
+        }
+    ],
+    "paths": {
+        "/alpha/tagged-documents/{documentId}": {
+            "get": {
+                "summary": "Tagged Document Details",
+                "description": "This API retrieves details of the pages and tagged elements within a specified document. It returns a paginated list of the document's pages and metadata about each page. If the document has tagged elements, the API includes their respective details, such as size and position. If the document does not have tagged elements, it returns an empty array. The response includes pagination information to help users navigate the document’s pages. A maximum of 10 pages can be returned in 1 API call.",
+                "operationId": "taggedDocumentDetails",
+                "parameters": [
+                    {
+                        "name": "documentId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "The unique identifier of the document."
+                    },
+                    {
+                        "name": "start",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "Specifies the starting document page number from which details need to be fetched. Default is 1."
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved the details of the tagged document.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaggedDocumentDetailsResponse"
+                                },
+                                "examples": {
+                                    "taggedDocumentDetailsResponseSampleOne": {
+                                        "$ref": "#/components/examples/taggedDocumentDetailsResponseSampleOne"
+                                    },
+                                    "taggedDocumentDetailsResponseSampleTwo": {
+                                        "$ref": "#/components/examples/taggedDocumentDetailsResponseSampleTwo"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsBadRequest": {
+                                        "$ref": "#/components/examples/errorResponseDetailsBadRequest"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsUnauthorized": {
+                                        "$ref": "#/components/examples/errorResponseDetailsUnauthorized"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsUnprocessableEntity": {
+                                        "$ref": "#/components/examples/errorResponseDetailsUnprocessableEntity"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsRuntimeError": {
+                                        "$ref": "#/components/examples/errorResponseDetailsRuntimeError"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "apiKey": {
+                "type": "apiKey",
+                "name": "X-API-KEY",
+                "in": "header"
+            },
+            "Authorization": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        },
+        "schemas": {
+            "TaggedDocumentDetailsResponse": {
+                "description": "Response payload for GET \"/tagged-documents/\\{documentId\\}\" API.",
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "description": "The name of the document.",
+                        "type": "string"
+                    },
+                    "id": {
+                        "description": "The unique identifier of the document.",
+                        "type": "string"
+                    },
+                    "paging": {
+                        "description": "Pagination details of the response.",
+                        "$ref": "#/components/schemas/Pagination"
+                    },
+                    "documentPages": {
+                        "description": "List of the pages from Express Document.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DocumentPageDetails"
+                        }
+                    }
+                },
+                "required": [
+                    "documentPages",
+                    "id",
+                    "name"
+                ]
+            },
+            "ErrorResponseDetails": {
+                "description": "Details of the error response.",
+                "type": "object",
+                "properties": {
+                    "error_code": {
+                        "description": "The error code.",
+                        "type": "string"
+                    },
+                    "message": {
+                        "description": "The error message.",
+                        "type": "string"
+                    },
+                    "validation_errors": {
+                        "description": "Validation error messages.",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "required": [
+                    "error_code"
+                ]
+            },
+            "Pagination": {
+                "description": "Pagination details of the response.",
+                "type": "object",
+                "properties": {
+                    "nextUrl": {
+                        "description": "A URL using which the next page of the response can be fetched.",
+                        "type": "string"
+                    },
+                    "totalRecords": {
+                        "description": "Total number of items available that match the query.",
+                        "type": "number"
+                    }
+                },
+                "required": [
+                    "nextUrl",
+                    "totalRecords"
+                ]
+            },
+            "DocumentPageDetails": {
+                "description": "The details of a single page in the Express Document.",
+                "type": "object",
+                "properties": {
+                    "pageNumber": {
+                        "description": "The number of the page starting from 1.",
+                        "type": "number"
+                    },
+                    "pageTitle": {
+                        "description": "The title of the page.",
+                        "type": "string"
+                    },
+                    "thumbnailUrl": {
+                        "description": "Pre-signed URL for the page's thumbnail rendition valid for 4 hours.\nThe size of the rendition will be 640 pixels along the longest side. The format of the rendition will be a PNG image.",
+                        "type": "string"
+                    },
+                    "size": {
+                        "$ref": "#/components/schemas/Size",
+                        "description": "The original width and height of the page."
+                    },
+                    "taggedElements": {
+                        "description": "List of all the tagged elements on this page.\nIf this page do not have any tagged element, this field will be undefined.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/TaggedElement"
+                        }
+                    }
+                },
+                "required": [
+                    "pageNumber",
+                    "pageTitle",
+                    "size",
+                    "thumbnailUrl"
+                ]
+            },
+            "Size": {
+                "description": "Represents a dimension within a Page.",
+                "type": "object",
+                "properties": {
+                    "width": {
+                        "description": "The width in pixels ( px ).",
+                        "type": "number"
+                    },
+                    "height": {
+                        "description": "The height in pixels ( px ).",
+                        "type": "number"
+                    }
+                },
+                "required": [
+                    "height",
+                    "width"
+                ]
+            },
+            "TaggedElement": {
+                "description": "The details of a tag element inside the page.",
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "description": "The name of the tag. Following rules apply to the tag name:\n\n1. In the same page, tag names should be unique.\n2. Across different pages, tags of same element type can have same name.\n3. The tag name is case-sensitive.",
+                        "type": "string"
+                    },
+                    "type": {
+                        "$ref": "#/components/schemas/TaggedElementType",
+                        "description": "The type of the tagged element."
+                    },
+                    "position": {
+                        "$ref": "#/components/schemas/Point",
+                        "description": "The x and y coordinates of the tagged element on the document's page, relative to the original page size."
+                    },
+                    "size": {
+                        "$ref": "#/components/schemas/Size",
+                        "description": "The width and height of the tagged element in the document's page relative to the original page size."
+                    }
+                },
+                "required": [
+                    "name",
+                    "position",
+                    "size",
+                    "type"
+                ]
+            },
+            "TaggedElementType": {
+                "description": "The supported tag types in a document.",
+                "enum": [
+                    "image",
+                    "text",
+                    "video"
+                ],
+                "type": "string"
+            },
+            "Point": {
+                "description": "Represents position within a page. 0,0 represents the top-left corner of a page.",
+                "type": "object",
+                "properties": {
+                    "x": {
+                        "description": "The left co-ordinate position in px.",
+                        "type": "number"
+                    },
+                    "y": {
+                        "description": "The top co-ordinate position in px.",
+                        "type": "number"
+                    }
+                },
+                "required": [
+                    "x",
+                    "y"
+                ]
+            }
+        },
+        "examples": {
+            "taggedDocumentDetailsResponseSampleOne": {
+                "summary": "Tagged Document Details Response Sample 1",
+                "value": {
+                    "documentPages": [
+                        {
+                            "pageNumber": 1,
+                            "pageTitle": "Introduction",
+                            "size": {
+                                "height": 792,
+                                "width": 612
+                            },
+                            "taggedElements": [
+                                {
+                                    "name": "HeaderTitle",
+                                    "position": {
+                                        "x": 100,
+                                        "y": 150
+                                    },
+                                    "size": {
+                                        "height": 50,
+                                        "width": 200
+                                    },
+                                    "type": "text"
+                                },
+                                {
+                                    "name": "CompanyLogo",
+                                    "position": {
+                                        "x": 50,
+                                        "y": 50
+                                    },
+                                    "size": {
+                                        "height": 100,
+                                        "width": 100
+                                    },
+                                    "type": "image"
+                                }
+                            ],
+                            "thumbnailUrl": "https://example.com/page1-thumbnail.png"
+                        },
+                        {
+                            "pageNumber": 2,
+                            "pageTitle": "Project Details",
+                            "size": {
+                                "height": 792,
+                                "width": 612
+                            },
+                            "taggedElements": [
+                                {
+                                    "name": "Subheading",
+                                    "position": {
+                                        "x": 120,
+                                        "y": 180
+                                    },
+                                    "size": {
+                                        "height": 40,
+                                        "width": 250
+                                    },
+                                    "type": "text"
+                                }
+                            ],
+                            "thumbnailUrl": "https://example.com/page2-thumbnail.png"
+                        },
+                        {
+                            "pageNumber": 3,
+                            "pageTitle": "Logo Details",
+                            "size": {
+                                "height": 792,
+                                "width": 612
+                            },
+                            "taggedElements": [
+                                {
+                                    "name": "Subheading",
+                                    "position": {
+                                        "x": 120,
+                                        "y": 180
+                                    },
+                                    "size": {
+                                        "height": 40,
+                                        "width": 250
+                                    },
+                                    "type": "text"
+                                }
+                            ],
+                            "thumbnailUrl": "https://example.com/page3-thumbnail.png"
+                        },
+                        {
+                            "pageNumber": 4,
+                            "pageTitle": "Banner",
+                            "size": {
+                                "height": 792,
+                                "width": 612
+                            },
+                            "taggedElements": [
+                                {
+                                    "name": "Subheading",
+                                    "position": {
+                                        "x": 120,
+                                        "y": 180
+                                    },
+                                    "size": {
+                                        "height": 40,
+                                        "width": 250
+                                    },
+                                    "type": "text"
+                                }
+                            ],
+                            "thumbnailUrl": "https://example.com/page4-thumbnail.png"
+                        },
+                        {
+                            "pageNumber": 5,
+                            "pageTitle": "Background Details",
+                            "size": {
+                                "height": 792,
+                                "width": 612
+                            },
+                            "taggedElements": [
+                                {
+                                    "name": "Subheading",
+                                    "position": {
+                                        "x": 120,
+                                        "y": 180
+                                    },
+                                    "size": {
+                                        "height": 40,
+                                        "width": 250
+                                    },
+                                    "type": "text"
+                                }
+                            ],
+                            "thumbnailUrl": "https://example.com/page5-thumbnail.png"
+                        },
+                        {
+                            "pageNumber": 6,
+                            "pageTitle": "Project Details",
+                            "size": {
+                                "height": 792,
+                                "width": 612
+                            },
+                            "taggedElements": [
+                                {
+                                    "name": "Subheading",
+                                    "position": {
+                                        "x": 120,
+                                        "y": 180
+                                    },
+                                    "size": {
+                                        "height": 40,
+                                        "width": 250
+                                    },
+                                    "type": "text"
+                                }
+                            ],
+                            "thumbnailUrl": "https://example.com/page6-thumbnail.png"
+                        },
+                        {
+                            "pageNumber": 7,
+                            "pageTitle": "Project Details",
+                            "size": {
+                                "height": 792,
+                                "width": 612
+                            },
+                            "taggedElements": [
+                                {
+                                    "name": "Subheading",
+                                    "position": {
+                                        "x": 120,
+                                        "y": 180
+                                    },
+                                    "size": {
+                                        "height": 40,
+                                        "width": 250
+                                    },
+                                    "type": "text"
+                                }
+                            ],
+                            "thumbnailUrl": "https://example.com/page7-thumbnail.png"
+                        },
+                        {
+                            "pageNumber": 8,
+                            "pageTitle": "Project Details",
+                            "size": {
+                                "height": 792,
+                                "width": 612
+                            },
+                            "taggedElements": [
+                                {
+                                    "name": "Subheading",
+                                    "position": {
+                                        "x": 120,
+                                        "y": 180
+                                    },
+                                    "size": {
+                                        "height": 40,
+                                        "width": 250
+                                    },
+                                    "type": "text"
+                                }
+                            ],
+                            "thumbnailUrl": "https://example.com/page8-thumbnail.png"
+                        },
+                        {
+                            "pageNumber": 9,
+                            "pageTitle": "Project Details",
+                            "size": {
+                                "height": 792,
+                                "width": 612
+                            },
+                            "taggedElements": [
+                                {
+                                    "name": "Subheading",
+                                    "position": {
+                                        "x": 120,
+                                        "y": 180
+                                    },
+                                    "size": {
+                                        "height": 40,
+                                        "width": 250
+                                    },
+                                    "type": "text"
+                                }
+                            ],
+                            "thumbnailUrl": "https://example.com/page9-thumbnail.png"
+                        },
+                        {
+                            "pageNumber": 10,
+                            "pageTitle": "Project Details",
+                            "size": {
+                                "height": 792,
+                                "width": 612
+                            },
+                            "taggedElements": [
+                                {
+                                    "name": "Subheading",
+                                    "position": {
+                                        "x": 120,
+                                        "y": 180
+                                    },
+                                    "size": {
+                                        "height": 40,
+                                        "width": 250
+                                    },
+                                    "type": "text"
+                                }
+                            ],
+                            "thumbnailUrl": "https://example.com/page10-thumbnail.png"
+                        }
+                    ],
+                    "id": "urn:aaid:sc:AP:0000aaaa-0000-000a-0000-000000aaaaaa",
+                    "name": "Project Proposal",
+                    "paging": {
+                        "nextUrl": "https://example.com/api/tagged-documents/urn:aaid:sc:AP:0000aaaa-0000-000a-0000-000000aaaaaa?start=11",
+                        "totalRecords": 14
+                    }
+                }
+            },
+            "taggedDocumentDetailsResponseSampleTwo": {
+                "summary": "Tagged Document Details Response Sample 2",
+                "value": {
+                    "documentPages": [
+                        {
+                            "pageNumber": 1,
+                            "pageTitle": "Introduction",
+                            "size": {
+                                "height": 792,
+                                "width": 612
+                            },
+                            "taggedElements": [
+                                {
+                                    "name": "HeaderTitle",
+                                    "position": {
+                                        "x": 100,
+                                        "y": 150
+                                    },
+                                    "size": {
+                                        "height": 50,
+                                        "width": 200
+                                    },
+                                    "type": "text"
+                                },
+                                {
+                                    "name": "CompanyLogo",
+                                    "position": {
+                                        "x": 50,
+                                        "y": 50
+                                    },
+                                    "size": {
+                                        "height": 100,
+                                        "width": 100
+                                    },
+                                    "type": "image"
+                                }
+                            ],
+                            "thumbnailUrl": "https://example.com/page1-thumbnail.png"
+                        },
+                        {
+                            "pageNumber": 2,
+                            "pageTitle": "Project Details",
+                            "size": {
+                                "height": 792,
+                                "width": 612
+                            },
+                            "taggedElements": [
+                                {
+                                    "name": "Subheading",
+                                    "position": {
+                                        "x": 120,
+                                        "y": 180
+                                    },
+                                    "size": {
+                                        "height": 40,
+                                        "width": 250
+                                    },
+                                    "type": "text"
+                                }
+                            ],
+                            "thumbnailUrl": "https://example.com/page2-thumbnail.png"
+                        }
+                    ],
+                    "id": "urn:aaid:sc:AP:0000aaaa-0000-000a-0000-000000aaaaaa",
+                    "name": "Project Proposal"
+                }
+            },
+            "errorResponseDetailsBadRequest": {
+                "summary": "Bad Request",
+                "value": {
+                    "error_code": "client_error",
+                    "message": "Client Error"
+                }
+            },
+            "errorResponseDetailsUnauthorized": {
+                "summary": "Unauthorized",
+                "value": {
+                    "error_code": "unauthorized_error",
+                    "message": "Not authorized"
+                }
+            },
+            "errorResponseDetailsUnprocessableEntity": {
+                "summary": "Unprocessable Entity",
+                "value": {
+                    "error_code": "validation_error",
+                    "message": "Validation error",
+                    "validation_errors": [
+                        "The input value is invalid"
+                    ]
+                }
+            },
+            "errorResponseDetailsRuntimeError": {
+                "summary": "Runtime Error",
+                "value": {
+                    "error_code": "runtime_error",
+                    "message": "Runtime error"
+                }
+            }
+        }
+    },
+    "security": [
+        {
+            "apiKey": [],
+            "Authorization": []
+        }
+    ]
+}

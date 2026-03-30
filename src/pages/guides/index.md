@@ -1,24 +1,188 @@
 ---
-title: Guides - Analytics
-description: This is the guides overview page of  Analytics 
+title: Getting Started Guide - Express API
+description: A comprehensive guide to integrating Adobe Express functionality into your applications using the Express API.
+keywords:
+  - Adobe Express
+  - Adobe Express API
+  - Getting started
+  - REST API
+  - Document tagging
+contributors:
+  - https://github.com/nimithajalal
+  - https://github.com/hollyschinsky
+hideBreadcrumbNav: true
 ---
 
-# Get Started
+# Getting Started with Express API
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam malesuada feugiat enim vel facilisis. Nunc eget enim eu lacus lobortis tincidunt a nec est. Nunc quis sapien quis orci rutrum sollicitudin. Nullam vehicula ultricies mauris, id aliquam justo aliquam vitae. Nam quis tincidunt ante. Curabitur sagittis aliquam elit, at auctor enim maximus et. Praesent in lectus facilisis, tempor magna eget, bibendum est. In quis ornare mi. Donec vestibulum viverra magna, non mollis leo vestibulum sit amet. Aenean euismod nulla augue, sit amet vehicula nibh faucibus vel. Fusce at est lacus. Nullam ante nulla, elementum nec ornare in, placerat luctus enim. Suspendisse vitae lacinia nibh. Pellentesque porta accumsan est at volutpat. Nulla aliquam dictum faucibus.
+Express API enables you to integrate Adobe Express functionalities into your applications through a REST API. This guide walks you through the setup process, provides usage examples, and outlines best practices.
 
-## Authentication
+## Overview
 
-Mauris pellentesque ornare nulla. Proin fermentum elementum velit non consequat. Donec euismod nisl sed tellus sagittis, a consequat leo rhoncus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse neque justo, porttitor eget volutpat sed, suscipit nec mauris. Etiam nec egestas purus. Praesent suscipit in elit cursus consectetur. Duis blandit pulvinar odio, eget volutpat magna vestibulum interdum. Ut sed ultrices risus, vel gravida nisi. Sed vitae rutrum felis. Aliquam at eros molestie, sagittis augue sed, venenatis erat. Praesent at consectetur tellus, ut vehicula nunc. Pellentesque aliquet condimentum neque, fermentum consequat neque viverra vel. Aliquam accumsan dignissim turpis vitae consequat. Aenean id justo vel diam sollicitudin posuere. Sed eu mauris ac elit porta commodo et varius sem.
+The Express API allows you to programmatically interact with Adobe Express documents that have been tagged for automation. By tagging specific elements (text, images, and videos) in your Express documents, you can modify them via API calls to create customized variations and generate renditions.
 
-## OAuth
+The Express API endpoints currently only operate on the Express documents tagged for automation workflows. The [Tag Elements Add-on](https://adobesparkpost.app.link/TR9Mb7TXFLb?mode=private&claimCode=wjmj67nj9:PLYN7XLJ) facilitates the functionality of tagging elements in an Express document, enabling the document for automation.
 
-Donec imperdiet tempus ligula, sit amet pellentesque justo pharetra quis. Duis sed lacus diam. Maecenas sollicitudin diam sit amet pharetra placerat. Aliquam egestas lectus et tellus sagittis, venenatis finibus nisi volutpat. Cras laoreet, nisl sed faucibus laoreet, nibh arcu pretium enim, eget elementum ligula tellus vitae lorem. Aenean consequat in lorem at venenatis. Phasellus consequat dolor in libero vulputate rutrum. Nulla sit amet augue fringilla, elementum libero eget, accumsan velit. Suspendisse et lorem ornare, congue justo vel, ultrices felis. Ut et aliquet eros. Nulla facilisi. Nulla vitae velit a enim egestas eleifend. Etiam malesuada orci non mollis vulputate. Praesent id augue eget sapien lobortis bibendum. Praesent placerat tellus dui, vel facilisis magna condimentum in.
+## Terminology
 
-<InlineAlert variant="info" slots="text"/>
+- **Document/Template**: An Adobe Express document containing design elements that can be tagged for API access
+- **Document URN**: A unique, persistent identifier for Express documents (format: `urn:aaid:sc:VA6C2:...`)
+- **Tagged Element**: A text, image or video element that has been named and marked for programmatic access
+- **Rendition**: An exported version of a document (JPG, PNG, MP4, and PDF formats are supported)
+- **Variation**: A modified version of a document with changes to its tagged elements
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. In urna tellus, fringilla sit amet lorem eget, dignissim pellentesque ligula. Donec nec dolor vitae leo laoreet aliquam vehicula at dui. Integer in tortor lacus. Aliquam convallis, lorem ac consectetur sodales, tellus.
+## Prerequisites
 
-## JWT
+Before you begin:
 
-Donec imperdiet tempus ligula, sit amet pellentesque justo pharetra quis. Duis sed lacus diam. Maecenas sollicitudin diam sit amet pharetra placerat. Aliquam egestas lectus et tellus sagittis, venenatis finibus nisi volutpat. Cras laoreet, nisl sed faucibus laoreet, nibh arcu pretium enim, eget elementum ligula tellus vitae lorem. Aenean consequat in lorem at venenatis. Phasellus consequat dolor in libero vulputate rutrum. Nulla sit amet augue fringilla, elementum libero eget, accumsan velit. Suspendisse et lorem ornare, congue justo vel, ultrices felis. Ut et aliquet eros. Nulla facilisi. Nulla vitae velit a enim egestas eleifend. Etiam malesuada orci non mollis vulputate. Praesent id augue eget sapien lobortis bibendum. Praesent placerat tellus dui, vel facilisis magna condimentum in.
+1. **Adobe Express Account**: Ensure you have access to [Adobe Express](https://new.express.adobe.com/)
+2. **Authentication**: Obtain an access token with `openid`, `AdobeID`, and `ee.express_api` scopes. See [authentication documentation](../guides/concepts/authentication/index.md)
+3. **API Key**: [Register your application](https://developer.adobe.com/console) to receive an API key
+4. **Required Headers**: Include these in every API request:
+
+   ```bash
+   X-API-KEY: "YOUR-API-KEY"
+   Authorization: "Bearer <Authorization Token>"
+   ```
+
+## Step 1: Preparing Documents for API Access
+
+1. **Install the Add-on**:
+   - Log into [Adobe Express](https://new.express.adobe.com/)
+   - Install the [Tag Elements Add-on](https://adobesparkpost.app.link/TR9Mb7TXFLb?mode=private&claimCode=wjmj67nj9:PLYN7XLJ) by opening the URL and clicking **ADD**
+   - Find the add-on in the **Add-ons section** under **Your add-ons**
+
+2. **Create and Tag a Document**:
+   - Create a new Express document or open an existing one
+   - Design your document with the elements you want to modify via API
+   - Open the Tag Elements Add-on
+   - Select an element (text, image or video)
+   - Enter a descriptive tag name in the input field (this will be the identifier in API calls)
+   - Click **Create tag**
+   - Repeat for all elements you want to programmatically modify
+
+## Step 2: Using the Express API
+
+The Express API provides five key endpoints:
+
+- [**Tagged documents API**](../api/alpha-tagged-documents/index.md): Lists all your tagged documents
+- [**Tagged document details API**](../api/alpha-tagged-documents-documentId/index.md): Retrieves metadata and tagged element information for a specific document
+- [**Generate variation API**](../api/alpha-generate-variation/index.md): Creates a new document variation by modifying tagged elements
+- [**Export rendition API**](../api/alpha-export-rendition/index.md): Exports a document as JPG, PNG, MP4, or PDF
+- [**Status API**](../api/status-jobId/index.md): Checks the status of asynchronous operations like variation generation
+
+### Fetch Tagged Documents Example
+
+This example demonstrates how to retrieve all tagged documents available to your account:
+
+<CodeBlock slots="heading, code" repeat="2" languages="CURL, JSON" />
+
+#### Request
+
+```bash
+curl -i -X GET \
+  'https://express-api.adobe.io/alpha/tagged-documents?start=0&limit=10&sortBy=name' \
+  -H 'Authorization: Bearer <YOUR_TOKEN>' \
+  -H 'X-API-KEY: YOUR-API-KEY'
+```
+
+#### Response
+
+```json
+{
+  "documents": [
+    {
+      "id":"urn:aaid:sc:VA6C2:1ee6d0fe-cd84-590f-b064-285b7d6cc051",
+      "name": "My Document.express",
+      "thumbnailUrl": "https://aep-cs-blobstore-stage-va6c2-data.s3.amazonaws.com"
+    }
+  ],
+  "paging": {
+    "nextUrl": "https://<domain>/alpha/tagged-documents?start=1&limit=1&sortBy=name",
+    "totalRecords": 1
+  }
+}
+```
+
+**Note**: If you receive an empty document list, verify that you have [properly tagged your documents](../guides/how-to/tag-documents.md).
+
+### Fetch Document Details Example
+
+Once you have document IDs, you can retrieve detailed information about a specific document:
+
+<CodeBlock slots="heading, code" repeat="2" languages="CURL, JSON" />
+
+#### Request
+
+```bash
+curl -i -X GET \
+  'https://express-api.adobe.io/alpha/tagged-documents/<YOUR_DOCUMENT_ID>' \
+  -H 'Authorization: Bearer <YOUR_TOKEN>' \
+  -H 'X-API-KEY: YOUR-API-KEY'
+```
+
+#### Response
+
+```json
+{
+  "name": "MyDocument",
+  "id": "urn:aaid:sc:VA6C2:d8638bc5-33d0-3aaf-9e08-9932a8fccf0f",
+  "documentPages": [
+    {
+      "pageNumber": 1,
+      "pageTitle": "",
+      "thumbnailUrl": "https://aep-cs-blobstore-stage-va6c2-data.s3.amazonaws.com/thumbnail.jpg",
+      "size": {
+        "width": 1080,
+        "height": 1920
+      },
+      "taggedElements": [
+        {
+          "name": "logoImage",
+          "type": "image",
+          "position": {
+            "x": 380.13818359375,
+            "y": 1211.0332407951355
+          },
+          "size": {
+            "width": 292.2994079589844,
+            "height": 222.86627197265625
+          }
+        },
+        {
+          "name": "nameLabel",
+          "type": "text",
+          "position": {
+            "x": 386,
+            "y": 982.5430908203125
+          },
+          "size": {
+            "width": 252.43186950683594,
+            "height": 70.70060157775879
+          }
+        }        
+      ]
+    }
+  ]
+}
+```
+
+The response provides detailed information about each tagged element, including its name, type, position, and dimensions. This information is essential when generating document variations.
+
+For detailed examples of generating variations and exporting renditions, see the [how-to guides](../guides/how-to/tag-documents.md).
+
+## Best Practices and Limitations
+
+For optimal results with the Express API:
+
+- **Document Structure**: Use single-page documents for simpler management and faster processing
+- **Tag Naming**: Use descriptive, unique names for your tags to easily identify elements in API calls
+- **Thumbnails**: Use the `thumbnailUrl` property to display document previews in your application
+- **Pagination**: When dealing with multiple documents, use the `nextUrl` from the `paging` object to implement pagination
+- **Error Handling**: Implement robust error handling for API responses, particularly for asynchronous operations
+
+## Next Steps
+
+- Explore the [complete API reference](../api/index.md) for detailed endpoint documentation
+- Learn how to [generate document variations](../guides/how-to/generate-variations.md)
+- Understand [authentication and security](../guides/concepts/authentication/index.md) for the Express API

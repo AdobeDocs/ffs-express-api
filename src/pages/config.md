@@ -1,5 +1,5 @@
 - pathPrefix:
-    - /dev-docs-template/
+    - /firefly-services/docs/express-api/
 
 - pages:
     - [Analytics](index.md)

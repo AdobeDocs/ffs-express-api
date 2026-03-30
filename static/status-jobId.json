@@ -1,0 +1,546 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "Express API",
+        "description": "Express API to automate bulk creation, export renditions and various other use cases.",
+        "version": "alpha",
+        "contact": {
+            "name": "Express API support",
+            "email": "express-api-support@adobe.com"
+        }
+    },
+    "servers": [
+        {
+            "url": "https://express-api.adobe.io",
+            "description": "Prod endpoint"
+        }
+    ],
+    "paths": {
+        "/status/{jobId}": {
+            "get": {
+                "summary": "Job Status",
+                "description": "Retrieve a job's status by its `jobId`. Depending on the job type, the response may include job-specific details.",
+                "operationId": "getJobStatus",
+                "parameters": [
+                    {
+                        "name": "jobId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "The unique identifier of the job."
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response with job status and details.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "$ref": "#/components/schemas/JobStatusResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/ExportRenditionResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/GenerateVariationResponse"
+                                        }
+                                    ]
+                                },
+                                "examples": {
+                                    "jobStatusResponseSampleOne": {
+                                        "$ref": "#/components/examples/jobStatusResponseSampleOne"
+                                    },
+                                    "jobStatusResponseSampleTwo": {
+                                        "$ref": "#/components/examples/jobStatusResponseSampleTwo"
+                                    },
+                                    "jobStatusResponseSampleThree": {
+                                        "$ref": "#/components/examples/jobStatusResponseSampleThree"
+                                    },
+                                    "exportRenditionResponseSampleOne": {
+                                        "$ref": "#/components/examples/exportRenditionResponseSampleOne"
+                                    },
+                                    "exportRenditionResponseSampleTwo": {
+                                        "$ref": "#/components/examples/exportRenditionResponseSampleTwo"
+                                    },
+                                    "exportRenditionResponseSampleThree": {
+                                        "$ref": "#/components/examples/exportRenditionResponseSampleThree"
+                                    },
+                                    "exportPdfRenditionResponseSampleOne": {
+                                        "$ref": "#/components/examples/exportPdfRenditionResponseSampleOne"
+                                    },
+                                    "exportPdfRenditionResponseSampleTwo": {
+                                        "$ref": "#/components/examples/exportPdfRenditionResponseSampleTwo"
+                                    },
+                                    "generateVariationResponseSample": {
+                                        "$ref": "#/components/examples/generateVariationResponseSample"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsNotFound": {
+                                        "$ref": "#/components/examples/errorResponseDetailsNotFound"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsRuntimeError": {
+                                        "$ref": "#/components/examples/errorResponseDetailsRuntimeError"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "apiKey": {
+                "type": "apiKey",
+                "name": "X-API-KEY",
+                "in": "header"
+            },
+            "Authorization": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        },
+        "schemas": {
+            "JobStatusResponse": {
+                "description": "Base response payload returned by Job Status API.",
+                "type": "object",
+                "properties": {
+                    "jobId": {
+                        "description": "The identifier of the job.",
+                        "type": "string"
+                    },
+                    "status": {
+                        "$ref": "#/components/schemas/JobStatus",
+                        "description": "The status of the job."
+                    }
+                },
+                "required": [
+                    "jobId",
+                    "status"
+                ]
+            },
+            "ExportRenditionResponse": {
+                "description": "Response payload for the \"export-rendition\" API.",
+                "anyOf": [
+                    {
+                        "$ref": "#/components/schemas/PageRenditionResponse"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PdfRenditionResponse"
+                    }
+                ]
+            },
+            "GenerateVariationResponse": {
+                "description": "Response payload for the \"generate-variation\" API.",
+                "type": "object",
+                "properties": {
+                    "document": {
+                        "$ref": "#/components/schemas/ExpressDocument",
+                        "description": "Specifies the details of the generated variation."
+                    },
+                    "jobId": {
+                        "description": "The identifier of the job.",
+                        "type": "string"
+                    },
+                    "status": {
+                        "$ref": "#/components/schemas/JobStatus",
+                        "description": "The status of the job."
+                    }
+                },
+                "required": [
+                    "document",
+                    "jobId",
+                    "status"
+                ]
+            },
+            "ErrorResponseDetails": {
+                "description": "Details of the error response.",
+                "type": "object",
+                "properties": {
+                    "error_code": {
+                        "description": "The error code.",
+                        "type": "string"
+                    },
+                    "message": {
+                        "description": "The error message.",
+                        "type": "string"
+                    },
+                    "validation_errors": {
+                        "description": "Validation error messages.",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "required": [
+                    "error_code"
+                ]
+            },
+            "JobStatus": {
+                "description": "Various statuses of a job.",
+                "enum": [
+                    "failed",
+                    "partially_succeeded",
+                    "pending",
+                    "running",
+                    "succeeded"
+                ],
+                "type": "string"
+            },
+            "PageRenditionResponse": {
+                "description": "Response payload for the \"export-rendition\" API when exporting page renditions.",
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "description": "The identifier of the document for which the rendition request was made.",
+                        "type": "string"
+                    },
+                    "pageRenditionsResult": {
+                        "description": "The exported renditions outcome indicates whether they were successful or failed.",
+                        "type": "array",
+                        "items": {
+                            "anyOf": [
+                                {
+                                    "$ref": "#/components/schemas/SuccessfulPageRendition"
+                                },
+                                {
+                                    "$ref": "#/components/schemas/FailedPageRendition"
+                                }
+                            ]
+                        }
+                    },
+                    "jobId": {
+                        "description": "The identifier of the job.",
+                        "type": "string"
+                    },
+                    "status": {
+                        "$ref": "#/components/schemas/JobStatus",
+                        "description": "The status of the job."
+                    }
+                },
+                "required": [
+                    "id",
+                    "jobId",
+                    "pageRenditionsResult",
+                    "status"
+                ]
+            },
+            "PdfRenditionResponse": {
+                "description": "Response payload for the \"export-rendition\" API when exporting PDF rendition.",
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "description": "The identifier of the document for which the rendition request was made.",
+                        "type": "string"
+                    },
+                    "pageRenditionsResult": {
+                        "description": "The exported PDF rendition outcome.",
+                        "type": "array",
+                        "items": {
+                            "anyOf": [
+                                {
+                                    "$ref": "#/components/schemas/SuccessfulPdfRendition"
+                                },
+                                {
+                                    "$ref": "#/components/schemas/FailedPdfRendition"
+                                }
+                            ]
+                        }
+                    },
+                    "jobId": {
+                        "description": "The identifier of the job.",
+                        "type": "string"
+                    },
+                    "status": {
+                        "$ref": "#/components/schemas/JobStatus",
+                        "description": "The status of the job."
+                    }
+                },
+                "required": [
+                    "id",
+                    "jobId",
+                    "pageRenditionsResult",
+                    "status"
+                ]
+            },
+            "ExpressDocument": {
+                "description": "Details of the Express document.",
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "description": "The unique identifier of the document.",
+                        "type": "string"
+                    },
+                    "name": {
+                        "description": "The name or title of the document.",
+                        "type": "string"
+                    },
+                    "thumbnailUrl": {
+                        "description": "Pre-signed URL for the Document's thumbnail rendition.\nThe size of the rendition will be `640 pixels` along the longest side. The format of the rendition will be a `PNG` image.",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "id",
+                    "name",
+                    "thumbnailUrl"
+                ]
+            },
+            "SuccessfulPageRendition": {
+                "description": "Details of the page rendition that was successfully exported.",
+                "type": "object",
+                "properties": {
+                    "pageNumber": {
+                        "description": "The page number for which the rendition export request was made.",
+                        "type": "number"
+                    },
+                    "renditionUrl": {
+                        "description": "Pre-signed URL where the rendition result can be downloaded from.",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "pageNumber",
+                    "renditionUrl"
+                ]
+            },
+            "FailedPageRendition": {
+                "description": "Details of the page rendition that failed to export.",
+                "type": "object",
+                "properties": {
+                    "pageNumber": {
+                        "description": "The page number for which the rendition export request was made.",
+                        "type": "number"
+                    },
+                    "error": {
+                        "$ref": "#/components/schemas/ErrorResponseDetails",
+                        "description": "Error object indicating the reason for the failure."
+                    }
+                },
+                "required": [
+                    "error",
+                    "pageNumber"
+                ]
+            },
+            "SuccessfulPdfRendition": {
+                "description": "Result of a successful PDF rendition export.",
+                "type": "object",
+                "properties": {
+                    "renditionUrl": {
+                        "description": "The URL of the PDF rendition.",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "renditionUrl"
+                ]
+            },
+            "FailedPdfRendition": {
+                "description": "Result of a failed PDF rendition export.",
+                "type": "object",
+                "properties": {
+                    "error": {
+                        "$ref": "#/components/schemas/ErrorResponseDetails",
+                        "description": "Error object indicating the reason for the failure."
+                    }
+                },
+                "required": [
+                    "error"
+                ]
+            }
+        },
+        "examples": {
+            "jobStatusResponseSampleOne": {
+                "summary": "Job status response running",
+                "value": {
+                    "jobId": "af121560-218e-4dd9-918d-add12b3b6d98",
+                    "status": "running"
+                }
+            },
+            "jobStatusResponseSampleTwo": {
+                "summary": "Job status response succeeded",
+                "value": {
+                    "jobId": "af121560-218e-4dd9-918d-add12b3b6d98",
+                    "status": "succeeded"
+                }
+            },
+            "jobStatusResponseSampleThree": {
+                "summary": "Job status response failed",
+                "value": {
+                    "jobId": "af121560-218e-4dd9-918d-add12b3b6d98",
+                    "status": "failed"
+                }
+            },
+            "exportRenditionResponseSampleOne": {
+                "summary": "Export Rendition Response Sample 1",
+                "value": {
+                    "jobId": "af121560-218e-4dd9-918d-add12b3b6d98",
+                    "status": "succeeded",
+                    "id": "urn:aaid:sc:AP:0000aaaa-0000-000a-0000-000000aaaaaa",
+                    "pageRenditionsResult": [
+                        {
+                            "pageNumber": 1,
+                            "renditionUrl": "https://example.com/rendition/page1.jpg"
+                        },
+                        {
+                            "pageNumber": 2,
+                            "renditionUrl": "https://example.com/rendition/page2.jpg"
+                        },
+                        {
+                            "pageNumber": 3,
+                            "renditionUrl": "https://example.com/rendition/page2.jpg"
+                        },
+                        {
+                            "pageNumber": 4,
+                            "renditionUrl": "https://example.com/rendition/page2.jpg"
+                        },
+                        {
+                            "pageNumber": 5,
+                            "renditionUrl": "https://example.com/rendition/page2.jpg"
+                        }
+                    ]
+                }
+            },
+            "exportRenditionResponseSampleTwo": {
+                "summary": "Export Rendition Response Sample 2",
+                "value": {
+                    "jobId": "af121560-218e-4dd9-918d-add12b3b6d98",
+                    "status": "partially_succeeded",
+                    "id": "urn:aaid:sc:AP:0000aaaa-0000-000a-0000-000000aaaaaa",
+                    "pageRenditionsResult": [
+                        {
+                            "pageNumber": 1,
+                            "renditionUrl": "https://example.com/rendition/page1.jpg"
+                        },
+                        {
+                            "pageNumber": 2,
+                            "error": {
+                                "error_code": "access_error",
+                                "message": "Not allowed"
+                            }
+                        },
+                        {
+                            "pageNumber": 3,
+                            "renditionUrl": "https://example.com/rendition/page3.jpg"
+                        }
+                    ]
+                }
+            },
+            "exportRenditionResponseSampleThree": {
+                "summary": "Export Rendition Response Sample 3",
+                "value": {
+                    "jobId": "af121560-218e-4dd9-918d-add12b3b6d98",
+                    "status": "failed",
+                    "id": "urn:aaid:sc:AP:0000aaaa-0000-000a-0000-000000aaaaaa",
+                    "pageRenditionsResult": [
+                        {
+                            "pageNumber": 1,
+                            "error": {
+                                "error_code": "runtime_error",
+                                "message": "Runtime error"
+                            }
+                        },
+                        {
+                            "pageNumber": 2,
+                            "error": {
+                                "error_code": "runtime_error",
+                                "message": "Runtime error"
+                            }
+                        }
+                    ]
+                }
+            },
+            "exportPdfRenditionResponseSampleOne": {
+                "summary": "Export PDF Rendition Response - Succeeded",
+                "value": {
+                    "jobId": "af121560-218e-4dd9-918d-add12b3b6d98",
+                    "status": "succeeded",
+                    "id": "urn:aaid:sc:AP:0000aaaa-0000-000a-0000-000000aaaaaa",
+                    "pageRenditionsResult": [
+                        {
+                            "renditionUrl": "https://example.com/rendition/document.pdf"
+                        }
+                    ]
+                }
+            },
+            "exportPdfRenditionResponseSampleTwo": {
+                "summary": "Export PDF Rendition Response - Failed",
+                "value": {
+                    "jobId": "af121560-218e-4dd9-918d-add12b3b6d98",
+                    "status": "failed",
+                    "id": "urn:aaid:sc:AP:0000aaaa-0000-000a-0000-000000aaaaaa",
+                    "pageRenditionsResult": [
+                        {
+                            "error": {
+                                "error_code": "runtime_error",
+                                "message": "Runtime error"
+                            }
+                        }
+                    ]
+                }
+            },
+            "generateVariationResponseSample": {
+                "summary": "Generate variation request succeeded",
+                "value": {
+                    "jobId": "af121560-218e-4dd9-918d-add12b3b6d98",
+                    "status": "succeeded",
+                    "document": {
+                        "id": "urn:aaid:sc:AP:0000aaaa-0000-000a-0000-000000aaaaaa",
+                        "name": "Generated Document",
+                        "thumbnailUrl": "https://example.com/thumbnails/generated-doc.png"
+                    }
+                }
+            },
+            "errorResponseDetailsNotFound": {
+                "summary": "Not Found",
+                "value": {
+                    "error_code": "not_found",
+                    "message": "Requested resource not found"
+                }
+            },
+            "errorResponseDetailsRuntimeError": {
+                "summary": "Runtime Error",
+                "value": {
+                    "error_code": "runtime_error",
+                    "message": "Runtime error"
+                }
+            }
+        }
+    },
+    "security": [
+        {
+            "apiKey": [],
+            "Authorization": []
+        }
+    ]
+}

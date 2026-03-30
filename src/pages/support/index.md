@@ -1,17 +1,32 @@
 ---
-title: Support - Analytics
-description: This is the support page of Analytics 
+title: Support 
+description: This is the support page
+contributors:
+  - https://github.com/hollyschinsky
 ---
 
-<Superhero slots="heading, text" background="rgb(19, 93, 183)"/>
+<Hero slots="heading, text" background="rgb(64, 34, 138)"/>
 
 # Support
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis eleifend ornare purus, vel dapibus augue suscipit in. 
+Frequently asked questions, best practices and more.
 
-## Feedback
+## Overview
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis eleifend ornare purus, vel dapibus augue suscipit in. Nam blandit vitae ante et auctor. Donec placerat egestas posuere. Aliquam erat volutpat. In condimentum massa eu pharetra porta. Nunc tempus massa sit amet nisl posuere sagittis. Mauris sit amet rhoncus neque. Phasellus ut vulputate est, vel auctor metus.
+Here you will find resources to help you get started with the Express API, best practices, and answers to frequently asked questions.
 
-Donec tincidunt turpis in congue vulputate. Suspendisse potenti. Phasellus feugiat eros sem, tristique sollicitudin lacus consectetur id. Cras tortor orci, venenatis ac vulputate sit amet, auctor sed ex. Ut vel convallis felis. Etiam luctus, diam sed venenatis tincidunt, ipsum turpis volutpat eros, nec interdum arcu mi molestie dolor. Donec id mauris sed odio mollis viverra sed lobortis quam. Aliquam mi metus, ultricies sagittis hendrerit eget, volutpat vel dui. Proin id urna hendrerit, scelerisque arcu sit amet, egestas neque. Sed fringilla odio tincidunt sapien malesuada facilisis.
+If you don't find what you're looking form, or need to report a bug, email us at [express-api-support@adobe.com](mailto:express-api-support@adobe.com).
 
+<DiscoverBlock slots="link, text" width="33%"/>
+
+[FAQ](./FAQ/index.md)
+
+Frequently asked questions and answers.
+
+<DiscoverBlock slots="link, text" width="33%"/>
+
+[Best Practices](./best-practices/index.md)
+
+Best practices for using the Express API.
+
+<br/><br/><br/><br/>
