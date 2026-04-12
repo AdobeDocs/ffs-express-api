@@ -6,7 +6,7 @@ contributors:
   - https://github.com/hollyschinsky
 ---
 
-<Hero slots="heading, text" background="rgb(64, 34, 138)"/>
+<Superhero  slots="heading, text" background="rgb(64, 34, 138)"/>
 
 # Adobe Express API (Alpha)
 

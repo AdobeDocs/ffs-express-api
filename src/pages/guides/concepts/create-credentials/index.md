@@ -31,23 +31,21 @@ Adobe Express API supports multiple ways of user authentication. Based on the au
 
 ## Choose Authentication Type
 
-<!--
 ### Server-to-Server Authentication
 
 Authenticate an application running on your backend server to call Adobe APIs on behalf of your organization.
--->
 
-**User Authentication**
+### User Authentication
 
 Authenticate an Adobe user to call Adobe APIs on their behalf. The Adobe user must sign in and consent to your application before it can view or edit their data. Learn more on [how to implement](https://developer.adobe.com/developer-console/docs/guides/authentication/UserAuthentication/) user authentication.
 
 In user authentication, there are two options:
 
-### OAuth WebApp
+#### OAuth WebApp
 
 Compatible with applications that have a frontend UI and a backend server. The server is responsible for storing client secrets securely and fetching access tokens.
 
-### OAuth Single-page App (SPA)
+#### OAuth Single-page App (SPA)
 
 Compatible with web applications running in a browser without a backend server. The web application is responsible for fetching access tokens.
 
@@ -71,33 +69,40 @@ Start by registering your project name. This will help you find your project in 
 
 **To make calls to the Adobe Express API, developers need a valid client ID (API key) and an access token**.
 
-<!--
 #### Server-to-Server Authentication
 
-Server-to-server authentication allows your application's server to generate access tokens and make API calls on your application's behalf. This method uses the OAuth 2.0 client_credentials grant type.
+Server-to-server authentication lets your backend generate access tokens and call Adobe APIs on behalf of your organization. It uses the OAuth 2.0 `client_credentials` grant. The steps below align with the same Developer Console pattern used across Firefly Services APIs—create a project, add APIs, choose **OAuth Server-to-Server**, assign product profiles, then generate tokens. For the full walkthrough (console access, adding APIs, credentials, scopes, and sample token requests), see [Getting started with Adobe Firefly Services](https://developer.adobe.com/firefly-services/docs/guides/get-started/).
 
-**Steps to Implement Server-to-Server Authentication:**
+**1. Register your application and add Express**
 
-1. **Register Your Application**:
-  - Go to the Adobe Developer Console and create a new project.
-  - Add the Adobe Express API to your project.
-  - Select OAuth Server-to-Server as the authentication method.
-
-2. **Save Configured API**:
-  - Click on **Save configured API** in the following modal. You can see your **client ID (API key)** on the next screen.
-  - Note the **technical account email address** displayed in the credentials overview - this is crucial for document access
+- In [Adobe Developer Console](https://developer.adobe.com/console/home), create a project (or open an existing one).
+- **Add API** and add **Adobe Express API** so your project has Express entitlement for server-to-server use.
+- When prompted, keep **OAuth Server-to-Server** as the credential type, name the credential, and complete the flow.
+- Select the **product profiles** your admin assigned for Express; these control what the credential can access in your organization.
+- Click **Save configured API**. On the credential overview, copy your **client ID (API key)** and **client secret**, and note the **technical account email**—you will need it for document and asset access.
 
 ![Server-to-Server Credentials](../images/server-credentials.png)
 *Server-to-Server credentials overview showing client ID (API key) and technical account email*
 
-Important: For server-to-server authentication to work properly, any documents that need to be accessed must be shared with the **technical account email address** shown in your credentials overview. Without this sharing permission, the generated access token won't be able to access the documents.
+**2. Generate access tokens**
 
-3. **Use the Access Token**:
-  - Use the access token to authenticate requests to the Adobe Express API on behalf of your application.
+- Use the token endpoint and scopes for your credential (see **Generate access token** in the [Firefly Services getting started](https://developer.adobe.com/firefly-services/docs/guides/get-started/) guide linked above).
+- When calling Express API, send the token and API key as described in [Authentication – Call the Express API](../authentication/index.md#call-the-express-api).
 
--->
+**3. Asset and document access for the technical account**
 
-### User Authentication: OAuth WebApp
+API calls run as the **technical account** tied to your OAuth Server-to-Server credential—not as an end user. Anything your integration must read or edit (templates, Express documents, cloud assets) must be reachable by that technical account. Common approaches:
+
+| Approach | When to use |
+| -------- | ----------- |
+| **Share in Express** | You need access to specific Express documents or projects. Open the share experience for the doc or project, paste the **technical account email** from the credential overview into the share field, and grant at least **Can edit** (or the minimum permission your workflow needs). This is the most direct way to give the technical account access to a given asset. |
+| **Storage administrator (org-wide)** | You need the technical account to work across Adobe cloud storage in your organization (for example, broader asset management). In [Adobe Admin Console](https://adminconsole.adobe.com/), an org administrator must grant the technical account **Storage administrator** and ensure it has a product license that includes Enterprise Storage where required. Follow [Technical account setup for Adobe Cloud Storage](https://developer.adobe.com/cloud-storage/guides/getting-started/technical-account-setup)—including verifying the identity is a **Technical Account** (Enterprise ID), not a personal Adobe ID. |
+
+If documents or assets are still inaccessible, confirm sharing with the technical account email, product profile assignment in Developer Console, and (for cloud storage) Storage administrator assignment and Enterprise Storage licensing per the guide above.
+
+For request headers, curl examples, and token usage, see [Authentication – Call the Express API](../authentication/index.md#call-the-express-api). Store client secrets only on your server.
+
+#### User Authentication: OAuth WebApp
 
 OAuth WebApp authentication is ideal for applications with both frontend and backend components. This method uses the OAuth 2.0 authorization_code grant type to obtain an access token on behalf of the user.
 
@@ -136,7 +141,7 @@ OAuth WebApp authentication is ideal for applications with both frontend and bac
   - Your application can fetch tokens using the client secret on the backend server without exposing sensitive credentials through the frontend
   - Learn more about implementing OAuth WebApp authentication in our [detailed implementation guide](https://developer.adobe.com/developer-console/docs/guides/authentication/UserAuthentication/implementation/#oauth-web-app-credential)
 
-### User Authentication: OAuth Single-page App (SPA)
+#### User Authentication: OAuth Single-page App
 
 OAuth Single-page App authentication is designed for JavaScript-based applications that run entirely in the browser. This method uses the OAuth 2.0 PKCE (Proof Key for Code Exchange) flow to obtain tokens securely without requiring a client secret.
 
@@ -173,7 +178,7 @@ OAuth Single-page App authentication is designed for JavaScript-based applicatio
   - No client secret is needed as authentication happens directly in the browser
   - Learn more about implementing OAuth Single-page App authentication in our [detailed implementation guide](https://developer.adobe.com/developer-console/docs/guides/authentication/UserAuthentication/implementation/#oauth-single-page-app-credential)
 
-### Change project status to production
+**Change project status to production**
 
 <InlineAlert variant="warning" slots="text" />
 
@@ -184,7 +189,7 @@ Click **Push to production** button once you have completed the development.
 ![Push to prod](../images/push-to-prod.png)
   *Project overview showing push to production button*
 
-## User Consent Flow
+#### User Consent Flow
 
 When users authenticate through either OAuth WebApp or OAuth Single-page App, they will see a consent screen. Users need to click "Allow Access" to grant the requested permissions.
 
