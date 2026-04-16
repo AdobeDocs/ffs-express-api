@@ -1,6 +1,6 @@
 ---
-title: Authentication
-description: Learn how to authenticate requests to Express API
+title: Express API Authentication
+description: Learn how to authenticate requests to Express API.
 keywords:
   - Express API Authentication
   - Server-to-Server Authentication
