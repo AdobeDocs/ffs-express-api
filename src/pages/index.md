@@ -6,7 +6,9 @@ contributors:
   - https://github.com/hollyschinsky
 ---
 
-<Superhero  slots="heading, text" background="rgb(64, 34, 138)"/>
+<Superhero  slots="image, heading, text" background="rgb(64, 34, 138)"/>
+
+![Express API hero image](./express-api-hero.png)
 
 # Adobe Express API (Alpha)
 
