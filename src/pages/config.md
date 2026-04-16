@@ -18,6 +18,10 @@
     - [API Reference](api/index.md)
     - [Support](support/index.md)
 
+- buttons:
+    - [Support](https://airtable.com/appu5RTWgdM95jynx/pagyuT1qspNJcPU2E/form)
+    - [Console](https://developer.adobe.com/console/) consoleId
+
 - subPages:
     - [Overview](index.md)
     - [Guides](guides/index.md)
