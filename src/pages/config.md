@@ -31,6 +31,8 @@
     - [Error Logging](/getting-started/error-logging/index.md)
     - [Technical Usage Notes](/getting-started/usage/index.md)
     - Support header
+    - [FAQ](getting-started/support/FAQ/index.md)
+    - [Best Practices](/getting-started/support/best-practices/index.md)
     - [Overview](index.md)
     - [Guides](guides/index.md)
       - [How To](#how-to)
@@ -42,7 +44,4 @@
       - [Tutorials](#tutorials)
         - [Dropbox Integration Workflow](guides/tutorials/dropbox-workflow.md)
     - [Support](support/index.md)
-      - [FAQ](support/FAQ/index.md)
-      - [Best Practices](support/best-practices/index.md)
-      - [Community](support/community/index.md)
-      - [Contribute](support/contribute/index.md)
+      
