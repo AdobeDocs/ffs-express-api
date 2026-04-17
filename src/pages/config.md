@@ -16,7 +16,6 @@
     - [Getting Started](/getting-started/index.md)
     - [Guides](guides/index.md)
     - [API Reference](api/index.md)
-    - [Support](support/index.md)
 
 - buttons:
     - [Support](https://airtable.com/appu5RTWgdM95jynx/pagyuT1qspNJcPU2E/form)
@@ -34,14 +33,13 @@
     - [FAQ](getting-started/support/FAQ/index.md)
     - [Best Practices](/getting-started/support/best-practices/index.md)
     - [Overview](index.md)
-    - [Guides](guides/index.md)
-      - [How To](#how-to)
-        - [Tag Documents](guides/how-to/tag-documents.md)
-        - [Get Tagged Documents](guides/how-to/get-tagged-documents.md)
-        - [Generate Variations](guides/how-to/generate-variations.md)
-        - [Export Document Renditions](guides/how-to/export-document.md)
-        - [End-to-End Workflow](guides/how-to/end-to-end-workflow.md)
-      - [Tutorials](#tutorials)
-        - [Dropbox Integration Workflow](guides/tutorials/dropbox-workflow.md)
-    - [Support](support/index.md)
-      
+    - Guides header
+    - [Express API Quickstart](guides/index.md)
+    - [How Tos](#how-to)
+      - [Tag Documents](guides/how-to/tag-documents.md)
+      - [Get Tagged Documents](guides/how-to/get-tagged-documents.md)
+      - [Generate Variations](guides/how-to/generate-variations.md)
+      - [Export Document Renditions](guides/how-to/export-document.md)
+      - [End-to-End Workflow](guides/how-to/end-to-end-workflow.md)
+    - [Tutorials](#tutorials)
+       - [Dropbox Integration Workflow](guides/tutorials/dropbox-workflow.md)

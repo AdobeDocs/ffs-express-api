@@ -18,13 +18,13 @@ Effortlessly create and customize mixed-media designs with on-brand precision.
 
 #### Resources
 
-* [Quickstart Guide](./guides/index.md)
+* [Express API Quickstart](./guides/index.md)
 
-## Overview
+## What is the Adobe Express API?
 
 The Adobe Express API provides an effortless way to incorporate Adobe Express functionalities into your applications through a straightforward REST-based API. This documentation guides you through the initial steps, best practices, and current known issues/limitations.
 
-## Features
+## What can Express API do?
 
 The Adobe Express (Alpha) API offers the following key features:
 
