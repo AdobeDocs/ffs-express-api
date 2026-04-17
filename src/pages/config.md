@@ -23,14 +23,15 @@
     - [Console](https://developer.adobe.com/console/) consoleId
 
 - subPages:
+    - What's New header
+    
+    - Getting Started header
+    - [General Authentication](/getting-started/index.md)
+    - [Create Credentials](/getting-started/create-credentials/index.md)
+    - [Error Logging](/getting-started/error-logging/index.md)
+    - [Technical Usage Notes](/getting-started/usage/index.md)
     - [Overview](index.md)
     - [Guides](guides/index.md)
-      - [Concepts](#concepts)
-        - [Authentication](guides/concepts/authentication/index.md)
-        - [Rate Limits](guides/concepts/rate-limits/index.md)
-        - [Create Credentials](guides/concepts/create-credentials/index.md)
-        - [Error Logging](guides/concepts/error-logging/index.md)
-        - [Known Issues](guides/concepts/known-issues/index.md)
       - [How To](#how-to)
         - [Tag Documents](guides/how-to/tag-documents.md)
         - [Get Tagged Documents](guides/how-to/get-tagged-documents.md)
@@ -40,7 +41,6 @@
       - [Tutorials](#tutorials)
         - [Dropbox Integration Workflow](guides/tutorials/dropbox-workflow.md)
       - [Changelog](guides/changelog/index.md)
-    - [API Reference](api/index.md)
     - [Support](support/index.md)
       - [FAQ](support/FAQ/index.md)
       - [Best Practices](support/best-practices/index.md)
