@@ -36,7 +36,7 @@ The Express API endpoints currently only operate on the Express documents tagged
 Before you begin:
 
 1. **Adobe Express Account**: Ensure you have access to [Adobe Express](https://new.express.adobe.com/)
-2. **Authentication**: Obtain an access token with `openid`, `AdobeID`, and `ee.express_api` scopes. See [authentication documentation](../guides/concepts/authentication/index.md)
+2. **Authentication**: Obtain an access token with `openid`, `AdobeID`, and `ee.express_api` scopes. See [authentication documentation](../getting-started/index.md)
 3. **API Key**: [Register your application](https://developer.adobe.com/console) to receive an API key
 4. **Required Headers**: Include these in every API request:
 
@@ -104,7 +104,7 @@ curl -i -X GET \
 }
 ```
 
-**Note**: If you receive an empty document list, verify that you have [properly tagged your documents](../guides/how-to/tag-documents.md).
+**Note**: If you receive an empty document list, verify that you have [properly tagged your documents](how-to/tag-documents.md).
 
 ### Fetch Document Details Example
 
@@ -169,7 +169,7 @@ curl -i -X GET \
 
 The response provides detailed information about each tagged element, including its name, type, position, and dimensions. This information is essential when generating document variations.
 
-For detailed examples of generating variations and exporting renditions, see the [how-to guides](../guides/how-to/tag-documents.md).
+For detailed examples of generating variations and exporting renditions, see the [how-to guides](how-to/tag-documents.md).
 
 ## Best Practices and Limitations
 
@@ -184,5 +184,5 @@ For optimal results with the Express API:
 ## Next Steps
 
 - Explore the [complete API reference](../api/index.md) for detailed endpoint documentation
-- Learn how to [generate document variations](../guides/how-to/generate-variations.md)
-- Understand [authentication and security](../guides/concepts/authentication/index.md) for the Express API
+- Learn how to [generate document variations](how-to/generate-variations.md)
+- Understand [authentication and security](../getting-started/index.md) for the Express API

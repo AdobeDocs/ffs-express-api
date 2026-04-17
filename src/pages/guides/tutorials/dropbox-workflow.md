@@ -40,7 +40,7 @@ This tutorial combines several key concepts from the How-to section, including:
 
 This tutorial assumes you have:
 
-- Access to the [Adobe Express API](../concepts/authentication/index.md), and know how to generate an API key and authorization token.
+- Access to the [Adobe Express API](../../getting-started/index.md), and know how to generate an API key and authorization token.
 - Familiarity with [Template tagging](../how-to/tag-documents.md), and the [Tag Elements Add-on](../index.md#overview).
 - Node.js installed on your machine (version 18 or later would be better).
 

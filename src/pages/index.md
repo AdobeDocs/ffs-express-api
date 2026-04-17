@@ -18,7 +18,7 @@ Effortlessly create and customize mixed-media designs with on-brand precision.
 
 **Useful Resources**
 
-* [Express API Quickstart](./guides/index.md)
+* [Express API Quickstart](guides/index.md)
 
 ## What is the Adobe Express API?
 
@@ -50,7 +50,7 @@ The Export Rendition API enables document export in various supported formats (c
 
 ### Get Started
 
-[Quickstart Guide](guides/)
+[Quickstart Guide](guides/index.md)
 
 Get started with the Adobe Express API.
 
@@ -58,19 +58,19 @@ Get started with the Adobe Express API.
 
 ### Guides
 
-[Authentication](guides/concepts/authentication/)
+[Authentication](getting-started/index.md)
 
 Learn how to authenticate your requests.
 
 <DiscoverBlock slots="link, text"/>
 
-[Rate limiting](guides/concepts/rate-limits/)
+[Rate limiting](guides/concepts/rate-limits/index.md)
 
 Learn about rate limiting.
 
 <DiscoverBlock slots="link, text"/>
 
-[Create Credentials](guides/concepts/create-credentials/)
+[Create Credentials](getting-started/create-credentials/index.md)
 
 Learn how to create credentials for your services — Admin only.
 
@@ -78,6 +78,6 @@ Learn how to create credentials for your services — Admin only.
 
 ### API References
 
-[Try the API](api/)
+[Try the API](api/index.md)
 
 Try the Adobe Express (beta) API. Explore, make calls, with full endpoint descriptions.

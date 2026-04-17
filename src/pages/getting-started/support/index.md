@@ -19,14 +19,12 @@ If you don't find what you're looking form, or need to report a bug, email us at
 
 <DiscoverBlock slots="link, text" width="33%"/>
 
-[FAQ](./FAQ/index.md)
+[FAQ](FAQ/index.md)
 
 Frequently asked questions and answers.
 
 <DiscoverBlock slots="link, text" width="33%"/>
 
-[Best Practices](./best-practices/index.md)
+[Best Practices](best-practices/index.md)
 
 Best practices for using the Express API.
-
-<br/><br/><br/><br/>

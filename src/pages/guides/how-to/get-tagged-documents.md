@@ -27,7 +27,7 @@ Let's get started!
 
 ## Step 1: Creating Documents and Enabling Tags
 
-Use the [how to create tags guide](./tag-documents.md) guide to tag your document with the [Tag Elements Add-on](https://adobesparkpost.app.link/TR9Mb7TXFLb?mode=private&claimCode=wjmj67nj9:PLYN7XLJ), then copy the `Document ID` from the add-on for further use.
+Use the [how to create tags guide](tag-documents.md) guide to tag your document with the [Tag Elements Add-on](https://adobesparkpost.app.link/TR9Mb7TXFLb?mode=private&claimCode=wjmj67nj9:PLYN7XLJ), then copy the `Document ID` from the add-on for further use.
 
 ## Step 2: Fetching Tagged Documents
 
@@ -64,7 +64,7 @@ Use the following `curl` command to fetch tagged documents:
     }
 ```
 
-This should return an array of `id`'s (document URNs) available for the user. If this returns an empty list, ensure you have first [created and tagged your documents using the Tag Elements Add-on](./tag-documents.md).
+This should return an array of `id`'s (document URNs) available for the user. If this returns an empty list, ensure you have first [created and tagged your documents using the Tag Elements Add-on](tag-documents.md).
 
 ## Step 3: Using the Tagged Documents
 
@@ -140,6 +140,6 @@ This Node.js script fetches all tagged documents, then processes and prints the 
 
 Now that you have access to your tagged documents, you can use a document ID to perform further operations, including:
 
-- [Exporting a rendition](./export-document.md) of your document using the document ID.
+- [Exporting a rendition](export-document.md) of your document using the document ID.
 
-- [Generating variations](./generate-variations.md) of your document using the document ID, along with your desired variation details.
+- [Generating variations](generate-variations.md) of your document using the document ID, along with your desired variation details.

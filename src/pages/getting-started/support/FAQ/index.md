@@ -21,7 +21,7 @@ The Adobe Express API is a set of RESTful API that allow developers to programma
 
 ## How do I use the Adobe Express API?
 
-To use the Adobe Express API, you need to obtain an API key and an access token. You can then make requests to the API endpoints using the appropriate HTTP methods and parameters. Refer to the [Getting Started](../../guides/index.md) guide for detailed instructions on how to use the Adobe Express API.
+To use the Adobe Express API, you need to obtain an API key and an access token. You can then make requests to the API endpoints using the appropriate HTTP methods and parameters. Refer to the [Getting Started](../../../guides/index.md) guide for detailed instructions on how to use the Adobe Express API.
 
 ## What are the supported formats for exporting renditions?
 
@@ -83,14 +83,14 @@ The Adobe Express API supports a wide range of use cases, including:
 
 The key features of Adobe Express (beta) API are below:
 
-- [Get details of a tagged-document](../../index.md#get-details-of-a-tagged-document)
-- [Get all tagged documents](../../index.md#get-all-tagged-documents)
-- [Generate variation](../../index.md#generate-variation)
-- [Export rendition](../../index.md#export-rendition)
+- [Get details of a tagged document](../../../api/alpha-tagged-documents-documentId/index.md)
+- [Get all tagged documents](../../../api/alpha-tagged-documents/index.md)
+- [Generate variation](../../../api/alpha-generate-variation/index.md)
+- [Export rendition](../../../api/alpha-export-rendition/index.md)
 - Get Job Status: The Job Status API allows users to check the status of a job that was submitted to the Adobe Express API. The API returns information about the job, including its current status, and any error messages that may have occurred during processing.
 
-## Why am I getting empty array when using [`/beta/tagged-documents`](../../api/alpha-tagged-documents/).?
+## Why am I getting empty array when using [`/beta/tagged-documents`](../../../api/alpha-tagged-documents/index.md).?
 
 When using the tagged documents API, if you're receiving an empty array in the response, check the following:
 
-- Make sure to save changes after [tagging the elements in the documents](../../guides/how-to/tag-documents.md#step-2-create-tags-for-a-document).
+- Make sure to save changes after [tagging the elements in the documents](../../../guides/how-to/tag-documents.md#step-2-create-tags-for-a-document).

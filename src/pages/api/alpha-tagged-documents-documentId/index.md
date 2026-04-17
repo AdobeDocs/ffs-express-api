@@ -4,4 +4,4 @@ description: Adobe Express(beta) API Spec
 layout: none
 ---
 
-<RedoclyAPIBlock src="alpha-tagged-documents-documentId.json" width="600px" generateCodeSamples="languages: [{ lang: 'curl' }, { lang: 'Node.js' }, { lang: 'JavaScript' }, {lang: 'Python'}]" disableSidebar />
+<RedoclyAPIBlock src="/express-api/alpha-tagged-documents-documentId.json" width="600px" generateCodeSamples="languages: [{ lang: 'curl' }, { lang: 'Node.js' }, { lang: 'JavaScript' }, {lang: 'Python'}]" disableSidebar />

@@ -18,7 +18,7 @@ hideBreadcrumbNav: true
 
 <InlineAlert variant="warning" slots="text" />
 
-This guide contains instructions for admins on creating client ID (API key) and Client secrets for their teams. If you are a developer and your admin has shared a valid API Key with you, head over to the [Authentication](../authentication/) guide.
+This guide contains instructions for admins on creating client ID (API key) and Client secrets for their teams. If you are a developer and your admin has shared a valid API Key with you, head over to the [Authentication](../index.md) guide.
 
 ## Overview
 
@@ -87,7 +87,7 @@ Server-to-server authentication lets your backend generate access tokens and cal
 **2. Generate access tokens**
 
 - Use the token endpoint and scopes for your credential (see **Generate access token** in the [Firefly Services getting started](https://developer.adobe.com/firefly-services/docs/guides/get-started/) guide linked above).
-- When calling Express API, send the token and API key as described in [Authentication – Call the Express API](../authentication/index.md#call-the-express-api).
+- When calling Express API, send the token and API key as described in [Authentication – Call the Express API](../index.md#call-the-express-api).
 
 **3. Asset and document access for the technical account**
 
@@ -100,7 +100,7 @@ API calls run as the **technical account** tied to your OAuth Server-to-Server c
 
 If documents or assets are still inaccessible, confirm sharing with the technical account email, product profile assignment in Developer Console, and (for cloud storage) Storage administrator assignment and Enterprise Storage licensing per the guide above.
 
-For request headers, curl examples, and token usage, see [Authentication – Call the Express API](../authentication/index.md#call-the-express-api). Store client secrets only on your server.
+For request headers, curl examples, and token usage, see [Authentication – Call the Express API](../index.md#call-the-express-api). Store client secrets only on your server.
 
 #### User Authentication: OAuth WebApp
 

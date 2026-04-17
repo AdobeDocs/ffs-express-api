@@ -55,9 +55,9 @@ A list of updates to Adobe Express API.
   - Added video tag examples throughout documentation and code snippets
 
 - **Updated Documentation**: Comprehensive updates to guides and tutorials
-  - Enhanced [Generate Variations guide](../how-to/generate-variations.md) with video tag mapping examples
-  - Updated [Export Document guide](../how-to/export-document.md) with video format constraints
-  - Added video examples to [End-to-End Workflow guide](../how-to/end-to-end-workflow.md)
+  - Enhanced [Generate Variations guide](../../guides/how-to/generate-variations.md) with video tag mapping examples
+  - Updated [Export Document guide](../../guides/how-to/export-document.md) with video format constraints
+  - Added video examples to [End-to-End Workflow guide](../../guides/how-to/end-to-end-workflow.md)
   - Updated FAQ and Known Issues sections with video tag mapping examples
   - Enhanced error logging documentation to include video format validation
 

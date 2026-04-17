@@ -21,7 +21,7 @@ hideBreadcrumbNav: true
 
 # Authentication
 
-Use this guide once you have credentials from the Developer Console. If you still need to create a project, add **Adobe Express API**, or pick Web App, SPA, or Server-to-Server, follow **[Create credentials](../create-credentials/)** first.
+Use this guide once you have credentials from the Developer Console. If you still need to create a project, add **Adobe Express API**, or pick Web App, SPA, or Server-to-Server, follow **[Create credentials](create-credentials/index.md)** first.
 
 ## Overview
 
@@ -30,18 +30,18 @@ Express API uses **OAuth 2.0**. Every request must include:
 - `Authorization: Bearer <access_token>`
 - `X-API-KEY: <client_id>` (API key from the Developer Console)
 
-How you obtain `<access_token>` depends on your credential type (user-based vs server-to-server). Those options are summarized under [Choose authentication type](../create-credentials/index.md#choose-authentication-type) in the create-credentials guide.
+How you obtain `<access_token>` depends on your credential type (user-based vs server-to-server). Those options are summarized under [Choose authentication type](create-credentials/index.md#choose-authentication-type) in the create-credentials guide.
 
 ## Prerequisites
 
-* Credentials from your admin or your own [Adobe Developer Console](https://developer.adobe.com/) project with **Adobe Express API** configured — see [Create credentials](../create-credentials/)
+* Credentials from your admin or your own [Adobe Developer Console](https://developer.adobe.com/) project with **Adobe Express API** configured — see [Create credentials](create-credentials/index.md)
 * **Client ID** (API key); for OAuth Web App and Server-to-Server you also use the **client secret** where applicable
 
 ## Get an access token
 
 ### User authentication (OAuth Web App or SPA)
 
-The user signs in with their Adobe ID and consents to your app. Use the OAuth 2.0 **authorization code** flow (Web App) or **PKCE** (SPA). Implementation steps are in Adobe’s [User authentication](https://developer.adobe.com/developer-console/docs/guides/authentication/UserAuthentication/) documentation; Console setup for Express API is in [Create credentials – User Authentication](../create-credentials/index.md#user-authentication).
+The user signs in with their Adobe ID and consents to your app. Use the OAuth 2.0 **authorization code** flow (Web App) or **PKCE** (SPA). Implementation steps are in Adobe’s [User authentication](https://developer.adobe.com/developer-console/docs/guides/authentication/UserAuthentication/) documentation; Console setup for Express API is in [Create credentials – User Authentication](create-credentials/index.md#user-authentication).
 
 You can sanity-check Web App credentials with a sample such as [this OAuth 2.0 Web App client](https://github.com/theManikJindal/adobe-oauth-web-app-client).
 
@@ -51,7 +51,7 @@ Include scopes such as: `ee.express_api`, `openid`, `AdobeID` (match the scope s
 
 ### Server-to-server (OAuth Server-to-Server)
 
-The backend uses the `client_credentials` grant; there is no interactive user. Console setup, token generation, product profiles, and **technical account** access to documents and assets (sharing, Storage administrator, troubleshooting) are documented in one place: [Create credentials – Server-to-Server Authentication](../create-credentials/index.md#server-to-server-authentication-1).
+The backend uses the `client_credentials` grant; there is no interactive user. Console setup, token generation, product profiles, and **technical account** access to documents and assets (sharing, Storage administrator, troubleshooting) are documented in one place: [Create credentials – Server-to-Server Authentication](create-credentials/index.md#server-to-server-authentication-1).
 
 ## Call the Express API
 
@@ -66,7 +66,7 @@ Tokens expire; refresh or re-issue them according to Adobe’s documentation for
 
 ### Example: list tagged documents
 
-Endpoint: [/beta/tagged-documents](../../../api/alpha-tagged-documents/)
+Endpoint: [/beta/tagged-documents](../api/alpha-tagged-documents/index.md)
 
 ```bash
 curl -i -X GET \
