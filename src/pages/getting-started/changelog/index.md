@@ -28,7 +28,7 @@ hideBreadcrumbNav: true
 
 # Changelog
 
-Updates to Adobe Express API
+A list of updates to Adobe Express API.
 
 ## 2026-02-19
 
