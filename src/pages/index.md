@@ -1,6 +1,6 @@
 ---
-title: Overview - Adobe Express API Alpha
-description: This is the overview page of Adobe Express(Alpha) API
+title: Overview - Adobe Express API beta
+description: This is the overview page of Adobe Express(beta) API
 contributors:
   - https://github.com/nimithajalal
   - https://github.com/hollyschinsky
@@ -10,13 +10,13 @@ contributors:
 
 ![Express API hero image](./express-api-hero.png)
 
-# Adobe Express API (Alpha)
+# Adobe Express API (beta)
 
 Effortlessly create and customize mixed-media designs with on-brand precision.
 
-<Resources slots="heading, links"/>
+<Resources slots="text, links"/>
 
-#### Resources
+**Useful Resources**
 
 * [Express API Quickstart](./guides/index.md)
 
@@ -26,7 +26,7 @@ The Adobe Express API provides an effortless way to incorporate Adobe Express fu
 
 ## What can Express API do?
 
-The Adobe Express (Alpha) API offers the following key features:
+The Adobe Express (beta) API offers the following key features:
 
 ### Get Details of a Tagged Document
 
@@ -80,4 +80,4 @@ Learn how to create credentials for your services — Admin only.
 
 [Try the API](api/)
 
-Try the Adobe Express (Alpha) API. Explore, make calls, with full endpoint descriptions.
+Try the Adobe Express (beta) API. Explore, make calls, with full endpoint descriptions.

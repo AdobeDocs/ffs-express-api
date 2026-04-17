@@ -66,11 +66,11 @@ Tokens expire; refresh or re-issue them according to Adobe’s documentation for
 
 ### Example: list tagged documents
 
-Endpoint: [/alpha/tagged-documents](../../../api/alpha-tagged-documents/)
+Endpoint: [/beta/tagged-documents](../../../api/alpha-tagged-documents/)
 
 ```bash
 curl -i -X GET \
-  'https://express-api.adobe.io/alpha/tagged-documents?start=0&limit=5&sortBy=name' \
+  'https://express-api.adobe.io/beta/tagged-documents?start=0&limit=5&sortBy=name' \
   -H 'Authorization: Bearer <ACCESS_TOKEN>' \
   -H 'X-API-KEY: <CLIENT_ID>'
 ```

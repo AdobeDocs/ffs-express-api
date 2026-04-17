@@ -1667,7 +1667,7 @@ export async function getExpressStatus(jobId) {
  * @returns {Promise<Object>} The export job information
  */
 export async function exportRendition(requestBody) {
-  const resp = await fetch(`${EXPRESS_ENDPOINT}/alpha/export-rendition`, {
+  const resp = await fetch(`${EXPRESS_ENDPOINT}/beta/export-rendition`, {
     method: "POST",
     headers,
     body: JSON.stringify(requestBody),
@@ -1689,7 +1689,7 @@ export async function exportRendition(requestBody) {
  * @returns {Promise<Object>} The variation job information
  */
 export async function generateVariations(requestBody) {
-  const resp = await fetch(`${EXPRESS_ENDPOINT}/alpha/generate-variation`, {
+  const resp = await fetch(`${EXPRESS_ENDPOINT}/beta/generate-variation`, {
     method: "POST",
     headers,
     body: JSON.stringify(requestBody),
@@ -1712,7 +1712,7 @@ export async function retrieveTagDetails(
 ) {
   const queryString = new URLSearchParams(queryParams).toString();
   const resp = await fetch(
-    `${EXPRESS_ENDPOINT}/alpha/tagged-documents/${documentId}?${queryString}`,
+    `${EXPRESS_ENDPOINT}/beta/tagged-documents/${documentId}?${queryString}`,
     {
       method: "GET",
       headers,

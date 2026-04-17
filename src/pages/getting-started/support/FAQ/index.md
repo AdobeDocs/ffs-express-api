@@ -81,7 +81,7 @@ The Adobe Express API supports a wide range of use cases, including:
 
 ## What are the key features of the Adobe Express API?
 
-The key features of Adobe Express (Alpha) API are below:
+The key features of Adobe Express (beta) API are below:
 
 - [Get details of a tagged-document](../../index.md#get-details-of-a-tagged-document)
 - [Get all tagged documents](../../index.md#get-all-tagged-documents)
@@ -89,7 +89,7 @@ The key features of Adobe Express (Alpha) API are below:
 - [Export rendition](../../index.md#export-rendition)
 - Get Job Status: The Job Status API allows users to check the status of a job that was submitted to the Adobe Express API. The API returns information about the job, including its current status, and any error messages that may have occurred during processing.
 
-## Why am I getting empty array when using [`/alpha/tagged-documents`](../../api/alpha-tagged-documents/).?
+## Why am I getting empty array when using [`/beta/tagged-documents`](../../api/alpha-tagged-documents/).?
 
 When using the tagged documents API, if you're receiving an empty array in the response, check the following:
 

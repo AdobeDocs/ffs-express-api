@@ -41,7 +41,7 @@ Use the following `curl` command to fetch tagged documents:
 
 ```bash
      curl -i -X GET
-       'https://express-api.adobe.io/alpha/tagged-documents?start=0&limit=5&sortBy=name'
+       'https://express-api.adobe.io/beta/tagged-documents?start=0&limit=5&sortBy=name'
        -H 'Authorization: Bearer YOUR_AUTH_TOKEN_HERE' 
        -H 'X-API-KEY: YOUR_API_KEY_HERE'
 ```
@@ -109,7 +109,7 @@ Copy and paste the code below into the `index.mjs` file created above, then run 
 
 ```javascript
 // Define the API endpoint and headers
-const url = 'https://express-api.adobe.io/alpha/tagged-documents?start=0&limit=5&sortBy=name';
+const url = 'https://express-api.adobe.io/beta/tagged-documents?start=0&limit=5&sortBy=name';
 
 const headers = {
   'Authorization': `Bearer ${process.env.AUTH_TOKEN}`,

@@ -1,6 +1,6 @@
 ---
-title: Adobe Express API(Alpha)
-description: Adobe Express(Alpha) API Spec
+title: Adobe Express API(beta)
+description: Adobe Express(beta) API Spec
 layout: none
 ---
 

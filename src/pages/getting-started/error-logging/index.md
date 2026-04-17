@@ -80,7 +80,7 @@ Your request has been completed.
 
 <CodeBlock slots="heading, code" repeat="3" languages="JSON, JSON, JSON" />
 
-#### GET /alpha/tagged-documents
+#### GET /beta/tagged-documents
 
 ```json
 {
@@ -98,7 +98,7 @@ Your request has been completed.
 }
 ```
 
-#### GET /alpha/tagged-documents/{documentId}
+#### GET /beta/tagged-documents/{documentId}
 
 ```json
 {
@@ -164,7 +164,7 @@ Your request has been completed.
 
 The request has been accepted for processing. Check the status using `GET /status/{jobId}`.
 
-#### POST /alpha/generate-variation
+#### POST /beta/generate-variation
 
 ```json
 {
@@ -200,12 +200,12 @@ In a `422` error, you will get validation errors specific to different endpoints
 
 | Endpoint                                   | Validation Error Messages                                                                                                                                                                      | What to Do?                                                                                                             |
 | ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `GET /alpha/tagged-documents`              | `json { "error_code": "validation_error", "message": "Validation error", "validation_errors": [ "start must not be less than 0" ] }`                                                           | Check for the page index and ensure that it is valid.                                                                   |
-| `GET /alpha/tagged-documents/{documentId}` | `json { "error_code": "validation_error", "message": "Validation error", "validation_errors": [ "The 'start' value must be greater than or equal to 1", "start must be a positive number"] }`  | Check whether the index is valid.                                                                                       |
-| `POST /alpha/generate-variation`           | `json { "error_code": "validation_error", "message": "Validation error", "validation_errors": [ "property variationDetail should not exist", "variationDetails must be a non-empty object"] }` | Check that the request body has the correct fields.                                                                     |
-| `POST /alpha/export-rendition`             | `json { "error_code": "validation_error", "message": "Invalid start page. Document contains 1 pages" }`                                                                                        | Check whether the request page index is valid.                                                                          |
+| `GET /beta/tagged-documents`              | `json { "error_code": "validation_error", "message": "Validation error", "validation_errors": [ "start must not be less than 0" ] }`                                                           | Check for the page index and ensure that it is valid.                                                                   |
+| `GET /beta/tagged-documents/{documentId}` | `json { "error_code": "validation_error", "message": "Validation error", "validation_errors": [ "The 'start' value must be greater than or equal to 1", "start must be a positive number"] }`  | Check whether the index is valid.                                                                                       |
+| `POST /beta/generate-variation`           | `json { "error_code": "validation_error", "message": "Validation error", "validation_errors": [ "property variationDetail should not exist", "variationDetails must be a non-empty object"] }` | Check that the request body has the correct fields.                                                                     |
+| `POST /beta/export-rendition`             | `json { "error_code": "validation_error", "message": "Invalid start page. Document contains 1 pages" }`                                                                                        | Check whether the request page index is valid.                                                                          |
 |                                            | `json { "error_code": "validation_error", "message": "Validation error", "validation_errors": [ "options.format must be one of the following values: image/jpeg, image/png, video/mp4, or application/pdf" ] }`               | Check the chosen format is correct.                                                                               |
-| `GET /status/{jobId}`                      | `json { "error_code": "unknown_job_id", "message": "Unknown job Id" }`                                                                                                                         | Check the `jobId` requested is a valid id generated from `/alpha/generate-variation` and `/alpha/export-rendition` API. |
+| `GET /status/{jobId}`                      | `json { "error_code": "unknown_job_id", "message": "Unknown job Id" }`                                                                                                                         | Check the `jobId` requested is a valid id generated from `/beta/generate-variation` and `/beta/export-rendition` API. |
 
 ### Server Errors (5xx)
 
@@ -220,14 +220,14 @@ These errors indicate issues with the server.
 
 Let us look at some examples.
 
-### Example 1: Handling a `401` Error for `GET /alpha/tagged-documents`
+### Example 1: Handling a `401` Error for `GET /beta/tagged-documents`
 
 For example, one might see this error if the authentication token is not included or is invalid.
 
 **Request:**
 
 ```sh
-GET /alpha/tagged-documents
+GET /beta/tagged-documents
 ```
 
 **Response:**
@@ -247,11 +247,11 @@ GET /alpha/tagged-documents
 **Corrected Request:**
 
 ```bash
-GET /alpha/tagged-documents
+GET /beta/tagged-documents
 Authorization: Bearer your-auth-token
 ```
 
-### Example 2: Handling a `422` Error for `POST /alpha/generate-variation`
+### Example 2: Handling a `422` Error for `POST /beta/generate-variation`
 
 #### Sample code 1
 
@@ -351,7 +351,7 @@ Authorization: Bearer your-auth-token
 }
 ```
 
-### Example 3: Handling a `422` Error for `POST /alpha/export-rendition`
+### Example 3: Handling a `422` Error for `POST /beta/export-rendition`
 
 <CodeBlock slots="heading, code" repeat="2" languages="JSON, JSON" />
 
