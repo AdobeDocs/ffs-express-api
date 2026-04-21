@@ -3,7 +3,7 @@
     "info": {
         "title": "Express API",
         "description": "Express API to automate bulk creation, export renditions and various other use cases.",
-        "version": "alpha",
+        "version": "beta",
         "contact": {
             "name": "Express API support",
             "email": "express-api-support@adobe.com"
@@ -16,7 +16,7 @@
         }
     ],
     "paths": {
-        "/alpha/tagged-documents": {
+        "/beta/tagged-documents": {
             "get": {
                 "summary": "Tagged documents",
                 "description": "This API retrieves a list of tagged documents that users can access, including those they own or those shared with them, along with relevant metadata. It supports pagination and sorting, allowing users to specify the starting point, define the number of documents to return, and choose the order in which to list them. The response includes the requested documents and their metadata.",
@@ -189,7 +189,7 @@
                 }
             }
         },
-        "/alpha/tagged-documents/{documentId}": {
+        "/beta/tagged-documents/{documentId}": {
             "get": {
                 "summary": "Tagged Document Details",
                 "description": "This API retrieves details of the pages and tagged elements within a specified document. It returns a paginated list of the document's pages and metadata about each page. If the document has tagged elements, the API includes their respective details, such as size and position. If the document does not have tagged elements, it returns an empty array. The response includes pagination information to help users navigate the document\u2019s pages. A maximum of 10 pages can be returned in 1 API call.",
@@ -296,7 +296,7 @@
                 }
             }
         },
-        "/alpha/generate-variation": {
+        "/beta/generate-variation": {
             "post": {
                 "summary": "Generate variations",
                 "description": "This API creates a document variation based on provided input parameters. After processing, it temporarily stores the generated document and makes it available to the user within a designated folder. The document remains accessible for 30 days, after which the system automatically removes it.",
@@ -455,7 +455,7 @@
                 }
             }
         },
-        "/alpha/export-rendition": {
+        "/beta/export-rendition": {
             "post": {
                 "summary": "Export renditions",
                 "description": "Export one or more pages from an Adobe Express document in supported formats. This endpoint accepts an export request and returns pre-signed URLs for accessing the rendered files.\n\n**Supported formats:**\n- Image formats: `image/jpeg` (JPG), `image/png` (PNG)\n- Video format: `video/mp4` (MP4)\n- Document format: `application/pdf` (PDF)\n\n**Rendition availability:**\n- Image renditions: Valid for 4 hours, maximum size 8192px on the longest side\n- Video and PDF renditions: Valid for 24 hours, maximum size 4096px on the longest side\n\n**Asynchronous processing:**\nExport requests are processed asynchronously. The response includes a `jobId` and `statusUrl` that you can use to track the export progress and retrieve the final rendition URLs.",
@@ -634,8 +634,8 @@
         },
         "/status/{jobId}": {
             "get": {
-                "summary": "Job Status",
-                "description": "Retrieve a job's status by its `jobId`. Depending on the job type, the response may include job-specific details.",
+                "summary": "Retrieve job status",
+                "description": "This API retrieves a job's status by its `jobId`. Depending on the job type, the response may include job-specific details.",
                 "operationId": "getJobStatus",
                 "parameters": [
                     {
@@ -867,6 +867,8 @@
             "JobStatus": {
                 "description": "Various statuses of a job.",
                 "enum": [
+                    "cancel_requested",
+                    "cancelled",
                     "failed",
                     "partially_succeeded",
                     "pending",
@@ -910,6 +912,20 @@
                     "jobId",
                     "status"
                 ]
+            },
+            "TaggedDocumentsSortBy": {
+                "description": "Represents the sortBy field enum for tagged documents.",
+                "enum": [
+                    "+modifiedDate",
+                    "+name",
+                    "-modifiedDate",
+                    "-name",
+                    "-relevance",
+                    "modifiedDate",
+                    "name",
+                    "relevance"
+                ],
+                "type": "string"
             },
             "TaggedElement": {
                 "description": "The details of a tag element inside the page.",
@@ -1233,19 +1249,344 @@
                     "status"
                 ]
             },
-            "TaggedDocumentsSortBy": {
-                "description": "Represents the sortBy field enum for tagged documents.",
-                "enum": [
-                    "+modifiedDate",
-                    "+name",
-                    "-modifiedDate",
-                    "-name",
-                    "-relevance",
-                    "modifiedDate",
-                    "name",
-                    "relevance"
-                ],
-                "type": "string"
+            "UrlResource": {
+                "description": "A Resource object referencing an asset via a pre-signed URL.\nUsed for customer-supplied storage or Adobe-owned temporary storage.",
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "description": "An absolute pre-signed URL used to GET an input asset or PUT an output asset.\nAllowed domains include AWS S3, Azure Blob Storage, and Dropbox.",
+                        "type": "string"
+                    },
+                    "storageType": {
+                        "description": "Required only for output parameters when the URL targets\nAzure BlobStore or Dropbox storage.",
+                        "enum": [
+                            "Azure",
+                            "Dropbox"
+                        ],
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "url"
+                ]
+            },
+            "CreativeCloudFileIdResource": {
+                "description": "A Resource object referencing an ACP asset by its file identifier.",
+                "type": "object",
+                "properties": {
+                    "creativeCloudFileId": {
+                        "description": "The identifier of an asset stored in ACP.\nExample: \"urn:aaid:sc:US:a21c8629-413f-55d9-9e65-83330a277ac1\"",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "creativeCloudFileId"
+                ]
+            },
+            "CreativeCloudPathResource": {
+                "description": "A Resource object referencing an ACP asset by its storage path.",
+                "type": "object",
+                "properties": {
+                    "creativeCloudPath": {
+                        "description": "The path of an asset in ACP, relative to the root folder\nof the user's personal storage area.\nExample: \"/cloud-content/images/myImage.png\"",
+                        "type": "string"
+                    },
+                    "creativeCloudProjectId": {
+                        "description": "The identifier of a project containing the asset.\nRequired when referencing assets inside a project.",
+                        "type": "string"
+                    },
+                    "creativeCloudFolderId": {
+                        "description": "The identifier of a folder containing the asset.\nAlternative to creativeCloudProjectId for folder-based references.",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "creativeCloudPath"
+                ]
+            },
+            "UploadIdResource": {
+                "description": "A Resource object referencing an asset uploaded to Adobe-owned temporary storage.\nOnly valid for input parameters.",
+                "type": "object",
+                "properties": {
+                    "uploadId": {
+                        "description": "A URN returned from the Adobe temporary storage upload endpoint.",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "uploadId"
+                ]
+            },
+            "DestinationFolderResource": {
+                "description": "A Resource object specifying an ACP folder as a destination for output assets.\nWhen used, the service chooses unique file names within the specified folder.",
+                "type": "object",
+                "properties": {
+                    "creativeCloudPath": {
+                        "description": "The path of the destination folder in ACP.\nExample: \"/cloud-content/myFolder\" or \"campaigns/summer_assets\"",
+                        "type": "string"
+                    },
+                    "creativeCloudProjectId": {
+                        "description": "The identifier of a project to store output assets in.",
+                        "type": "string"
+                    },
+                    "creativeCloudFolderId": {
+                        "description": "The identifier of a folder to store output assets in.",
+                        "type": "string"
+                    }
+                }
+            },
+            "BulkProgress": {
+                "description": "Progress details for a bulk operation.",
+                "type": "object",
+                "properties": {
+                    "processedRecords": {
+                        "description": "The number of variation records that have been processed.",
+                        "type": "number"
+                    },
+                    "totalRecords": {
+                        "description": "The total number of variation records declared by the client in the input manifest.",
+                        "type": "number"
+                    },
+                    "injectedRecords": {
+                        "description": "The number of variation records actually injected into the system across all\norchestrated files.",
+                        "type": "number"
+                    }
+                },
+                "required": [
+                    "injectedRecords",
+                    "processedRecords",
+                    "totalRecords"
+                ]
+            },
+            "TextMapping": {
+                "description": "A mapping that replaces a text-type tagged element.",
+                "type": "object",
+                "properties": {
+                    "tagName": {
+                        "description": "The name of the text tag to replace. Must match a tag name\nreturned by the tagged-documents API.",
+                        "type": "string"
+                    },
+                    "text": {
+                        "description": "The replacement text value.",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "tagName",
+                    "text"
+                ]
+            },
+            "ImageMapping": {
+                "description": "A mapping that replaces an image-type tagged element.",
+                "type": "object",
+                "properties": {
+                    "tagName": {
+                        "description": "The name of the image tag to replace. Must match a tag name\nreturned by the tagged-documents API.",
+                        "type": "string"
+                    },
+                    "source": {
+                        "$ref": "#/components/schemas/UrlResource",
+                        "description": "The source of the replacement image, specified as a pre-signed URL."
+                    }
+                },
+                "required": [
+                    "source",
+                    "tagName"
+                ]
+            },
+            "TagMappings": {
+                "description": "Collection of tag-to-value mappings for a variation, organized by element type.",
+                "type": "object",
+                "properties": {
+                    "textMappings": {
+                        "description": "Mappings for text-type tagged elements.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/TextMapping"
+                        }
+                    },
+                    "imageMappings": {
+                        "description": "Mappings for image-type tagged elements.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ImageMapping"
+                        }
+                    }
+                }
+            },
+            "ImageOutput": {
+                "description": "Requested image rendition output configuration.",
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "description": "Discriminator indicating image output type.",
+                        "type": "string",
+                        "enum": [
+                            "image"
+                        ]
+                    },
+                    "mediaType": {
+                        "$ref": "#/components/schemas/ImageRenditionFormat",
+                        "description": "The media type of the image rendition."
+                    },
+                    "size": {
+                        "description": "The size of the image rendition on the longest side in pixels.\nThe aspect ratio is maintained. Min: 1, Max: 8192.\nIf not provided, the default size of page is considered.",
+                        "type": "number"
+                    }
+                },
+                "required": [
+                    "mediaType",
+                    "type"
+                ]
+            },
+            "CreateVariationInput": {
+                "description": "Input details for a single variation request.\nAlso serves as the schema for each row in a bulk-create-variation NDJSON input file.",
+                "type": "object",
+                "properties": {
+                    "mappings": {
+                        "$ref": "#/components/schemas/TagMappings",
+                        "description": "Tag mappings to apply to the template or document."
+                    },
+                    "variationRequestId": {
+                        "description": "The client-provided identifier for the variation request.\nIf supplied, the service echoes it back in the corresponding response\nto simplify client-side correlation.",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "mappings"
+                ]
+            },
+            "ImageOutputResult": {
+                "description": "Result of a successful image rendition output.",
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "description": "Discriminator indicating this is an image output result.",
+                        "type": "string",
+                        "enum": [
+                            "image"
+                        ]
+                    },
+                    "mediaType": {
+                        "$ref": "#/components/schemas/ImageRenditionFormat",
+                        "description": "The media type of the generated image rendition."
+                    },
+                    "pageNumber": {
+                        "description": "The page number from which this rendition was generated.",
+                        "type": "number"
+                    },
+                    "destination": {
+                        "$ref": "#/components/schemas/UrlResource",
+                        "description": "The location where the image rendition can be downloaded from."
+                    }
+                },
+                "required": [
+                    "destination",
+                    "mediaType",
+                    "pageNumber",
+                    "type"
+                ]
+            },
+            "OutputError": {
+                "description": "Error details for a specific output that failed during a create-variation operation.",
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "description": "The output type that failed.",
+                        "enum": [
+                            "document",
+                            "image"
+                        ],
+                        "type": "string"
+                    },
+                    "pageNumber": {
+                        "description": "The page number associated with the failure, if applicable.",
+                        "type": "number"
+                    },
+                    "error_code": {
+                        "description": "The error code.",
+                        "type": "string"
+                    },
+                    "message": {
+                        "description": "The error message.",
+                        "type": "string"
+                    },
+                    "validation_errors": {
+                        "description": "Validation error messages.",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "required": [
+                    "error_code"
+                ]
+            },
+            "BulkInputSource": {
+                "description": "The input source for a bulk operation, referencing a manifest JSON file\nthat contains references to NDJSON chunk files with variation input rows.",
+                "type": "object",
+                "properties": {
+                    "source": {
+                        "$ref": "#/components/schemas/UrlResource",
+                        "description": "A pre-signed URL pointing to the manifest JSON file.\nThe manifest describes the total record count and references to NDJSON\nchunk files, each containing variation input rows conforming to\nthe {@link CreateVariationInput} schema."
+                    },
+                    "mediaType": {
+                        "description": "The media type of the input manifest file. Must be \"application/json\".",
+                        "type": "string",
+                        "enum": [
+                            "application/json"
+                        ]
+                    }
+                },
+                "required": [
+                    "mediaType",
+                    "source"
+                ]
+            },
+            "BulkOutputResult": {
+                "description": "A reference to the JSON manifest produced by a completed bulk job.",
+                "type": "object",
+                "properties": {
+                    "mediaType": {
+                        "description": "The media type of the manifest file.",
+                        "type": "string",
+                        "enum": [
+                            "application/json"
+                        ]
+                    },
+                    "destination": {
+                        "$ref": "#/components/schemas/UrlResource",
+                        "description": "The location where the output manifest file can be downloaded from."
+                    }
+                },
+                "required": [
+                    "destination",
+                    "mediaType"
+                ]
+            },
+            "BulkJobSummary": {
+                "description": "Aggregate summary of a completed bulk job.",
+                "type": "object",
+                "properties": {
+                    "totalRecords": {
+                        "description": "The total number of variation records in the input.",
+                        "type": "number"
+                    },
+                    "successfulRecords": {
+                        "description": "The number of variation records that completed successfully.",
+                        "type": "number"
+                    },
+                    "failedRecords": {
+                        "description": "The number of variation records that failed.",
+                        "type": "number"
+                    }
+                },
+                "required": [
+                    "failedRecords",
+                    "successfulRecords",
+                    "totalRecords"
+                ]
             },
             "ImageRenditionOptions": {
                 "description": "Options for the image rendition request.",
@@ -1418,6 +1759,107 @@
                     "pageRenditionsResult",
                     "status"
                 ]
+            },
+            "ExpressTemplate": {
+                "description": "Represents an Adobe Express template asset.",
+                "type": "object",
+                "properties": {
+                    "assetType": {
+                        "description": "The asset type is always template.",
+                        "type": "string",
+                        "enum": [
+                            "template"
+                        ]
+                    },
+                    "pages": {
+                        "description": "The pages of the template asset.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ExpressTemplatePage"
+                        }
+                    },
+                    "id": {
+                        "description": "The unique identifier (URN) of the asset.",
+                        "type": "string"
+                    },
+                    "title": {
+                        "description": "The title of the asset.",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "The description of the asset, if available.",
+                        "type": "string"
+                    },
+                    "type": {
+                        "description": "The type of the asset.",
+                        "type": "string",
+                        "enum": [
+                            "template"
+                        ]
+                    },
+                    "licensingCategory": {
+                        "$ref": "#/components/schemas/LicensingCategory",
+                        "description": "The licensing category of the asset."
+                    },
+                    "viewUrl": {
+                        "description": "The view url of the asset.",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "assetType",
+                    "id",
+                    "licensingCategory",
+                    "pages",
+                    "type"
+                ]
+            },
+            "ExpressTemplatePage": {
+                "description": "Represents a page of an Adobe Express template.",
+                "type": "object",
+                "properties": {
+                    "thumbnailRendition": {
+                        "description": "The thumbnail rendition details of the page, if available.\nThe size is variable and depends on the size of the template page.",
+                        "$ref": "#/components/schemas/RenditionDetails"
+                    },
+                    "previewRendition": {
+                        "description": "The preview rendition details of the page, if available.\nThe size is variable and depends on the size of the template page.\nIts generally higher resolution than the thumbnailUrl.",
+                        "$ref": "#/components/schemas/RenditionDetails"
+                    }
+                }
+            },
+            "RenditionDetails": {
+                "description": "Details of rendition of an asset.",
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "description": "The url of the rendition.",
+                        "type": "string"
+                    },
+                    "width": {
+                        "description": "The width of the rendition.",
+                        "type": "number"
+                    },
+                    "height": {
+                        "description": "The height of the rendition.",
+                        "type": "number"
+                    },
+                    "mediaType": {
+                        "description": "The media type of the rendition.\ne.g., \"image/jpeg\", \"image/webp\", etc.",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "url"
+                ]
+            },
+            "LicensingCategory": {
+                "description": "The licensing category of the asset.",
+                "enum": [
+                    "free",
+                    "premium"
+                ],
+                "type": "string"
             }
         },
         "examples": {
@@ -2002,11 +2444,9 @@
                     "jobId": "af121560-218e-4dd9-918d-add12b3b6d98",
                     "status": "succeeded",
                     "id": "urn:aaid:sc:AP:0000aaaa-0000-000a-0000-000000aaaaaa",
-                    "pageRenditionsResult": [
-                        {
-                            "renditionUrl": "https://example.com/rendition/document.pdf"
-                        }
-                    ]
+                    "pageRenditionsResult": {
+                        "pdfUrl": "https://example.com/rendition/document.pdf"
+                    }
                 }
             },
             "exportPdfRenditionResponseSampleTwo": {
@@ -2015,14 +2455,12 @@
                     "jobId": "af121560-218e-4dd9-918d-add12b3b6d98",
                     "status": "failed",
                     "id": "urn:aaid:sc:AP:0000aaaa-0000-000a-0000-000000aaaaaa",
-                    "pageRenditionsResult": [
-                        {
-                            "error": {
-                                "error_code": "runtime_error",
-                                "message": "Runtime error"
-                            }
+                    "pageRenditionsResult": {
+                        "error": {
+                            "error_code": "runtime_error",
+                            "message": "Runtime error"
                         }
-                    ]
+                    }
                 }
             },
             "generateVariationResponseSample": {
@@ -2115,6 +2553,57 @@
                 "value": {
                     "error_code": "access_error",
                     "message": "Not allowed"
+                }
+            },
+            "assetSearchResponseSample": {
+                "summary": "Asset Search Response Sample",
+                "value": {
+                    "assets": [
+                        {
+                            "assetType": "template",
+                            "pages": [
+                                {
+                                    "thumbnailRendition": {
+                                        "url": "https://example.com/asset1/page1-thumb.webp",
+                                        "width": 320,
+                                        "height": 180,
+                                        "mediaType": "image/webp"
+                                    },
+                                    "previewRendition": {
+                                        "url": "https://example.com/asset1/page1-preview.webp",
+                                        "width": 1280,
+                                        "height": 720,
+                                        "mediaType": "image/webp"
+                                    }
+                                }
+                            ],
+                            "id": "urn:aaid:sc:AP:11111111-1111-1111-1111-111111111111",
+                            "title": "Birthday Card",
+                            "description": "Playful birthday card template",
+                            "type": "template",
+                            "licensingCategory": "free",
+                            "viewUrl": "https://express.adobe.com/templates/birthday-card"
+                        },
+                        {
+                            "assetType": "template",
+                            "pages": [
+                                {
+                                    "thumbnailRendition": {
+                                        "url": "https://example.com/asset2/page1-thumb.webp"
+                                    }
+                                }
+                            ],
+                            "id": "urn:aaid:sc:AP:22222222-2222-2222-2222-222222222222",
+                            "title": "Wedding Invitation",
+                            "type": "template",
+                            "licensingCategory": "premium",
+                            "viewUrl": "https://express.adobe.com/templates/wedding-invitation"
+                        }
+                    ],
+                    "paging": {
+                        "nextUrl": "https://example.com/alpha/search-assets?query=card&assetType=template&start=2&limit=2",
+                        "totalRecords": 250
+                    }
                 }
             }
         }
