@@ -35,11 +35,11 @@
     - [Overview](index.md)
     - Guides header
     - [Express API Quickstart](guides/index.md)
-    - [How Tos](#how-to)
-      - [Tag Documents](guides/how-to/tag-documents.md)
-      - [Get Tagged Documents](guides/how-to/get-tagged-documents.md)
-      - [Generate Variations](guides/how-to/generate-variations.md)
-      - [Export Document Renditions](guides/how-to/export-document.md)
-      - [End-to-End Workflow](guides/how-to/end-to-end-workflow.md)
-    - [Tutorials](#tutorials)
-       - [Dropbox Integration Workflow](guides/tutorials/dropbox-workflow.md)
+    - How Tos header
+    - [Tag Documents](guides/how-to/tag-documents.md)
+    - [Get Tagged Documents](guides/how-to/get-tagged-documents.md)
+    - [Generate Variations](guides/how-to/generate-variations.md)
+    - [Export Document Renditions](guides/how-to/export-document.md)
+    - [End-to-End Workflow](guides/how-to/end-to-end-workflow.md)
+    - Tutorials header
+    - [Dropbox Integration Workflow](guides/tutorials/dropbox-workflow.md)
