@@ -14,84 +14,86 @@ contributors:
 hideBreadcrumbNav: true
 ---
 
-# [Admins only] Create Credentials
+# Create Credentials
 
 <InlineAlert variant="warning" slots="text" />
 
-This guide contains instructions for admins on creating client ID (API key) and Client secrets for their teams. If you are a developer and your admin has shared a valid API Key with you, head over to the [Authentication](../index.md) guide.
+This guide is for admins creating a client ID (API key) and client secret for their teams. If you are a developer and your admin has already shared a valid client ID and secret with you, head over to the [Authentication](../index.md) guide.
 
-## Overview
+## Before you begin
 
-This guide will help you:
+By the end of this guide you will have:
 
-1. Choose the appropriate authentication flow for your application
-2. Create API keys (client ID) and client secrets in the Adobe Developer Console to start using the Adobe Express API
+- Chosen the authentication type that matches your application architecture.
+- Created a project in Adobe Developer Console with the Adobe Express API added.
+- Generated the client ID (API key) and, where applicable, the client secret needed to call the Adobe Express API.
 
-Adobe Express API supports multiple ways of user authentication. Based on the authentication type chosen by your admin, follow the corresponding section in this guide to set up your credentials.
+## Choose an authentication type
 
-## Choose Authentication Type
+Adobe Express API supports three authentication flows. Pick the one that matches how and where your application runs.
 
-### Server-to-Server Authentication
+| Flow | Best for | Needs a client secret? | Calls run as |
+| ---- | -------- | ---------------------- | ------------ |
+| **Server-to-Server** | Backend integrations acting for your organization | Yes (stored on your server) | Technical account |
+| **OAuth Web App** | Web apps with a frontend **and** a backend server | Yes (stored on your server) | End user |
+| **OAuth Single-page App (SPA)** | Browser-only apps with no backend | No (uses PKCE) | End user |
 
-Authenticate an application running on your backend server to call Adobe APIs on behalf of your organization.
+Learn more about [authentication](https://developer.adobe.com/developer-console/docs/guides/authentication/UserAuthentication/) in the Adobe Developer Console docs.
 
-### User Authentication
+## Set up your project
 
-Authenticate an Adobe user to call Adobe APIs on their behalf. The Adobe user must sign in and consent to your application before it can view or edit their data. Learn more on [how to implement](https://developer.adobe.com/developer-console/docs/guides/authentication/UserAuthentication/) user authentication.
+Complete these steps once, regardless of which authentication flow you use. You'll configure the flow-specific credential in the next section.
 
-In user authentication, there are two options:
+**1. Log in to the Adobe Developer Console**
 
-#### OAuth WebApp
+Sign in at [Adobe Developer Console](https://developer.adobe.com/console/home), open the **APIs & Services** catalog, and locate **Adobe Express API**.
 
-Compatible with applications that have a frontend UI and a backend server. The server is responsible for storing client secrets securely and fetching access tokens.
+**2. Create a new project**
 
-#### OAuth Single-page App (SPA)
-
-Compatible with web applications running in a browser without a backend server. The web application is responsible for fetching access tokens.
-
-## Create API keys (client ID) and client secret
-
-### Access Adobe Developer Console
-
-- Login to [Adobe Developer Console](https://developer.adobe.com/console/home)
-- Navigate to the **API and services** section. Search for **Express API**.
-
-### Create a New Project
-
-Once you see the Adobe Express API product card, click the **Create project** button.
+On the Adobe Express API product card, click **Create project**.
 
 ![Express API product card](../images/dev-console.png)
 *Adobe Express API product card in the Developer Console*
 
-**Register Your Project Name**:
+**3. Register your project name**
 
-Start by registering your project name. This will help you find your project in the Developer Console later, and you can modify this name later.
+Give the project a recognizable name so you can find it later in the Developer Console. You can change this name at any time.
 
-**To make calls to the Adobe Express API, developers need a valid client ID (API key) and an access token**.
+Next, configure credentials for your chosen authentication flow.
 
-#### Server-to-Server Authentication
+## Configure credentials
 
-Server-to-server authentication lets your backend generate access tokens and call Adobe APIs on behalf of your organization. It uses the OAuth 2.0 `client_credentials` grant. The steps below align with the same Developer Console pattern used across Firefly Services APIs—create a project, add APIs, choose **OAuth Server-to-Server**, assign product profiles, then generate tokens. For the full walkthrough (console access, adding APIs, credentials, scopes, and sample token requests), see [Getting started with Adobe Firefly Services](https://developer.adobe.com/firefly-services/docs/guides/get-started/).
+<InlineAlert variant="info" slots="text" />
 
-**1. Register your application and add Express**
+To call the Adobe Express API, developers need a valid client ID (API key) and an access token.
 
-- In [Adobe Developer Console](https://developer.adobe.com/console/home), create a project (or open an existing one).
-- **Add API** and add **Adobe Express API** so your project has Express entitlement for server-to-server use.
-- When prompted, keep **OAuth Server-to-Server** as the credential type, name the credential, and complete the flow.
-- Select the **product profiles** your admin assigned for Express; these control what the credential can access in your organization.
-- Click **Save configured API**. On the credential overview, copy your **client ID (API key)** and **client secret**, and note the **technical account email**—you will need it for document and asset access.
+### Server-to-Server
+
+Server-to-Server authentication lets your backend generate access tokens and call Adobe APIs on behalf of your organization using the OAuth 2.0 `client_credentials` grant. The steps below follow the same Developer Console pattern used across Firefly Services APIs. For the full walkthrough—including console access, scopes, and sample token requests—see [Getting started with Adobe Firefly Services](https://developer.adobe.com/firefly-services/docs/guides/get-started/).
+
+**1. Add the Adobe Express API**
+
+- In your project, click **Add API** and select **Adobe Express API**.
+- When prompted for a credential type, keep **OAuth Server-to-Server**, name the credential, and continue.
+
+**2. Assign product profiles**
+
+Select the product profiles your admin assigned for Express. These control what the credential can access in your organization.
+
+**3. Save and retrieve credentials**
+
+Click **Save configured API**. On the credential overview, copy your **client ID (API key)** and **client secret**, and note the **technical account email**—you'll need it for document and asset access.
 
 ![Server-to-Server Credentials](../images/server-credentials.png)
 *Server-to-Server credentials overview showing client ID (API key) and technical account email*
 
-**2. Generate access tokens**
+**4. Generate access tokens**
 
-- Use the token endpoint and scopes for your credential (see **Generate access token** in the [Firefly Services getting started](https://developer.adobe.com/firefly-services/docs/guides/get-started/) guide linked above).
-- When calling Express API, send the token and API key as described in [Authentication – Call the Express API](../index.md#call-the-express-api).
+Use the token endpoint and scopes for your credential (see **Generate access token** in the [Firefly Services getting started](https://developer.adobe.com/firefly-services/docs/guides/get-started/) guide linked above). When calling Express API, send the token and client ID as described in [Authentication – Call the Express API](../index.md#call-the-express-api). Store your client secret only on the server.
 
-**3. Asset and document access for the technical account**
+**5. Grant the technical account access to documents and assets**
 
-API calls run as the **technical account** tied to your OAuth Server-to-Server credential—not as an end user. Anything your integration must read or edit (templates, Express documents, cloud assets) must be reachable by that technical account. Common approaches:
+API calls run as the **technical account** tied to your OAuth Server-to-Server credential—not as an end user. Anything your integration must read or edit (templates, Express documents, cloud assets) must be reachable by that technical account.
 
 | Approach | When to use |
 | -------- | ----------- |
@@ -100,98 +102,86 @@ API calls run as the **technical account** tied to your OAuth Server-to-Server c
 
 If documents or assets are still inaccessible, confirm sharing with the technical account email, product profile assignment in Developer Console, and (for cloud storage) Storage administrator assignment and Enterprise Storage licensing per the guide above.
 
-For request headers, curl examples, and token usage, see [Authentication – Call the Express API](../index.md#call-the-express-api). Store client secrets only on your server.
+### OAuth Web App
 
-#### User Authentication: OAuth WebApp
+OAuth Web App authentication is ideal for applications with both frontend and backend components. This method uses the OAuth 2.0 `authorization_code` grant type to obtain an access token on behalf of the user.
 
-OAuth WebApp authentication is ideal for applications with both frontend and backend components. This method uses the OAuth 2.0 authorization_code grant type to obtain an access token on behalf of the user.
+**1. Add the Adobe Express API**
 
-**Steps to Implement OAuth WebApp Authentication:**
+- In your project, click **Add API** and select **Adobe Express API**.
+- Choose **OAuth Web App** as the authentication method.
 
-1. **Select your project**:
+**2. Configure redirect URIs**
 
-  - Go to the Adobe Developer Console and [select your project](#create-a-new-project).
-  - Add the Adobe Express API to your project.
-  - Select OAuth WebApp as the authentication method.
+Provide a **Default Redirect URI** and a **Redirect URI pattern**. These are the URLs where Adobe will redirect users after they authorize your application.
 
-2. **Configure Redirect URIs**:
+**3. Save and retrieve credentials**
 
-  - Provide a Default Redirect URI and a Redirect URI pattern. These URIs are where Adobe will redirect users after they authorize your application.
-
-3. **Save Configured API and View Credentials**:
-
-  - Click on "Save configured API" in the configuration modal
-  - After saving, you'll be taken to the credential overview page where you can view your client ID (API key)
-  - Select the OAuth WebApp authentication type from the left navigation to view or retrieve your client secret
+- Click **Save configured API**.
+- On the credential overview you'll see the **client ID (API key)**.
+- Select **OAuth Web App** from the left navigation to view or retrieve your **client secret**.
 
 ![OAuth WebApp Credentials](../images/oauth-web-credentials.png)
-*OAuth WebApp credentials overview showing client ID (API key) and secret retrieval*
+*OAuth Web App credentials overview showing client ID (API key) and secret retrieval*
 
-4. **Managing Beta Access**:
+**4. Manage beta access**
 
-  - For projects in beta, you'll need to add beta users who can access your application
-  - Navigate to the your **Credential > Oauth Web App Credential > Beta users** section in your project
-  - Add the email addresses of users who should have access
-  - Note that it may take a few minutes for beta user access to sync
+- For projects in beta, add the users who can access your application.
+- In your project, navigate to **Credentials > OAuth Web App > Beta users**.
+- Add the email addresses of users who should have access. It may take a few minutes for beta user access to sync.
 
-5. **Use the API Key and Client Secret**:
+**5. Use the client ID and client secret**
 
-  - Use the client ID (API key) and client secret from your credential overview page to authenticate requests
-  - Store the client secret securely on your backend server
-  - Your application can fetch tokens using the client secret on the backend server without exposing sensitive credentials through the frontend
-  - Learn more about implementing OAuth WebApp authentication in our [detailed implementation guide](https://developer.adobe.com/developer-console/docs/guides/authentication/UserAuthentication/implementation/#oauth-web-app-credential)
+- Authenticate requests using the client ID (API key) and client secret from the credential overview.
+- Store the client secret only on your backend server and fetch tokens from there, so credentials are never exposed in the frontend.
+- For end-to-end guidance, see the [OAuth Web App implementation guide](https://developer.adobe.com/developer-console/docs/guides/authentication/UserAuthentication/implementation/#oauth-web-app-credential).
 
-#### User Authentication: OAuth Single-page App
+### OAuth Single-page App
 
-OAuth Single-page App authentication is designed for JavaScript-based applications that run entirely in the browser. This method uses the OAuth 2.0 PKCE (Proof Key for Code Exchange) flow to obtain tokens securely without requiring a client secret.
+OAuth Single-page App authentication is designed for JavaScript applications that run entirely in the browser. This method uses the OAuth 2.0 PKCE (Proof Key for Code Exchange) flow to obtain tokens securely without requiring a client secret.
 
-**Steps to Implement OAuth Single-page App Authentication:**
+**1. Add the Adobe Express API**
 
-1. **Register Your Application**:
+- In your project, click **Add API** and select **Adobe Express API**.
+- Choose **OAuth Single-page App** as the authentication method.
 
-  - Go to the Adobe Developer Console and [select your project](#create-a-new-project).
-  - Add the Adobe Express API to your project.
-  - Select OAuth Single-page App as the authentication method.
+**2. Configure redirect URIs**
 
-2. **Configure Redirect URIs**:
+Provide a **Default Redirect URI** and a **Redirect URI pattern**. These are the URLs where Adobe will redirect users after they authorize your application.
 
-  - Provide a Default Redirect URI and a Redirect URI pattern. These URIs are where Adobe will redirect users after they authorize your application.
-  
-3. **Save configured API**:
+**3. Save and retrieve the client ID**
 
-  - Click on **Save configured API** in the following modal. You can see your **client ID (API key)** on the next screen.
+Click **Save configured API**. On the next screen you'll see your **client ID (API key)**. No client secret is issued for SPA credentials.
 
-  ![OAuth SPA Credentials](../images/oauth-spa-credentials.png)
-  *OAuth SPA credentials overview showing client ID (API key)*
-  
-4. **Managing Beta Access**:
+![OAuth SPA Credentials](../images/oauth-spa-credentials.png)
+*OAuth SPA credentials overview showing client ID (API key)*
 
-  - For projects in beta, you'll need to add beta users who can access your application
-  - Navigate to the your **Credential > Oauth Web App Credential > Beta users** section in your project
-  - Add the email addresses of users who should have access
-  - Note that it may take a few minutes for beta user access to sync
+**4. Manage beta access**
 
-5. **Use the API Key with PKCE Flow**:
+- For projects in beta, add the users who can access your application.
+- In your project, navigate to **Credentials > OAuth Single-page App > Beta users**.
+- Add the email addresses of users who should have access. It may take a few minutes for beta user access to sync.
 
-  - Use the client ID (API key) from your credential overview page to authenticate requests
-  - Implement the [OAuth 2.0 PKCE](https://oauth.net/2/pkce/) flow in your frontend application for secure token generation
-  - No client secret is needed as authentication happens directly in the browser
-  - Learn more about implementing OAuth Single-page App authentication in our [detailed implementation guide](https://developer.adobe.com/developer-console/docs/guides/authentication/UserAuthentication/implementation/#oauth-single-page-app-credential)
+**5. Use the client ID with the PKCE flow**
 
-**Change project status to production**
+- Authenticate requests using the client ID (API key) from the credential overview.
+- Implement the [OAuth 2.0 PKCE](https://oauth.net/2/pkce/) flow in your frontend for secure token generation—no client secret is needed, as authentication happens directly in the browser.
+- For end-to-end guidance, see the [OAuth Single-page App implementation guide](https://developer.adobe.com/developer-console/docs/guides/authentication/UserAuthentication/implementation/#oauth-single-page-app-credential).
+
+**6. Push to production**
 
 <InlineAlert variant="warning" slots="text" />
 
-Note that you can not put this project back into development after you push it to production. Once the product is in production, you will not longer have a beta users list as your app will be open for everyone.
+Once you push a Single-page App project to production, you cannot move it back into development. Your app will be open to everyone and the beta users list will no longer apply.
 
-Click **Push to production** button once you have completed the development.
+When you finish development, click **Push to production**.
 
 ![Push to prod](../images/push-to-prod.png)
-  *Project overview showing push to production button*
+*Project overview showing push to production button*
 
-#### User Consent Flow
+## User consent flow
 
-When users authenticate through either OAuth WebApp or OAuth Single-page App, they will see a consent screen. Users need to click "Allow Access" to grant the requested permissions.
+When users authenticate through OAuth Web App or OAuth Single-page App, they see a consent screen. Users must click **Allow Access** to grant the requested permissions.
 
 ![OAuth Consent Screen](../images/oauth-consent.png)
 *Example of the OAuth consent screen shown to users*
