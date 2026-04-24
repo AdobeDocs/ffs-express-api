@@ -29,6 +29,7 @@
     - [Create Credentials](/getting-started/create-credentials/index.md)
     - [Error Logging](/getting-started/error-logging/index.md)
     - [Technical Usage Notes](/getting-started/usage/index.md)
+    - [Rate Limits](/getting-started/rate-limits/index.md)
     - Support header
     - [FAQ](getting-started/support/FAQ/index.md)
     - [Best Practices](/getting-started/support/best-practices/index.md)

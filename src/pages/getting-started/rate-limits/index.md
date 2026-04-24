@@ -38,9 +38,25 @@ Express API places default rate limits on the volume and frequency of API calls.
 
 ## Summary of Rate Limits
 
-Our API imposes the following rate limits **per organization**:
+Our API uses rate limits to ensure stability of the service. When you reach the rate limit, you'll receive HTTP 429 in response to your API request. You should implement logic that detects this and retries the calls at a later time.
 
-* **50** requests **per minute (RPM)**
+Current rate limit (except as noted below):
+
+**50** requests per minute (RPM)
+
+<InlineAlert variant="info" slots="text" />
+
+If your workflow needs a higher rate limit, please reach out to your account manager to request a higher rate limit or fill out this form(link/tbd).
+
+### Export Rendition Endpoint
+
+The [Export Rendition API](../../../api/index.md) has an additional per-client limit:
+
+* **5** invocations **per minute** per `client-id`
+
+This limit applies to the `/beta/export-rendition` route as a whole. Because rate limiting is enforced at the API route level, **image, PDF, and video export requests all share the same 5-per-minute budget** — they are not counted separately by format.
+
+If you need to export multiple formats or higher volumes, either space requests out across the minute or contact your account manager to request a higher limit.
 
 ## What to Do If You Run Into Issues
 
