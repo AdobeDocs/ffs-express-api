@@ -30,6 +30,24 @@ hideBreadcrumbNav: true
 
 A list of updates to Adobe Express API.
 
+## 2026-04-24
+
+### Added
+
+- **Beta release of the Express API**: API reference, guides, tutorials, FAQ, and error logging now reflect the beta endpoints at `/beta/` (tagged-documents, generate-variation, export-rendition, status).
+- **Consolidated OpenAPI specification**: All endpoints are now documented from a single bundled `ffs-express-api.json` spec for consistent schemas and examples across the API reference.
+- **Getting Started section**: New top-level Getting Started navigation tab consolidating onboarding content.
+  - Getting Started landing page with authentication (S2S), credentials creation, and usage guidance.
+  - Technical Usage Notes page covering limits, quotas, and operational guidance.
+  - Support (including FAQ and Known Issues) and the Changelog are now nested under Getting Started.
+- **Landing page hero image** and refreshed landing copy for clearer onboarding.
+- **Guides section** now includes an Express API Quickstart, with clearer separation between How-Tos and Tutorials in the side navigation.
+
+### Fixed
+
+- **Link redirects** across guides, getting started, API reference, and support pages so cross-references resolve correctly after the navigation restructure.
+- **Sidebar configuration** cleaned up: removed duplicate Support entries and corrected nesting for Guides, How-Tos, and Tutorials.
+
 ## 2026-02-19
 
 ### Added
