@@ -98,7 +98,7 @@ Your request has been completed.
 }
 ```
 
-#### GET /beta/tagged-documents/{documentId}
+#### GET /beta/tagged-documents/\{documentId\}
 
 ```json
 {
@@ -144,7 +144,7 @@ Your request has been completed.
 }
 ```
 
-#### GET /status/{jobId}
+#### GET /status/\{jobId\}
 
 ```json
 {
@@ -192,7 +192,7 @@ These errors indicate issues with the request made by the client.
 | `403`      | Forbidden             | The server understands the request, but the client does not have permission to access the resource—missing or insufficient permissions for the authenticated user cause this.   | Ensure the token used is for the same user accessing the document. Check if the user has access to the requested document.               |
 | `404`      | Not Found             | The server could not find the requested resource. This error could happen if the requested URL or endpoint does not exist, is misspelled, or is inaccessible to the user.       | Check the URL and ensure the resource exists.                                                                                            |
 | `422`      | Unprocessable Content | The server understands the request but cannot process it due to semantic errors or invalid data. This error often happens when input is invalid or required fields are missing. | Review the validation errors for each endpoint and correct the request data accordingly.                                                 |
-| `429`      | Too Many Requests     | You have sent too many requests in a given time (rate limiting).                                                                                                                | Reduce the request rate and try again later. Learn more about [rate limits](../../guides/concepts/rate-limits/index.md).                                    |
+| `429`      | Too Many Requests     | You have sent too many requests in a given time (rate limiting).                                                                                                                | Reduce the request rate and try again later. Learn more about [rate limits](../rate-limits/index.md).                                    |
 
 ### Validation Errors (`422`)
 

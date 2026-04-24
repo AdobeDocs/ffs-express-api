@@ -64,7 +64,7 @@ Learn how to authenticate your requests.
 
 <DiscoverBlock slots="link, text"/>
 
-[Rate limiting](guides/concepts/rate-limits/index.md)
+[Rate limiting](getting-started/rate-limits/index.md)
 
 Learn about rate limiting.
 

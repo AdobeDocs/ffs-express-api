@@ -57,7 +57,7 @@ If your workflow needs a higher rate limit, please reach out to your account man
 
 ### Export Rendition endpoint
 
-The [Export Rendition API](../../../api/index.md) has an additional per-client limit:
+The [Export Rendition API](../../api/index.md) has an additional per-client limit:
 
 * **5** invocations **per minute** per `client-id`
 

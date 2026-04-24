@@ -95,7 +95,7 @@ Back in the **Settings** tab, click on the **Generate** button in the **OAuth 2*
 
 Please also note the **App folder name** (in our case, `Express API test`), because it's the only folder our app will be able to access in our Dropbox account. I've put the CSV and the JPG files in a `Apps/Express API test/pictures` folder there, so we're all set!
 
-![](./images/dropbox_content.png)
+![Dropbox Apps folder with the Express API test app folder containing CSV and JPG files](./images/dropbox_content.png)
 
 ## Step 4: Scaffolding the Script
 

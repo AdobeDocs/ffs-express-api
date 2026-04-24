@@ -37,7 +37,7 @@ The APIs require an API key (`X-API-KEY`) and bearer token for authentication.
 
 ### Rate Limiting
 
-The APIs support rate limiting with 50 RPM (requests per minute) per client across all the APIs. Learn more about [rate limiting](../rate-limits/index.md) guidelines. **Note:** If the rate limit is exceeded, any additional requests will receive a `429 Too Many Requests` response.
+The APIs support rate limiting with 50 RPM (requests per minute) per client across all the APIs. Learn more about [rate limiting](../../../getting-started/rate-limits/index.md) guidelines. **Note:** If the rate limit is exceeded, any additional requests will receive a `429 Too Many Requests` response.
 
 ### Request Identifier
 
