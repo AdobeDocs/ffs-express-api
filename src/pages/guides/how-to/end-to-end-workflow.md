@@ -1,6 +1,6 @@
 ---
 title: Create an End-to-End Express API Workflow
-description: Build a Node.js workflow that combines Express API endpoints to fetch tagged documents, create variations, and export renditions while handling asynchronous operations.
+description: Build a workflow combining Express API endpoints to fetch tagged documents, create variations, and export renditions.
 keywords:
   - Adobe Express
   - Adobe Express API

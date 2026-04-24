@@ -76,7 +76,7 @@ Learn how to create credentials for your services — Admin only.
 
 <DiscoverBlock width="100%" slots="heading, link, text"/>
 
-### API References
+### API Reference
 
 [Try the API](api/index.md)
 
