@@ -1,6 +1,6 @@
 ---
-title: How to Troubleshoot Common Adobe Express API Issues
-description: This guide provides frequently asked questions and answer for using the Express API.
+title: Adobe Express API FAQ
+description: Frequently asked questions about using the Adobe Express API.
 keywords:
   - Adobe Express
   - Adobe Express API
@@ -11,47 +11,102 @@ contributors:
 hideBreadcrumbNav: true
 ---
 
-# How to Troubleshoot Common Adobe Express API Issues
+# Adobe Express API FAQ
 
-Frequently asked questions and answers about the Adobe Express API.
+Answers to the most common questions about the Adobe Express API. If you don't see your question here, [contact support](../index.md).
 
-## What is the Adobe Express API?
+## Access and onboarding
 
-The Adobe Express API is a set of RESTful API that allow developers to programmatically interact with Adobe Express, a web-based design tool that enables users to create professional-quality graphics, videos, and web pages. The API provides endpoints for creating, updating, and managing documents, as well as retrieving information about tagged elements within documents.
+### How do I request access?
 
-## How do I use the Adobe Express API?
+Fill out the [Express API Beta Access Request Form](https://airtable.com/appiNBn2w6uT0cpkR/pag3db7joqgtwXSOv/form). If you're already a Firefly Services customer and your administrator has provisioned you, you can [create your credentials](../../create-credentials/index.md) in the Adobe Developer Console.
 
-To use the Adobe Express API, you need to obtain an API key and an access token. You can then make requests to the API endpoints using the appropriate HTTP methods and parameters. Refer to the [Getting Started](../../../guides/index.md) guide for detailed instructions on how to use the Adobe Express API.
+<InlineAlert variant="info" slots="text" />
 
-## What are the supported formats for exporting renditions?
+If you create credentials in the Developer Console before filling out the form, we'll reach out so you can complete it.
 
-The Export Rendition API currently supports exporting document renditions in `JPG`, `PNG`, and `MP4` formats 
-This API allows users to export a document, identified by its document ID, in `JPG`, `PNG`, and `MP4` formats.  It provides pre-signed URLs for each page rendition. Image URLs are valid for 4 hours with sizes up to 8192px. Video URLs are valid for 24 hours with sizes up to 4096px. A status URL is included to track export progress.
+### Will Adobe need to approve my integration?
 
-## How long are pre-signed URLs valid for rendition URLs?
+The beta program is for testing and evaluation only. Don't deploy projects that depend on beta APIs to production.
 
-The pre-signed URLs returned via `renditionUrl` for image renditions are valid for 4 hours, and for video renditions, they are valid for 24 hours. Ensure to use or download the rendition within this time frame.
+### I participated in the alpha—what do I need to do?
 
-## How long are thumbnail URLs valid for generating variations?
+The private alpha endpoints will remain active for a few more weeks. Migrate to the beta APIs as soon as you can—we'll reach out with a specific deadline. If you don't have access to Firefly Services and can't make the switch, [let us know](../index.md).
 
-The thumbnail URLs returned along with the generate variation response are valid for 24 hours. Ensure to use or download the thumbnail within this time frame.
+### Can I request a higher rate limit?
 
-## What is the maximum supported size for exported renditions?
+Yes. Contact your account manager or fill out the [Express API Rate Limit Increase Form](https://airtable.com/appiNBn2w6uT0cpkR/pag5hZ3oDcxrjUbH8/form), and we'll evaluate your request. See [Rate Limits](../../rate-limits/index.md) for current defaults.
 
-The maximum supported size for image renditions is 8192px, and 4096px for video renditions. If you request a rendition size larger than the maximum limit, the response will return an error.
+### How do I use the Adobe Express API?
+
+First, get your API key and access token. Then send requests to the API endpoints using the appropriate HTTP methods and parameters. See the [Getting Started](../../../guides/index.md) guide for step-by-step instructions.
+
+## About the API
+
+### What is the Adobe Express API?
+
+The Adobe Express API is a set of RESTful APIs that let you interact with Adobe Express programmatically. Adobe Express is a web-based design tool for creating professional-quality graphics, videos, and web pages. The API provides endpoints for creating, updating, and managing documents, and for retrieving information about tagged elements.
+
+### What use cases does the Adobe Express API support?
+
+The Adobe Express API supports a wide range of use cases, including:
+
+- Retrieving information about tagged elements within documents.
+- Exporting document renditions in different formats.
+- Generating variations of existing documents.
+- Managing and updating documents programmatically.
+- Automating document creation and editing workflows.
+- Integrating Adobe Express with other applications and services.
+
+### What are the key features of the Adobe Express API?
+
+The key features of the Adobe Express (beta) API are:
+
+- [Get details of a tagged document](../../../api/alpha-tagged-documents-documentId/index.md)
+- [Get all tagged documents](../../../api/alpha-tagged-documents/index.md)
+- [Generate variation](../../../api/alpha-generate-variation/index.md)
+- [Export rendition](../../../api/alpha-export-rendition/index.md)
+- **Get Job Status:** Check the status of a job submitted to the Adobe Express API. The response includes the job's current status and any error messages from processing.
+
+## Renditions and exports
+
+### What formats can I export?
+
+The Export Rendition API supports `JPG`, `PNG`, and `MP4` formats. Pass a document ID, and you'll get a pre-signed URL for each page rendition along with a status URL to track progress.
+
+- Image URLs are valid for 4 hours, with sizes up to 8192px.
+- Video URLs are valid for 24 hours, with sizes up to 4096px.
+
+### What's the maximum supported size for renditions?
+
+Image renditions max out at 8192px, and video renditions at 4096px. Requests above these limits return an error.
 
 <InlineAlert variant="warning" slots="text1" />
 
-- Rendition size is capped at original document dimensions. Image renditions can be specified up to 8192px on the longest side, with aspect ratio maintained. 
-- Rendition sizes are constrained to the original document dimensions, allowing for downscaling but not upscaling. For example, with a 1024 x 1024 document, renditions from 1 x 1 up to 1024 x 1024 are supported, while any size value exceeding 1024 will produce a 1024 x 1024 output.
+- Rendition size is capped at the original document dimensions. Image renditions can be specified up to 8192px on the longest side, with aspect ratio maintained.
+- Renditions can be downscaled but not upscaled. For example, with a 1024 x 1024 document, renditions from 1 x 1 up to 1024 x 1024 are supported—any size value over 1024 produces a 1024 x 1024 output.
 
-## What is the max duration generated documents are stored?
+### How long are pre-signed rendition URLs valid?
 
-Generated documents are temporarily stored in a folder named **"Express API Documents"** and available for 30 days. After this period, the system automatically deletes them. You can move or copy the document(s) to any other location to persist indefinitely. Ensure to move or copy the document within 30 days.
+Image rendition URLs (`renditionUrl`) are valid for 4 hours. Video rendition URLs are valid for 24 hours. Download or consume the rendition within that window.
 
-## What storage options are supported for tag mappings?
+### How long are thumbnail URLs valid for generating variations?
 
-The `tagMappings` field supports pre-signed URLs from `AWS`, `Dropbox`, and `Azure (windows.net)`. An example tag mapping might look like this:
+Thumbnail URLs returned in the Generate Variation response are valid for 24 hours. Download or consume them within that window.
+
+## Documents and storage
+
+### How long are generated documents stored?
+
+Generated documents are stored in an **Express API Documents** folder for 30 days, after which they're deleted automatically. To keep a document longer, move or copy it to another location within the 30-day window.
+
+### What is a document URN?
+
+A document URN (Uniform Resource Name) is a unique, persistent identifier for a digital document. It stays valid even if the document's location or access method changes.
+
+### What storage options are supported for tag mappings?
+
+The `tagMappings` field supports pre-signed URLs from `AWS`, `Dropbox`, and `Azure (windows.net)`. An example tag mapping looks like this:
 
 ```json
 {
@@ -64,33 +119,8 @@ The `tagMappings` field supports pre-signed URLs from `AWS`, `Dropbox`, and `Azu
 }
 ```
 
-## What is a document URN?
+## Troubleshooting
 
-A document URN (Uniform Resource Name) is a unique, persistent identifier assigned to a digital document, allowing it to be identified reliably even if its location or access method changes.
+### Why does `/beta/tagged-documents` return an empty array?
 
-## What use cases are supported by the Adobe Express API?
-
-The Adobe Express API supports a wide range of use cases, including:
-
-- Retrieving information about tagged elements within documents.
-- Exporting document renditions in different formats.
-- Generating variations of existing documents.
-- Managing and updating documents programmatically.
-- Automating document creation and editing workflows.
-- Integrating Adobe Express with other applications and services.
-
-## What are the key features of the Adobe Express API?
-
-The key features of Adobe Express (beta) API are below:
-
-- [Get details of a tagged document](../../../api/alpha-tagged-documents-documentId/index.md)
-- [Get all tagged documents](../../../api/alpha-tagged-documents/index.md)
-- [Generate variation](../../../api/alpha-generate-variation/index.md)
-- [Export rendition](../../../api/alpha-export-rendition/index.md)
-- Get Job Status: The Job Status API allows users to check the status of a job that was submitted to the Adobe Express API. The API returns information about the job, including its current status, and any error messages that may have occurred during processing.
-
-## Why am I getting empty array when using [`/beta/tagged-documents`](../../../api/alpha-tagged-documents/index.md).?
-
-When using the tagged documents API, if you're receiving an empty array in the response, check the following:
-
-- Make sure to save changes after [tagging the elements in the documents](../../../guides/how-to/tag-documents.md#step-2-create-tags-for-a-document).
+If you're getting an empty array from the [tagged documents API](../../../api/alpha-tagged-documents/index.md), check that you've saved your changes after [tagging the elements in your document](../../../guides/how-to/tag-documents.md#step-2-create-tags-for-a-document).
