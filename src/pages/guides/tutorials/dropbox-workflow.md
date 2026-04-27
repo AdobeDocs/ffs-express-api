@@ -271,16 +271,16 @@ export const checkDropboxJobs = async (dropboxJobs, checkStatusFn) => {
 
 We'll start by fetching the CSV file from Dropbox and parsing it to get the teachers' data. Create a new file `services/dropbox.js`; in this file, we first use the `dotenv` package to load the environment variables from the `.env` file. We then create a new instance of the Dropbox SDK, passing the Access Token as a configuration option. We define three functions:
 
-- `listDropboxFiles()`: [Fetch a list of files](https://dropbox.github.io/dropbox-sdk-js/Dropbox.html#filesListFolder__anchor) in a Dropbox folder.
-- `getPreSignedUrl()`: [Fetch a pre-signed URL](https://dropbox.github.io/dropbox-sdk-js/Dropbox.html#filesGetTemporaryLink__anchor) for a file in Dropbox.
+- `listDropboxFiles()`: [Fetch a list of files](https://dropbox.github.io/dropbox-sdk-js/Dropbox.html#filesListFolder) in a Dropbox folder.
+- `getPreSignedUrl()`: [Fetch a pre-signed URL](https://dropbox.github.io/dropbox-sdk-js/Dropbox.html#filesGetTemporaryLink) for a file in Dropbox.
 - `readCsvFile()`: Read a CSV file from Dropbox, [parses it](https://www.papaparse.com/docs#strings) using the `papaparse` library, and returns an array of objects.
 
 These functions are enough to fetch the CSV file and the profile pictures. Later, we'll need more functions to interact with the Dropbox API:
 
-- `createFolder()`: [Create a new folder](https://dropbox.github.io/dropbox-sdk-js/Dropbox.html#filesCreateFolderV2__anchor) in Dropbox.
-- `saveUrlToDropbox()`: [Save a URL](https://dropbox.github.io/dropbox-sdk-js/Dropbox.html#filesSaveUrl__anchor) to Dropbox (the fetching happens on Dropbox's servers).
-- `checkDropboxStatus()`: [Check the status](https://dropbox.github.io/dropbox-sdk-js/Dropbox.html#filesSaveUrlCheckJobStatus__anchor) of an async Dropbox job.
-- `downloadAndUploadFile()`: [Alternative upload method](https://dropbox.github.io/dropbox-sdk-js/Dropbox.html#filesUpload__anchor) (the fetching happens on the local machine).
+- `createFolder()`: [Create a new folder](https://dropbox.github.io/dropbox-sdk-js/Dropbox.html#filesCreateFolderV2) in Dropbox.
+- `saveUrlToDropbox()`: [Save a URL](https://dropbox.github.io/dropbox-sdk-js/Dropbox.html#filesSaveUrl) to Dropbox (the fetching happens on Dropbox's servers).
+- `checkDropboxStatus()`: [Check the status](https://dropbox.github.io/dropbox-sdk-js/Dropbox.html#filesSaveUrlCheckJobStatus) of an async Dropbox job.
+- `downloadAndUploadFile()`: [Alternative upload method](https://dropbox.github.io/dropbox-sdk-js/Dropbox.html#filesUpload) (the fetching happens on the local machine).
 
 <InlineAlert variant="info" slots="text1" />
 

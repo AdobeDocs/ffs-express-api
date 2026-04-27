@@ -134,7 +134,7 @@ Provide a **Default Redirect URI** and a **Redirect URI pattern**. These are the
 
 - Authenticate requests using the client ID (API key) and client secret from the credential overview.
 - Store the client secret only on your backend server and fetch tokens from there, so credentials are never exposed in the frontend.
-- For end-to-end guidance, see the [OAuth Web App implementation guide](https://developer.adobe.com/developer-console/docs/guides/authentication/UserAuthentication/implementation/#oauth-web-app-credential).
+- For end-to-end guidance, see the [OAuth Web App implementation guide](https://developer.adobe.com/developer-console/docs/guides/authentication/UserAuthentication/implementation#web-app).
 
 ### OAuth Single-page App
 
@@ -166,7 +166,7 @@ Click **Save configured API**. On the next screen you'll see your **client ID (A
 
 - Authenticate requests using the client ID (API key) from the credential overview.
 - Implement the [OAuth 2.0 PKCE](https://oauth.net/2/pkce/) flow in your frontend for secure token generation—no client secret is needed, as authentication happens directly in the browser.
-- For end-to-end guidance, see the [OAuth Single-page App implementation guide](https://developer.adobe.com/developer-console/docs/guides/authentication/UserAuthentication/implementation/#oauth-single-page-app-credential).
+- For end-to-end guidance, see the [OAuth Single-page App implementation guide](https://developer.adobe.com/developer-console/docs/guides/authentication/UserAuthentication/implementation#single-page-app).
 
 **6. Push to production**
 
