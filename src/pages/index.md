@@ -14,6 +14,17 @@ contributors:
 
 Effortlessly create and customize mixed-media designs with on-brand precision.
 
+<Announcement slots="heading, text, button" className="request-access-announcement" variant="secondary" borderColor="#c148ed" hasborder="true" />
+
+### The Adobe Express API is now in beta
+
+We'd like to get to know you better! To participate in the beta, please submit Adobe Express API Beta Access form so
+better understand your needs and use cases. For more information, read the [FAQ](getting-started/support/FAQ/index.md#access-and-onboarding).
+
+- [Request Access](https://airtable.com/appiNBn2w6uT0cpkR/pag3db7joqgtwXSOv/form)
+
+&lt;br/ &gt;
+
 <Resources slots="text, links"/>
 
 **Useful Resources**
