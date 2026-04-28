@@ -27,11 +27,11 @@ If you create credentials in the Developer Console before filling out the form, 
 
 ### Will Adobe need to approve my integration?
 
-The beta program is for testing and evaluation only. Don't deploy projects that depend on beta APIs to production.
+The beta program is only available for testing and evaluation of the APIs. Do not use output from the API for commercial purposes or deploy projects using the beta APIs to production.
 
-### I participated in the alpha—what do I need to do?
+### I participated in the Express API Alpha— what do I need to do to access the Express API Beta?
 
-The private alpha endpoints will remain active for a few more weeks. Migrate to the beta APIs as soon as you can—we'll reach out with a specific deadline. If you don't have access to Firefly Services and can't make the switch, [let us know](../index.md).
+The private alpha endpoints will remain active during a brief deprecation period—you should move to the beta APIs as soon as is feasible. If you have existing API credentials, we will be reaching out to the email used to create the credentials to communicate a deadline. If you are an Alpha customer that does not have access to Firefly Services, please reach out to us to [let us know](../index.md).
 
 ### Can I request a higher rate limit?
 

@@ -12,7 +12,7 @@
     "servers": [
         {
             "url": "https://express-api.adobe.io",
-            "description": "Prod endpoint"
+            "description": "Production endpoint"
         }
     ],
     "paths": {
@@ -1335,29 +1335,6 @@
                     }
                 }
             },
-            "BulkProgress": {
-                "description": "Progress details for a bulk operation.",
-                "type": "object",
-                "properties": {
-                    "processedRecords": {
-                        "description": "The number of variation records that have been processed.",
-                        "type": "number"
-                    },
-                    "totalRecords": {
-                        "description": "The total number of variation records declared by the client in the input manifest.",
-                        "type": "number"
-                    },
-                    "injectedRecords": {
-                        "description": "The number of variation records actually injected into the system across all\norchestrated files.",
-                        "type": "number"
-                    }
-                },
-                "required": [
-                    "injectedRecords",
-                    "processedRecords",
-                    "totalRecords"
-                ]
-            },
             "TextMapping": {
                 "description": "A mapping that replaces a text-type tagged element.",
                 "type": "object",
@@ -1437,155 +1414,6 @@
                 "required": [
                     "mediaType",
                     "type"
-                ]
-            },
-            "CreateVariationInput": {
-                "description": "Input details for a single variation request.\nAlso serves as the schema for each row in a bulk-create-variation NDJSON input file.",
-                "type": "object",
-                "properties": {
-                    "mappings": {
-                        "$ref": "#/components/schemas/TagMappings",
-                        "description": "Tag mappings to apply to the template or document."
-                    },
-                    "variationRequestId": {
-                        "description": "The client-provided identifier for the variation request.\nIf supplied, the service echoes it back in the corresponding response\nto simplify client-side correlation.",
-                        "type": "string"
-                    }
-                },
-                "required": [
-                    "mappings"
-                ]
-            },
-            "ImageOutputResult": {
-                "description": "Result of a successful image rendition output.",
-                "type": "object",
-                "properties": {
-                    "type": {
-                        "description": "Discriminator indicating this is an image output result.",
-                        "type": "string",
-                        "enum": [
-                            "image"
-                        ]
-                    },
-                    "mediaType": {
-                        "$ref": "#/components/schemas/ImageRenditionFormat",
-                        "description": "The media type of the generated image rendition."
-                    },
-                    "pageNumber": {
-                        "description": "The page number from which this rendition was generated.",
-                        "type": "number"
-                    },
-                    "destination": {
-                        "$ref": "#/components/schemas/UrlResource",
-                        "description": "The location where the image rendition can be downloaded from."
-                    }
-                },
-                "required": [
-                    "destination",
-                    "mediaType",
-                    "pageNumber",
-                    "type"
-                ]
-            },
-            "OutputError": {
-                "description": "Error details for a specific output that failed during a create-variation operation.",
-                "type": "object",
-                "properties": {
-                    "type": {
-                        "description": "The output type that failed.",
-                        "enum": [
-                            "document",
-                            "image"
-                        ],
-                        "type": "string"
-                    },
-                    "pageNumber": {
-                        "description": "The page number associated with the failure, if applicable.",
-                        "type": "number"
-                    },
-                    "error_code": {
-                        "description": "The error code.",
-                        "type": "string"
-                    },
-                    "message": {
-                        "description": "The error message.",
-                        "type": "string"
-                    },
-                    "validation_errors": {
-                        "description": "Validation error messages.",
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    }
-                },
-                "required": [
-                    "error_code"
-                ]
-            },
-            "BulkInputSource": {
-                "description": "The input source for a bulk operation, referencing a manifest JSON file\nthat contains references to NDJSON chunk files with variation input rows.",
-                "type": "object",
-                "properties": {
-                    "source": {
-                        "$ref": "#/components/schemas/UrlResource",
-                        "description": "A pre-signed URL pointing to the manifest JSON file.\nThe manifest describes the total record count and references to NDJSON\nchunk files, each containing variation input rows conforming to\nthe {@link CreateVariationInput} schema."
-                    },
-                    "mediaType": {
-                        "description": "The media type of the input manifest file. Must be \"application/json\".",
-                        "type": "string",
-                        "enum": [
-                            "application/json"
-                        ]
-                    }
-                },
-                "required": [
-                    "mediaType",
-                    "source"
-                ]
-            },
-            "BulkOutputResult": {
-                "description": "A reference to the JSON manifest produced by a completed bulk job.",
-                "type": "object",
-                "properties": {
-                    "mediaType": {
-                        "description": "The media type of the manifest file.",
-                        "type": "string",
-                        "enum": [
-                            "application/json"
-                        ]
-                    },
-                    "destination": {
-                        "$ref": "#/components/schemas/UrlResource",
-                        "description": "The location where the output manifest file can be downloaded from."
-                    }
-                },
-                "required": [
-                    "destination",
-                    "mediaType"
-                ]
-            },
-            "BulkJobSummary": {
-                "description": "Aggregate summary of a completed bulk job.",
-                "type": "object",
-                "properties": {
-                    "totalRecords": {
-                        "description": "The total number of variation records in the input.",
-                        "type": "number"
-                    },
-                    "successfulRecords": {
-                        "description": "The number of variation records that completed successfully.",
-                        "type": "number"
-                    },
-                    "failedRecords": {
-                        "description": "The number of variation records that failed.",
-                        "type": "number"
-                    }
-                },
-                "required": [
-                    "failedRecords",
-                    "successfulRecords",
-                    "totalRecords"
                 ]
             },
             "ImageRenditionOptions": {
