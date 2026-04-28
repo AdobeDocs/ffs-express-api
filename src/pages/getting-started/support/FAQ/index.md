@@ -35,7 +35,7 @@ The private alpha endpoints will remain active for a few more weeks. Migrate to 
 
 ### Can I request a higher rate limit?
 
-Yes. Contact your account manager or fill out the [Express API Rate Limit Increase Form](https://airtable.com/appiNBn2w6uT0cpkR/pag5hZ3oDcxrjUbH8/form), and we'll evaluate your request. See [Rate Limits](../../rate-limits/index.md) for current defaults.
+Yes. Contact your account manager or fill out the [Express API Rate Limit Increase Form](https://www.adobe.com/go/express-api-ratelimiting), and we'll evaluate your request. See [Rate Limits](../../rate-limits/index.md) for current defaults.
 
 ### How do I use the Adobe Express API?
 

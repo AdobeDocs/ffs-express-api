@@ -6,9 +6,7 @@ contributors:
   - https://github.com/hollyschinsky
 ---
 
-<Superhero  slots="image, heading, text" background="rgb(64, 34, 138)"/>
-
-![Express API hero image](./express-api-hero.png)
+<Superhero slots="heading, text" background="rgb(111, 46, 135)"/>
 
 # Adobe Express API (beta)
 
@@ -21,7 +19,7 @@ Effortlessly create and customize mixed-media designs with on-brand precision.
 We'd like to get to know you better! To participate in the beta, please submit Adobe Express API Beta Access form so
 better understand your needs and use cases. For more information, read the [FAQ](getting-started/support/FAQ/index.md#access-and-onboarding).
 
-- [Request Access](https://airtable.com/appiNBn2w6uT0cpkR/pag3db7joqgtwXSOv/form)
+- [Request Access](https://www.adobe.com/go/express-api-access)
 
 &lt;br/ &gt;
 
