@@ -69,7 +69,7 @@ The Tag Elements Add-on lets you mark specific elements in your Adobe Express do
 <InlineAlert variant="warning" slots="text" />
 
 
-Clicking **Save changes** is important for the document/element visibility while using [`/beta/tagged-documents`](../../api/alpha-tagged-documents/index.md).
+Clicking **Save changes** is important for the document/element visibility while using [`/beta/tagged-documents`](../../api/index.md).
 
 ## Use Case: Locking a template for consistent branding
 

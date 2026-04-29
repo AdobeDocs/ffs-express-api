@@ -15,10 +15,10 @@ const OUTPUT_DIR = process.argv[3] || path.join(__dirname, '../static');
 
 /** Map (path, method) -> existing static filename (replaces these files in static/) */
 const OUTPUT_FILENAMES = {
-    '/alpha/tagged-documents': { get: 'alpha-tagged-documents.json' },
-    '/alpha/tagged-documents/{documentId}': { get: 'alpha-tagged-documents-documentId.json' },
-    '/alpha/generate-variation': { post: 'alpha-generate-variation.json' },
-    '/alpha/export-rendition': { post: 'alpha-export-rendition.json' },
+    '/beta/tagged-documents': { get: 'beta-tagged-documents.json' },
+    '/beta/tagged-documents/{documentId}': { get: 'beta-tagged-documents-documentId.json' },
+    '/beta/generate-variation': { post: 'beta-generate-variation.json' },
+    '/beta/export-rendition': { post: 'beta-export-rendition.json' },
     '/status/{jobId}': { get: 'status-jobId.json' },
 };
 
@@ -97,8 +97,8 @@ function collectTransitiveRefs(spec, initialRefs) {
 
 /**
  * Build a safe filename from path and method.
- * e.g. "/alpha/tagged-documents", "get" -> "alpha-tagged-documents-get"
- * e.g. "/alpha/tagged-documents/{documentId}", "get" -> "alpha-tagged-documents-documentId-get"
+ * e.g. "/beta/tagged-documents", "get" -> "beta-tagged-documents-get"
+ * e.g. "/beta/tagged-documents/{documentId}", "get" -> "beta-tagged-documents-documentId-get"
  */
 function pathAndMethodToFilename(pathStr, method) {
     const noLeading = pathStr.replace(/^\//, '');

@@ -66,7 +66,7 @@ Tokens expire; refresh or re-issue them according to Adobe’s documentation for
 
 ### Example: list tagged documents
 
-Endpoint: [/beta/tagged-documents](../api/alpha-tagged-documents/index.md)
+Endpoint: [/beta/tagged-documents](../api/index.md)
 
 ```bash
 curl -i -X GET \

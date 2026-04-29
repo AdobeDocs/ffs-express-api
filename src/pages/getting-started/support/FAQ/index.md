@@ -62,10 +62,10 @@ The Adobe Express API supports a wide range of use cases, including:
 
 The key features of the Adobe Express (beta) API are:
 
-- [Get details of a tagged document](../../../api/alpha-tagged-documents-documentId/index.md)
-- [Get all tagged documents](../../../api/alpha-tagged-documents/index.md)
-- [Generate variation](../../../api/alpha-generate-variation/index.md)
-- [Export rendition](../../../api/alpha-export-rendition/index.md)
+- [Get details of a tagged document](../../../api/index.md)
+- [Get all tagged documents](../../../api/index.md)
+- [Generate variation](../../../api/index.md)
+- [Export rendition](../../../api/index.md)
 - **Get Job Status:** Check the status of a job submitted to the Adobe Express API. The response includes the job's current status and any error messages from processing.
 
 ## Renditions and exports
@@ -123,4 +123,4 @@ The `tagMappings` field supports pre-signed URLs from `AWS`, `Dropbox`, and `Azu
 
 ### Why does `/beta/tagged-documents` return an empty array?
 
-If you're getting an empty array from the [tagged documents API](../../../api/alpha-tagged-documents/index.md), check that you've saved your changes after [tagging the elements in your document](../../../guides/how-to/tag-documents.md#step-2-create-tags-for-a-document).
+If you're getting an empty array from the [tagged documents API](../../../api/index.md), check that you've saved your changes after [tagging the elements in your document](../../../guides/how-to/tag-documents.md#step-2-create-tags-for-a-document).

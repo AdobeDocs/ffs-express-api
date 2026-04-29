@@ -74,9 +74,9 @@ A list of updates to Adobe Express API.
 
 - **API Specification Updates**: All OpenAPI specifications now include consistent video support
 
-  - `alpha-generate-variation.json`: Video tag type and mapping support
-  - `alpha-tagged-documents.json` and `alpha-tagged-documents-documentId.json`: Video tag type support
-  - `alpha-export-rendition.json`: Already had comprehensive video support
+  - `beta-generate-variation.json`: Video tag type and mapping support
+  - `beta-tagged-documents.json` and `beta-tagged-documents-documentId.json`: Video tag type support
+  - `beta-export-rendition.json`: Already had comprehensive video support
 
 ### Technical Details
 

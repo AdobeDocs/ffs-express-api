@@ -65,10 +65,10 @@ Before you begin:
 
 The Express API provides five key endpoints:
 
-- [**Tagged documents API**](../api/alpha-tagged-documents/index.md): Lists all your tagged documents
-- [**Tagged document details API**](../api/alpha-tagged-documents-documentId/index.md): Retrieves metadata and tagged element information for a specific document
-- [**Generate variation API**](../api/alpha-generate-variation/index.md): Creates a new document variation by modifying tagged elements
-- [**Export rendition API**](../api/alpha-export-rendition/index.md): Exports a document as JPG, PNG, MP4, or PDF
+- [**Tagged documents API**](../api/index.md): Lists all your tagged documents
+- [**Tagged document details API**](../api/index.md): Retrieves metadata and tagged element information for a specific document
+- [**Generate variation API**](../api/index.md): Creates a new document variation by modifying tagged elements
+- [**Export rendition API**](../api/index.md): Exports a document as JPG, PNG, MP4, or PDF
 - [**Status API**](../api/status-jobId/index.md): Checks the status of asynchronous operations like variation generation
 
 ### Fetch Tagged Documents Example

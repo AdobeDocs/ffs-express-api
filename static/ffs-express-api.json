@@ -1567,7 +1567,7 @@
                 "type": "object",
                 "properties": {
                     "tagMappings": {
-                        "description": "A key-value pair where each key represents the unique identifier of a tag element, and the value represents the corresponding element's content. The value type varies by element type: for text elements, it is a plain string; for image or video elements, it is a pre-signed URL pointing to the image or video resource. Allowed domains for pre-signed URLs are AWS, Dropbox and Azure (windows.net). The key is obtained from the response of `/alpha/tagged-documents/{documentId}` in `documentPages` -\\> `taggedElements` -\\> `name`.",
+                        "description": "A key-value pair where each key represents the unique identifier of a tag element, and the value represents the corresponding element's content. The value type varies by element type: for text elements, it is a plain string; for image or video elements, it is a pre-signed URL pointing to the image or video resource. Allowed domains for pre-signed URLs are AWS, Dropbox and Azure (windows.net). The key is obtained from the response of `/beta/tagged-documents/{documentId}` in `documentPages` -\\> `taggedElements` -\\> `name`.",
                         "type": "object",
                         "additionalProperties": {
                             "type": "string"
@@ -2392,7 +2392,7 @@
                         }
                     ],
                     "paging": {
-                        "nextUrl": "https://example.com/alpha/tagged-documents/urn:aaid:sc:AP:0000aaaa-0000-000a-0000-000000aaaaaa?start=10",
+                        "nextUrl": "https://example.com/beta/tagged-documents/urn:aaid:sc:AP:0000aaaa-0000-000a-0000-000000aaaaaa?start=10",
                         "totalRecords": 14
                     }
                 }
@@ -2577,7 +2577,7 @@
                         }
                     ],
                     "paging": {
-                        "nextUrl": "https://example.com/alpha/search-assets?query=card&assetType=template&start=2&limit=2",
+                        "nextUrl": "https://example.com/beta/search-assets?query=card&assetType=template&start=2&limit=2",
                         "totalRecords": 250
                     }
                 }
