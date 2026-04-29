@@ -18,212 +18,6 @@
         }
     ],
     "paths": {
-        "/status/{jobId}": {
-            "get": {
-                "summary": "Job status",
-                "description": "Retrieve a job's status by its `jobId`. Depending on the job type, the response may include job-specific details.",
-                "operationId": "getJobStatus",
-                "parameters": [
-                    {
-                        "name": "jobId",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        },
-                        "description": "The unique identifier of the job."
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful response with job status and details.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "oneOf": [
-                                        {
-                                            "$ref": "#/components/schemas/JobStatusResponse"
-                                        },
-                                        {
-                                            "$ref": "#/components/schemas/ExportRenditionResponse"
-                                        },
-                                        {
-                                            "$ref": "#/components/schemas/GenerateVariationResponse"
-                                        }
-                                    ]
-                                },
-                                "examples": {
-                                    "jobStatusResponseSampleOne": {
-                                        "$ref": "#/components/examples/jobStatusResponseSampleOne"
-                                    },
-                                    "jobStatusResponseSampleTwo": {
-                                        "$ref": "#/components/examples/jobStatusResponseSampleTwo"
-                                    },
-                                    "jobStatusResponseSampleThree": {
-                                        "$ref": "#/components/examples/jobStatusResponseSampleThree"
-                                    },
-                                    "exportRenditionResponseSampleOne": {
-                                        "$ref": "#/components/examples/exportRenditionResponseSampleOne"
-                                    },
-                                    "exportRenditionResponseSampleTwo": {
-                                        "$ref": "#/components/examples/exportRenditionResponseSampleTwo"
-                                    },
-                                    "exportRenditionResponseSampleThree": {
-                                        "$ref": "#/components/examples/exportRenditionResponseSampleThree"
-                                    },
-                                    "exportPdfRenditionResponseSampleOne": {
-                                        "$ref": "#/components/examples/exportPdfRenditionResponseSampleOne"
-                                    },
-                                    "exportPdfRenditionResponseSampleTwo": {
-                                        "$ref": "#/components/examples/exportPdfRenditionResponseSampleTwo"
-                                    },
-                                    "generateVariationResponseSample": {
-                                        "$ref": "#/components/examples/generateVariationResponseSample"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponseDetails"
-                                },
-                                "examples": {
-                                    "errorResponseDetailsNotFound": {
-                                        "$ref": "#/components/examples/errorResponseDetailsNotFound"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponseDetails"
-                                },
-                                "examples": {
-                                    "errorResponseDetailsRuntimeError": {
-                                        "$ref": "#/components/examples/errorResponseDetailsRuntimeError"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/beta/tagged-documents/{documentId}": {
-            "get": {
-                "summary": "Tagged Document Details",
-                "description": "This API retrieves details of the pages and tagged elements within a specified document. It returns a paginated list of the document's pages and metadata about each page. If the document has tagged elements, the API includes their respective details, such as size and position. If the document does not have tagged elements, it returns an empty array. The response includes pagination information to help users navigate the document’s pages. A maximum of 10 pages can be returned in 1 API call.",
-                "operationId": "taggedDocumentDetails",
-                "parameters": [
-                    {
-                        "name": "documentId",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        },
-                        "description": "The unique identifier of the document."
-                    },
-                    {
-                        "name": "start",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "integer"
-                        },
-                        "description": "Specifies the starting document page number from which details need to be fetched. Default is 1."
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully retrieved the details of the tagged document.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/TaggedDocumentDetailsResponse"
-                                },
-                                "examples": {
-                                    "taggedDocumentDetailsResponseSampleOne": {
-                                        "$ref": "#/components/examples/taggedDocumentDetailsResponseSampleOne"
-                                    },
-                                    "taggedDocumentDetailsResponseSampleTwo": {
-                                        "$ref": "#/components/examples/taggedDocumentDetailsResponseSampleTwo"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponseDetails"
-                                },
-                                "examples": {
-                                    "errorResponseDetailsBadRequest": {
-                                        "$ref": "#/components/examples/errorResponseDetailsBadRequest"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponseDetails"
-                                },
-                                "examples": {
-                                    "errorResponseDetailsUnauthorized": {
-                                        "$ref": "#/components/examples/errorResponseDetailsUnauthorized"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Unprocessable Entity",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponseDetails"
-                                },
-                                "examples": {
-                                    "errorResponseDetailsUnprocessableEntity": {
-                                        "$ref": "#/components/examples/errorResponseDetailsUnprocessableEntity"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponseDetails"
-                                },
-                                "examples": {
-                                    "errorResponseDetailsRuntimeError": {
-                                        "$ref": "#/components/examples/errorResponseDetailsRuntimeError"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/beta/tagged-documents": {
             "get": {
                 "summary": "Tagged documents",
@@ -389,6 +183,113 @@
                                 "examples": {
                                     "errorResponseDetailsServiceUnavailable": {
                                         "$ref": "#/components/examples/errorResponseDetailsServiceUnavailable"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/beta/tagged-documents/{documentId}": {
+            "get": {
+                "summary": "Tagged Document Details",
+                "description": "This API retrieves details of the pages and tagged elements within a specified document. It returns a paginated list of the document's pages and metadata about each page. If the document has tagged elements, the API includes their respective details, such as size and position. If the document does not have tagged elements, it returns an empty array. The response includes pagination information to help users navigate the document’s pages. A maximum of 10 pages can be returned in 1 API call.",
+                "operationId": "taggedDocumentDetails",
+                "parameters": [
+                    {
+                        "name": "documentId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "The unique identifier of the document."
+                    },
+                    {
+                        "name": "start",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "Specifies the starting document page number from which details need to be fetched. Default is 1."
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved the details of the tagged document.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaggedDocumentDetailsResponse"
+                                },
+                                "examples": {
+                                    "taggedDocumentDetailsResponseSampleOne": {
+                                        "$ref": "#/components/examples/taggedDocumentDetailsResponseSampleOne"
+                                    },
+                                    "taggedDocumentDetailsResponseSampleTwo": {
+                                        "$ref": "#/components/examples/taggedDocumentDetailsResponseSampleTwo"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsBadRequest": {
+                                        "$ref": "#/components/examples/errorResponseDetailsBadRequest"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsUnauthorized": {
+                                        "$ref": "#/components/examples/errorResponseDetailsUnauthorized"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsUnprocessableEntity": {
+                                        "$ref": "#/components/examples/errorResponseDetailsUnprocessableEntity"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsRuntimeError": {
+                                        "$ref": "#/components/examples/errorResponseDetailsRuntimeError"
                                     }
                                 }
                             }
@@ -1017,6 +918,105 @@
                                 "examples": {
                                     "errorResponseDetailsServiceUnavailable": {
                                         "$ref": "#/components/examples/errorResponseDetailsServiceUnavailable"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/status/{jobId}": {
+            "get": {
+                "summary": "Job status",
+                "description": "Retrieve a job's status by its `jobId`. Depending on the job type, the response may include job-specific details.",
+                "operationId": "getJobStatus",
+                "parameters": [
+                    {
+                        "name": "jobId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "The unique identifier of the job."
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response with job status and details.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "$ref": "#/components/schemas/JobStatusResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/ExportRenditionResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/GenerateVariationResponse"
+                                        }
+                                    ]
+                                },
+                                "examples": {
+                                    "jobStatusResponseSampleOne": {
+                                        "$ref": "#/components/examples/jobStatusResponseSampleOne"
+                                    },
+                                    "jobStatusResponseSampleTwo": {
+                                        "$ref": "#/components/examples/jobStatusResponseSampleTwo"
+                                    },
+                                    "jobStatusResponseSampleThree": {
+                                        "$ref": "#/components/examples/jobStatusResponseSampleThree"
+                                    },
+                                    "exportRenditionResponseSampleOne": {
+                                        "$ref": "#/components/examples/exportRenditionResponseSampleOne"
+                                    },
+                                    "exportRenditionResponseSampleTwo": {
+                                        "$ref": "#/components/examples/exportRenditionResponseSampleTwo"
+                                    },
+                                    "exportRenditionResponseSampleThree": {
+                                        "$ref": "#/components/examples/exportRenditionResponseSampleThree"
+                                    },
+                                    "exportPdfRenditionResponseSampleOne": {
+                                        "$ref": "#/components/examples/exportPdfRenditionResponseSampleOne"
+                                    },
+                                    "exportPdfRenditionResponseSampleTwo": {
+                                        "$ref": "#/components/examples/exportPdfRenditionResponseSampleTwo"
+                                    },
+                                    "generateVariationResponseSample": {
+                                        "$ref": "#/components/examples/generateVariationResponseSample"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsNotFound": {
+                                        "$ref": "#/components/examples/errorResponseDetailsNotFound"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsRuntimeError": {
+                                        "$ref": "#/components/examples/errorResponseDetailsRuntimeError"
                                     }
                                 }
                             }
