@@ -462,6 +462,24 @@
                 "summary": "Export rendition",
                 "description": "Export one or more pages from an Adobe Express document in supported formats. This endpoint accepts an export request and returns pre-signed URLs for accessing the rendered files.\n\n**Supported formats:**\n- Image formats: `image/jpeg` (JPG), `image/png` (PNG)\n- Video format: `video/mp4` (MP4)\n- Document format: `application/pdf` (PDF)\n\n**Rendition availability:**\n- Image renditions: Valid for 4 hours, maximum size 8192px on the longest side\n- Video and PDF renditions: Valid for 24 hours, maximum size 4096px on the longest side\n\n**Asynchronous processing:**\nExport requests are processed asynchronously. The response includes a `jobId` and `statusUrl` that you can use to track the export progress and retrieve the final rendition URLs.\n\n**Restrictions:**\n- **Public templates** (documents owned by Adobe that have not been copied to the user’s account) cannot be exported and will return a `400 Bad Request`.\n- **Documents containing Adobe Stock-licensed assets** cannot be exported and will return a `422 Unprocessable Entity` with error code `stock_content_detected`.",
                 "operationId": "exportRendition",
+                "x-restrictions": [
+                    {
+                        "condition": "Public templates (Adobe-owned documents not copied to the user account)",
+                        "behavior": "Export is not allowed",
+                        "error": {
+                            "status": 400,
+                            "code": "bad_request"
+                        }
+                    },
+                    {
+                        "condition": "Document contains Adobe Stock\u2013licensed assets",
+                        "behavior": "Export fails",
+                        "error": {
+                            "status": 422,
+                            "code": "stock_content_detected"
+                        }
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
