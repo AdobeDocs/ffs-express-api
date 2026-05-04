@@ -108,6 +108,21 @@
                                 "examples": {
                                     "errorResponseDetailsForbidden": {
                                         "$ref": "#/components/examples/errorResponseDetailsForbidden"
+                                    },
+                                    "errorResponseDetailsForbiddenMissingExpressEntitlement": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbiddenMissingExpressEntitlement"
+                                    },
+                                    "errorResponseDetailsForbiddenMissingExpressApiEntitlement": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbiddenMissingExpressApiEntitlement"
+                                    },
+                                    "errorResponseDetailsForbiddenExpressApiRequiresPremiumAccount": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbiddenExpressApiRequiresPremiumAccount"
+                                    },
+                                    "errorResponseDetailsForbiddenMissingTypekitEntitlement": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbiddenMissingTypekitEntitlement"
+                                    },
+                                    "errorResponseDetailsForbiddenTechnicalAccountNonFreeTypekit": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbiddenTechnicalAccountNonFreeTypekit"
                                     }
                                 }
                             }
@@ -374,6 +389,21 @@
                                 "examples": {
                                     "errorResponseDetailsForbidden": {
                                         "$ref": "#/components/examples/errorResponseDetailsForbidden"
+                                    },
+                                    "errorResponseDetailsForbiddenMissingExpressEntitlement": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbiddenMissingExpressEntitlement"
+                                    },
+                                    "errorResponseDetailsForbiddenMissingExpressApiEntitlement": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbiddenMissingExpressApiEntitlement"
+                                    },
+                                    "errorResponseDetailsForbiddenExpressApiRequiresPremiumAccount": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbiddenExpressApiRequiresPremiumAccount"
+                                    },
+                                    "errorResponseDetailsForbiddenMissingTypekitEntitlement": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbiddenMissingTypekitEntitlement"
+                                    },
+                                    "errorResponseDetailsForbiddenTechnicalAccountNonFreeTypekit": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbiddenTechnicalAccountNonFreeTypekit"
                                     }
                                 }
                             }
@@ -460,26 +490,8 @@
         "/beta/export-rendition": {
             "post": {
                 "summary": "Export rendition",
-                "description": "Export one or more pages from an Adobe Express document in supported formats. This endpoint accepts an export request and returns pre-signed URLs for accessing the rendered files.\n\n**Supported formats:**\n- Image formats: `image/jpeg` (JPG), `image/png` (PNG)\n- Video format: `video/mp4` (MP4)\n- Document format: `application/pdf` (PDF)\n\n**Rendition availability:**\n- Image renditions: Valid for 4 hours, maximum size 8192px on the longest side\n- Video and PDF renditions: Valid for 24 hours, maximum size 4096px on the longest side\n\n**Asynchronous processing:**\nExport requests are processed asynchronously. The response includes a `jobId` and `statusUrl` that you can use to track the export progress and retrieve the final rendition URLs.\n\n**Restrictions:**\n- **Public templates** (documents owned by Adobe that have not been copied to the user’s account) cannot be exported and will return a `400 Bad Request`.\n- **Documents containing Adobe Stock-licensed assets** cannot be exported and will return a `422 Unprocessable Entity` with error code `stock_content_detected`.",
+                "description": "Export one or more pages from an Adobe Express document in supported formats. This endpoint accepts an export request and returns pre-signed URLs for accessing the rendered files.\n\n**Supported formats:**\n- Image formats: `image/jpeg` (JPG), `image/png` (PNG)\n- Video format: `video/mp4` (MP4)\n- Document format: `application/pdf` (PDF)\n\n**Rendition availability:**\n- Image renditions: Valid for 4 hours, maximum size 8192px on the longest side\n- Video and PDF renditions: Valid for 24 hours, maximum size 4096px on the longest side\n\n**Asynchronous processing:**\nExport requests are processed asynchronously. The response includes a `jobId` and `statusUrl` that you can use to track the export progress and retrieve the final rendition URLs.\n\n**Restrictions:**\n\n| Condition | Behavior | Error |\n| --- | --- | --- |\n| Public templates (Adobe-owned documents not copied to the user account) | Export is not allowed | `400 bad_request` |\n| Document contains Adobe Stock–licensed assets | Export fails | `422 stock_content_detected` |",
                 "operationId": "exportRendition",
-                "x-restrictions": [
-                    {
-                        "condition": "Public templates (Adobe-owned documents not copied to the user account)",
-                        "behavior": "Export is not allowed",
-                        "error": {
-                            "status": 400,
-                            "code": "bad_request"
-                        }
-                    },
-                    {
-                        "condition": "Document contains Adobe Stock\u2013licensed assets",
-                        "behavior": "Export fails",
-                        "error": {
-                            "status": 422,
-                            "code": "stock_content_detected"
-                        }
-                    }
-                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -508,6 +520,12 @@
                                 },
                                 "exportRenditionRequestSampleSeven": {
                                     "$ref": "#/components/examples/exportRenditionRequestSampleSeven"
+                                },
+                                "exportRenditionRequestPublicTemplate": {
+                                    "$ref": "#/components/examples/exportRenditionRequestPublicTemplate"
+                                },
+                                "exportRenditionRequestStockContent": {
+                                    "$ref": "#/components/examples/exportRenditionRequestStockContent"
                                 }
                             }
                         }
@@ -539,6 +557,9 @@
                                 "examples": {
                                     "errorResponseDetailsBadRequest": {
                                         "$ref": "#/components/examples/errorResponseDetailsBadRequest"
+                                    },
+                                    "errorResponseDetailsPublicTemplate": {
+                                        "$ref": "#/components/examples/errorResponseDetailsPublicTemplate"
                                     }
                                 }
                             }
@@ -569,6 +590,21 @@
                                 "examples": {
                                     "errorResponseDetailsForbidden": {
                                         "$ref": "#/components/examples/errorResponseDetailsForbidden"
+                                    },
+                                    "errorResponseDetailsForbiddenMissingExpressEntitlement": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbiddenMissingExpressEntitlement"
+                                    },
+                                    "errorResponseDetailsForbiddenMissingExpressApiEntitlement": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbiddenMissingExpressApiEntitlement"
+                                    },
+                                    "errorResponseDetailsForbiddenExpressApiRequiresPremiumAccount": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbiddenExpressApiRequiresPremiumAccount"
+                                    },
+                                    "errorResponseDetailsForbiddenMissingTypekitEntitlement": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbiddenMissingTypekitEntitlement"
+                                    },
+                                    "errorResponseDetailsForbiddenTechnicalAccountNonFreeTypekit": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbiddenTechnicalAccountNonFreeTypekit"
                                     }
                                 }
                             }
@@ -599,6 +635,9 @@
                                 "examples": {
                                     "errorResponseDetailsUnprocessableEntity": {
                                         "$ref": "#/components/examples/errorResponseDetailsUnprocessableEntity"
+                                    },
+                                    "errorResponseDetailsStockContent": {
+                                        "$ref": "#/components/examples/errorResponseDetailsStockContent"
                                     }
                                 }
                             }
@@ -1525,6 +1564,41 @@
                     "message": "Not allowed"
                 }
             },
+            "errorResponseDetailsForbiddenMissingExpressEntitlement": {
+                "summary": "Forbidden - Missing Adobe Express entitlement",
+                "value": {
+                    "error_code": "access_error",
+                    "message": "The account associated with the provided access token does not have Adobe Express entitlements"
+                }
+            },
+            "errorResponseDetailsForbiddenMissingExpressApiEntitlement": {
+                "summary": "Forbidden - Missing Express API entitlement",
+                "value": {
+                    "error_code": "access_error",
+                    "message": "The account associated with the provided access token does not have Express API entitlements"
+                }
+            },
+            "errorResponseDetailsForbiddenExpressApiRequiresPremiumAccount": {
+                "summary": "Forbidden - Premium Adobe Express account required",
+                "value": {
+                    "error_code": "access_error",
+                    "message": "Access to the Express API requires a premium Adobe Express account"
+                }
+            },
+            "errorResponseDetailsForbiddenMissingTypekitEntitlement": {
+                "summary": "Forbidden - Missing Typekit entitlement",
+                "value": {
+                    "error_code": "access_error",
+                    "message": "The account associated with the provided access token does not have 'typekit' entitlement"
+                }
+            },
+            "errorResponseDetailsForbiddenTechnicalAccountNonFreeTypekit": {
+                "summary": "Forbidden - Technical account has non-free Typekit entitlement",
+                "value": {
+                    "error_code": "access_error",
+                    "message": "The account associated with the provided access token has 'typekit' entitlements beyond the free tier, which is not permitted for API access"
+                }
+            },
             "errorResponseDetailsNotFound": {
                 "summary": "Not Found",
                 "value": {
@@ -1996,6 +2070,44 @@
                             }
                         }
                     }
+                }
+            },
+            "exportRenditionRequestPublicTemplate": {
+                "summary": "Export Rendition - Public Template (returns 400)",
+                "description": "Requesting rendition of a public template that has not been copied to the user's account will return a 400 Bad Request.",
+                "value": {
+                    "id": "urn:aaid:sc:VA6C2:5d99ac75-fb85-5ee7-b73d-ab51929c0cb5",
+                    "pages": "1",
+                    "options": {
+                        "format": "image/jpeg",
+                        "size": 1024
+                    }
+                }
+            },
+            "exportRenditionRequestStockContent": {
+                "summary": "Export Rendition - Document with Stock Assets (returns 422)",
+                "description": "Requesting rendition of a document that contains Adobe Stock-licensed assets will return a 422 Unprocessable Entity.",
+                "value": {
+                    "id": "urn:aaid:sc:AP:c129e458-8cc9-5c73-a44d-710796fea23a",
+                    "pages": "1",
+                    "options": {
+                        "format": "image/jpeg",
+                        "size": 1024
+                    }
+                }
+            },
+            "errorResponseDetailsPublicTemplate": {
+                "summary": "Bad Request - Public Template",
+                "value": {
+                    "error_code": "client_error",
+                    "message": "Document is a public template and cannot be exported directly. Please create a copy first."
+                }
+            },
+            "errorResponseDetailsStockContent": {
+                "summary": "Unprocessable Entity - Stock Content Detected",
+                "value": {
+                    "error_code": "stock_content_detected",
+                    "message": "Document contains stock-licensed content and cannot be used for rendition generation"
                 }
             },
             "jobStatusResponseSampleOne": {
