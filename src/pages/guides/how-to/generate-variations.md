@@ -28,7 +28,7 @@ The Generate Variation API lets you create document variations by modifying tagg
 
 ### Step 1: Get Your Document ID
 
-First, [get your tagged document ID](./get-tagged-documents.md).
+First, [get your tagged document ID](get-tagged-documents.md).
 
 ### Step 2: Generate a Variation
 
@@ -56,7 +56,7 @@ In this example, you will learn how to generate a document variation using the A
 
 ### Step 1: Generate Variation Request
 
-First, follow the steps in the [How to Get Tagged Documents Guide](./get-tagged-documents.md) to get the tagged documents available for export.
+First, follow the steps in the [How to Get Tagged Documents Guide](get-tagged-documents.md) to get the tagged documents available for export.
 
 Next, using one of the `id`'s (document URN) returned from the tagged documents response, call the endpoint [`generate-variation`](../../api/index.md) with a set of `variationDetails` defined for use in the new variation of your document. A sample `curl` request and response is included below.
 
@@ -66,7 +66,7 @@ Next, using one of the `id`'s (document URN) returned from the tagged documents 
 
 ```sh
 curl -i -X POST \
-  --url 'https://express-api.adobe.io/alpha/generate-variation \
+  --url 'https://express-api.adobe.io/beta/generate-variation \
   -H 'Authorization: Bearer YOUR_AUTH_TOKEN_HERE' \
   -H 'X-API-KEY: YOUR_API_KEY_HERE' \
   -d '{
@@ -171,7 +171,7 @@ async function generateVariation(id, variationDetails) {
         variationDetails     
     }
     
-    let resp = await fetch(`${BASE}/alpha/generate-variation`, {
+    let resp = await fetch(`${BASE}/beta/generate-variation`, {
         method:'POST',
         headers: {
             'Authorization': `Bearer ${process.env.AUTH_TOKEN}`,
@@ -273,7 +273,7 @@ async function generateVariation(id, variationDetails) {
         variationDetails     
     }
     
-    let resp = await fetch(`${BASE}/alpha/generate-variation`, {
+    let resp = await fetch(`${BASE}/beta/generate-variation`, {
         method:'POST',
         headers: {
             'Authorization': `Bearer ${process.env.AUTH_TOKEN}`,

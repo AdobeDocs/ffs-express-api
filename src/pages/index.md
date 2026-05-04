@@ -1,30 +1,41 @@
 ---
-title: Overview - Adobe Express API Alpha
-description: This is the overview page of Adobe Express(Alpha) API
+title: Overview - Adobe Express API beta
+description: This is the overview page of Adobe Express(beta) API
 contributors:
   - https://github.com/nimithajalal
   - https://github.com/hollyschinsky
 ---
 
-<Superhero  slots="heading, text" background="rgb(64, 34, 138)"/>
+<Superhero slots="heading, text" background="rgb(111, 46, 135)"/>
 
-# Adobe Express API (Alpha)
+# Adobe Express API (beta)
 
 Effortlessly create and customize mixed-media designs with on-brand precision.
 
-<Resources slots="heading, links"/>
+<Announcement slots="heading, text, button" className="request-access-announcement" variant="secondary" borderColor="#c148ed" hasborder="true" />
 
-#### Resources
+### The Adobe Express API is now in beta
 
-* [Quickstart Guide](./guides/index.md)
+We'd like to get to know you better! To participate in the beta, please submit Adobe Express API Beta Access form so
+better understand your needs and use cases. For more information, read the [FAQ](getting-started/support/FAQ/index.md#access-and-onboarding).
 
-## Overview
+- [Request Access](https://www.adobe.com/go/express-api-access)
+
+&lt;br/ &gt;
+
+<Resources slots="text, links"/>
+
+**Useful Resources**
+
+* [Express API Quickstart](guides/index.md)
+
+## What is the Adobe Express API?
 
 The Adobe Express API provides an effortless way to incorporate Adobe Express functionalities into your applications through a straightforward REST-based API. This documentation guides you through the initial steps, best practices, and current known issues/limitations.
 
-## Features
+## What can Express API do?
 
-The Adobe Express (Alpha) API offers the following key features:
+The Adobe Express (beta) API offers the following key features:
 
 ### Get Details of a Tagged Document
 
@@ -48,7 +59,7 @@ The Export Rendition API enables document export in various supported formats (c
 
 ### Get Started
 
-[Quickstart Guide](guides/)
+[Quickstart Guide](guides/index.md)
 
 Get started with the Adobe Express API.
 
@@ -56,26 +67,26 @@ Get started with the Adobe Express API.
 
 ### Guides
 
-[Authentication](guides/concepts/authentication/)
+[Authentication](getting-started/index.md)
 
 Learn how to authenticate your requests.
 
 <DiscoverBlock slots="link, text"/>
 
-[Rate limiting](guides/concepts/rate-limits/)
+[Rate limiting](getting-started/rate-limits/index.md)
 
 Learn about rate limiting.
 
 <DiscoverBlock slots="link, text"/>
 
-[Create Credentials](guides/concepts/create-credentials/)
+[Create Credentials](getting-started/create-credentials/index.md)
 
 Learn how to create credentials for your services — Admin only.
 
 <DiscoverBlock width="100%" slots="heading, link, text"/>
 
-### API References
+### API Reference
 
-[Try the API](api/)
+[Try the API](api/index.md)
 
-Try the Adobe Express (Alpha) API. Explore, make calls, with full endpoint descriptions.
+Try the Adobe Express (beta) API. Explore, make calls, with full endpoint descriptions.

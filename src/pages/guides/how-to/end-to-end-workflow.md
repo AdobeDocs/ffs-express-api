@@ -1,6 +1,6 @@
 ---
 title: Create an End-to-End Express API Workflow
-description: Build a Node.js workflow that combines Express API endpoints to fetch tagged documents, create variations, and export renditions while handling asynchronous operations.
+description: Build a workflow combining Express API endpoints to fetch tagged documents, create variations, and export renditions.
 keywords:
   - Adobe Express
   - Adobe Express API
@@ -103,7 +103,7 @@ const variationDetails = {
 // Fetch tagged documents
 async function getTaggedDocuments() {
     try {
-        const url = `${BASE}/alpha/tagged-documents?start=0&limit=10&sortBy=modifiedDate`;        
+        const url = `${BASE}/beta/tagged-documents?start=0&limit=10&sortBy=modifiedDate`;        
         const response = await fetch(url, { headers });
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -128,7 +128,7 @@ async function exportRendition(id, pages, options) {
         options     
     }
     
-    let resp = await fetch(`${BASE}/alpha/export-rendition`, {
+    let resp = await fetch(`${BASE}/beta/export-rendition`, {
         method:'POST',
         headers: {
             'Authorization': `Bearer ${process.env.AUTH_TOKEN}`,
@@ -148,7 +148,7 @@ async function generateVariation(id, variationDetails) {
         variationDetails     
     }
         
-    let resp = await fetch(`${BASE}/alpha/generate-variation`, {
+    let resp = await fetch(`${BASE}/beta/generate-variation`, {
         method:'POST',
         headers: {
             'Authorization': `Bearer ${process.env.AUTH_TOKEN}`,
@@ -264,7 +264,7 @@ node e2e-workflow.mjs
   ```js
   async function getTaggedDocuments() {        
     try {
-        const url = `${BASE}/alpha/tagged-documents?start=0&limit=10&sortBy=modifiedDate`;        
+        const url = `${BASE}/beta/tagged-documents?start=0&limit=10&sortBy=modifiedDate`;        
         const response = await fetch(url, { headers });
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -293,7 +293,7 @@ node e2e-workflow.mjs
         variationDetails     
     }
         
-    let resp = await fetch(`${BASE}/alpha/generate-variation`, {
+    let resp = await fetch(`${BASE}/beta/generate-variation`, {
         method:'POST',
         headers: {
             'Authorization': `Bearer ${process.env.AUTH_TOKEN}`,
@@ -319,7 +319,7 @@ node e2e-workflow.mjs
         options     
     }
     
-    let resp = await fetch(`${BASE}/alpha/export-rendition`, {
+    let resp = await fetch(`${BASE}/beta/export-rendition`, {
         method:'POST',
         headers: {
             'Authorization': `Bearer ${process.env.AUTH_TOKEN}`,

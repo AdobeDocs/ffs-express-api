@@ -2,32 +2,45 @@
     - /firefly-services/docs/express-api/
 
 - pages:
-    - [Overview](index.md)
+    - All Firefly Services
+        - [Firefly Services Home](https://developer.adobe.com/firefly-services/docs/guides/?aio_internal) - Introduction and general information about all Firefly services.
+        - [Firefly API](https://developer.adobe.com/firefly-services/docs/firefly-api/?aio_internal) - Docs and references for Firefly API.
+        - [Photoshop API](https://developer.adobe.com/firefly-services/docs/photoshop/?aio_internal) - Docs and references for Photoshop API.
+        - [Lightroom API](https://developer.adobe.com/firefly-services/docs/lightroom/?aio_internal) - Docs and references for Lightroom API.
+        - [Audio/Video API](https://developer.adobe.com/audio-video-firefly-services/?aio_internal) - Docs and references for Audio/Video API.
+        - [InDesign API](https://developer.adobe.com/firefly-services/docs/indesign-apis/?aio_internal) - Docs and references for InDesign API.
+        - [Substance 3D API](https://developer.adobe.com/firefly-services/docs/s3dapi/?aio_internal) - Unlock generative AI for rendering and object composites.
+        - [Illustrator API](https://developer.adobe.com/firefly-services/docs/illustrator/?aio_internal) - Docs and references for Illustrator API.
+        - [Content Tagging API](https://experienceleague.adobe.com/docs/experience-platform/intelligent-services/content-commerce-ai/overview.html) - Docs and references for Content Tagging services.
+    - [About Express API](/index.md)
+    - [Getting Started](/getting-started/index.md)
     - [Guides](guides/index.md)
     - [API Reference](api/index.md)
-    - [Support](support/index.md)
+
+- buttons:
+    - [Support](https://airtable.com/appu5RTWgdM95jynx/pagyuT1qspNJcPU2E/form)
+    - [Console](https://developer.adobe.com/console/) consoleId
 
 - subPages:
+    - What's New header
+    - [Changelog](getting-started/changelog/index.md)
+    - Getting Started header
+    - [General Authentication](/getting-started/index.md)
+    - [Create Credentials](/getting-started/create-credentials/index.md)
+    - [Error Logging](/getting-started/error-logging/index.md)
+    - [Technical Usage Notes](/getting-started/usage/index.md)
+    - [Rate Limits](/getting-started/rate-limits/index.md)
+    - Support header
+    - [FAQ](getting-started/support/FAQ/index.md)
+    - [Best Practices](/getting-started/support/best-practices/index.md)
     - [Overview](index.md)
-    - [Guides](guides/index.md)
-      - [Concepts](#concepts)
-        - [Authentication](guides/concepts/authentication/index.md)
-        - [Rate Limits](guides/concepts/rate-limits/index.md)
-        - [Create Credentials](guides/concepts/create-credentials/index.md)
-        - [Error Logging](guides/concepts/error-logging/index.md)
-        - [Known Issues](guides/concepts/known-issues/index.md)
-      - [How To](#how-to)
-        - [Tag Documents](guides/how-to/tag-documents.md)
-        - [Get Tagged Documents](guides/how-to/get-tagged-documents.md)
-        - [Generate Variations](guides/how-to/generate-variations.md)
-        - [Export Document Renditions](guides/how-to/export-document.md)
-        - [End-to-End Workflow](guides/how-to/end-to-end-workflow.md)
-      - [Tutorials](#tutorials)
-        - [Dropbox Integration Workflow](guides/tutorials/dropbox-workflow.md)
-      - [Changelog](guides/changelog/index.md)
-    - [API Reference](api/index.md)
-    - [Support](support/index.md)
-      - [FAQ](support/FAQ/index.md)
-      - [Best Practices](support/best-practices/index.md)
-      - [Community](support/community/index.md)
-      - [Contribute](support/contribute/index.md)
+    - Guides header
+    - [Express API Quickstart](guides/index.md)
+    - How Tos header
+    - [Tag Documents](guides/how-to/tag-documents.md)
+    - [Get Tagged Documents](guides/how-to/get-tagged-documents.md)
+    - [Generate Variations](guides/how-to/generate-variations.md)
+    - [Export Document Renditions](guides/how-to/export-document.md)
+    - [End-to-End Workflow](guides/how-to/end-to-end-workflow.md)
+    - Tutorials header
+    - [Dropbox Integration Workflow](guides/tutorials/dropbox-workflow.md)
