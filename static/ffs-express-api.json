@@ -208,7 +208,7 @@
         },
         "/beta/tagged-documents/{documentId}": {
             "get": {
-                "summary": "Tagged Document Details",
+                "summary": "Tagged document details",
                 "description": "This API retrieves details of the pages and tagged elements within a specified document. It returns a paginated list of the document's pages and metadata about each page. If the document has tagged elements, the API includes their respective details, such as size and position. If the document does not have tagged elements, it returns an empty array. The response includes pagination information to help users navigate the document’s pages. A maximum of 10 pages can be returned in 1 API call.",
                 "operationId": "taggedDocumentDetails",
                 "parameters": [
@@ -1483,7 +1483,7 @@
         },
         "examples": {
             "taggedDocumentsResponseSample": {
-                "summary": "Tagged Documents Response Sample",
+                "summary": "Tagged Documents response sample",
                 "value": {
                     "documents": [
                         {
@@ -1638,7 +1638,7 @@
                 }
             },
             "taggedDocumentDetailsResponseSampleOne": {
-                "summary": "Tagged Document Details Response Sample 1",
+                "summary": "Tagged document details response sample 1",
                 "value": {
                     "documentPages": [
                         {
@@ -1893,7 +1893,7 @@
                 }
             },
             "taggedDocumentDetailsResponseSampleTwo": {
-                "summary": "Tagged Document Details Response Sample 2",
+                "summary": "Tagged document details response sample 2",
                 "value": {
                     "documentPages": [
                         {
@@ -1975,7 +1975,7 @@
                 }
             },
             "jobResponseSample": {
-                "summary": "Job Response Sample",
+                "summary": "Job response sample",
                 "value": {
                     "jobId": "af121560-218e-4dd9-918d-add12b3b6d98",
                     "statusUrl": "https://example.com/status/af121560-218e-4dd9-918d-add12b3b6d98"
@@ -2132,7 +2132,7 @@
                 }
             },
             "exportRenditionResponseSampleOne": {
-                "summary": "Export Rendition Response Sample 1",
+                "summary": "Export Rendition response sample 1",
                 "value": {
                     "jobId": "af121560-218e-4dd9-918d-add12b3b6d98",
                     "status": "succeeded",
@@ -2162,7 +2162,7 @@
                 }
             },
             "exportRenditionResponseSampleTwo": {
-                "summary": "Export Rendition Response Sample 2",
+                "summary": "Export Rendition response sample 2",
                 "value": {
                     "jobId": "af121560-218e-4dd9-918d-add12b3b6d98",
                     "status": "partially_succeeded",
@@ -2187,7 +2187,7 @@
                 }
             },
             "exportRenditionResponseSampleThree": {
-                "summary": "Export Rendition Response Sample 3",
+                "summary": "Export Rendition response sample 3",
                 "value": {
                     "jobId": "af121560-218e-4dd9-918d-add12b3b6d98",
                     "status": "failed",
