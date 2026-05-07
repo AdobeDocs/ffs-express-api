@@ -1,7 +1,8 @@
 ---
-title: Adobe Express API(Alpha)
-description: Adobe Express(Alpha) API Spec
+title: Adobe Express API (beta) API Reference
+description: The Adobe Express(beta) API reference documentation.
 layout: none
+hideBreadcrumbNav: true
 ---
 
-<RedoclyAPIBlock src="/express-api/alpha-tagged-documents.json" width="600px" generateCodeSamples="languages: [{ lang: 'curl' }, { lang: 'Node.js' }, { lang: 'JavaScript' }, {lang: 'Python'}]" disableSidebar />
+<RedoclyAPIBlock src="/firefly-services/docs/express-api/ffs-express-api.json" hideTryItPanel scrollYOffset={64} generateCodeSamples="languages: [{ lang: 'curl' }, { lang: 'Node.js' }, { lang: 'JavaScript' }, {lang: 'Python'}]" />

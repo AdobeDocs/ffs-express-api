@@ -36,7 +36,7 @@ The Express API endpoints currently only operate on the Express documents tagged
 Before you begin:
 
 1. **Adobe Express Account**: Ensure you have access to [Adobe Express](https://new.express.adobe.com/)
-2. **Authentication**: Obtain an access token with `openid`, `AdobeID`, and `ee.express_api` scopes. See [authentication documentation](../guides/concepts/authentication/index.md)
+2. **Authentication**: Obtain an access token with `openid`, `AdobeID`, and `ee.express_api` scopes. See [authentication documentation](../getting-started/index.md)
 3. **API Key**: [Register your application](https://developer.adobe.com/console) to receive an API key
 4. **Required Headers**: Include these in every API request:
 
@@ -65,11 +65,11 @@ Before you begin:
 
 The Express API provides five key endpoints:
 
-- [**Tagged documents API**](../api/alpha-tagged-documents/index.md): Lists all your tagged documents
-- [**Tagged document details API**](../api/alpha-tagged-documents-documentId/index.md): Retrieves metadata and tagged element information for a specific document
-- [**Generate variation API**](../api/alpha-generate-variation/index.md): Creates a new document variation by modifying tagged elements
-- [**Export rendition API**](../api/alpha-export-rendition/index.md): Exports a document as JPG, PNG, MP4, or PDF
-- [**Status API**](../api/status-jobId/index.md): Checks the status of asynchronous operations like variation generation
+- [**Tagged documents API**](../api/index.md): Lists all your tagged documents
+- [**Tagged document details API**](../api/index.md): Retrieves metadata and tagged element information for a specific document
+- [**Generate variation API**](../api/index.md): Creates a new document variation by modifying tagged elements
+- [**Export rendition API**](../api/index.md): Exports a document as JPG, PNG, MP4, or PDF
+- [**Status API**](../api/index.md): Checks the status of asynchronous operations like variation generation
 
 ### Fetch Tagged Documents Example
 
@@ -81,7 +81,7 @@ This example demonstrates how to retrieve all tagged documents available to your
 
 ```bash
 curl -i -X GET \
-  'https://express-api.adobe.io/alpha/tagged-documents?start=0&limit=10&sortBy=name' \
+  'https://express-api.adobe.io/beta/tagged-documents?start=0&limit=10&sortBy=name' \
   -H 'Authorization: Bearer <YOUR_TOKEN>' \
   -H 'X-API-KEY: YOUR-API-KEY'
 ```
@@ -98,13 +98,13 @@ curl -i -X GET \
     }
   ],
   "paging": {
-    "nextUrl": "https://<domain>/alpha/tagged-documents?start=1&limit=1&sortBy=name",
+    "nextUrl": "https://<domain>/beta/tagged-documents?start=1&limit=1&sortBy=name",
     "totalRecords": 1
   }
 }
 ```
 
-**Note**: If you receive an empty document list, verify that you have [properly tagged your documents](../guides/how-to/tag-documents.md).
+**Note**: If you receive an empty document list, verify that you have [properly tagged your documents](how-to/tag-documents.md).
 
 ### Fetch Document Details Example
 
@@ -116,7 +116,7 @@ Once you have document IDs, you can retrieve detailed information about a specif
 
 ```bash
 curl -i -X GET \
-  'https://express-api.adobe.io/alpha/tagged-documents/<YOUR_DOCUMENT_ID>' \
+  'https://express-api.adobe.io/beta/tagged-documents/<YOUR_DOCUMENT_ID>' \
   -H 'Authorization: Bearer <YOUR_TOKEN>' \
   -H 'X-API-KEY: YOUR-API-KEY'
 ```
@@ -169,7 +169,7 @@ curl -i -X GET \
 
 The response provides detailed information about each tagged element, including its name, type, position, and dimensions. This information is essential when generating document variations.
 
-For detailed examples of generating variations and exporting renditions, see the [how-to guides](../guides/how-to/tag-documents.md).
+For detailed examples of generating variations and exporting renditions, see the [how-to guides](how-to/tag-documents.md).
 
 ## Best Practices and Limitations
 
@@ -184,5 +184,5 @@ For optimal results with the Express API:
 ## Next Steps
 
 - Explore the [complete API reference](../api/index.md) for detailed endpoint documentation
-- Learn how to [generate document variations](../guides/how-to/generate-variations.md)
-- Understand [authentication and security](../guides/concepts/authentication/index.md) for the Express API
+- Learn how to [generate document variations](how-to/generate-variations.md)
+- Understand [authentication and security](../getting-started/index.md) for the Express API

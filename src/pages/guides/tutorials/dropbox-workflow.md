@@ -40,7 +40,7 @@ This tutorial combines several key concepts from the How-to section, including:
 
 This tutorial assumes you have:
 
-- Access to the [Adobe Express API](../concepts/authentication/index.md), and know how to generate an API key and authorization token.
+- Access to the [Adobe Express API](../../getting-started/index.md), and know how to generate an API key and authorization token.
 - Familiarity with [Template tagging](../how-to/tag-documents.md), and the [Tag Elements Add-on](../index.md#overview).
 - Node.js installed on your machine (version 18 or later would be better).
 
@@ -95,7 +95,7 @@ Back in the **Settings** tab, click on the **Generate** button in the **OAuth 2*
 
 Please also note the **App folder name** (in our case, `Express API test`), because it's the only folder our app will be able to access in our Dropbox account. I've put the CSV and the JPG files in a `Apps/Express API test/pictures` folder there, so we're all set!
 
-![](./images/dropbox_content.png)
+![Dropbox Apps folder with the Express API test app folder containing CSV and JPG files](./images/dropbox_content.png)
 
 ## Step 4: Scaffolding the Script
 
@@ -271,16 +271,16 @@ export const checkDropboxJobs = async (dropboxJobs, checkStatusFn) => {
 
 We'll start by fetching the CSV file from Dropbox and parsing it to get the teachers' data. Create a new file `services/dropbox.js`; in this file, we first use the `dotenv` package to load the environment variables from the `.env` file. We then create a new instance of the Dropbox SDK, passing the Access Token as a configuration option. We define three functions:
 
-- `listDropboxFiles()`: [Fetch a list of files](https://dropbox.github.io/dropbox-sdk-js/Dropbox.html#filesListFolder__anchor) in a Dropbox folder.
-- `getPreSignedUrl()`: [Fetch a pre-signed URL](https://dropbox.github.io/dropbox-sdk-js/Dropbox.html#filesGetTemporaryLink__anchor) for a file in Dropbox.
+- `listDropboxFiles()`: [Fetch a list of files](https://dropbox.github.io/dropbox-sdk-js/Dropbox.html#filesListFolder) in a Dropbox folder.
+- `getPreSignedUrl()`: [Fetch a pre-signed URL](https://dropbox.github.io/dropbox-sdk-js/Dropbox.html#filesGetTemporaryLink) for a file in Dropbox.
 - `readCsvFile()`: Read a CSV file from Dropbox, [parses it](https://www.papaparse.com/docs#strings) using the `papaparse` library, and returns an array of objects.
 
 These functions are enough to fetch the CSV file and the profile pictures. Later, we'll need more functions to interact with the Dropbox API:
 
-- `createFolder()`: [Create a new folder](https://dropbox.github.io/dropbox-sdk-js/Dropbox.html#filesCreateFolderV2__anchor) in Dropbox.
-- `saveUrlToDropbox()`: [Save a URL](https://dropbox.github.io/dropbox-sdk-js/Dropbox.html#filesSaveUrl__anchor) to Dropbox (the fetching happens on Dropbox's servers).
-- `checkDropboxStatus()`: [Check the status](https://dropbox.github.io/dropbox-sdk-js/Dropbox.html#filesSaveUrlCheckJobStatus__anchor) of an async Dropbox job.
-- `downloadAndUploadFile()`: [Alternative upload method](https://dropbox.github.io/dropbox-sdk-js/Dropbox.html#filesUpload__anchor) (the fetching happens on the local machine).
+- `createFolder()`: [Create a new folder](https://dropbox.github.io/dropbox-sdk-js/Dropbox.html#filesCreateFolderV2) in Dropbox.
+- `saveUrlToDropbox()`: [Save a URL](https://dropbox.github.io/dropbox-sdk-js/Dropbox.html#filesSaveUrl) to Dropbox (the fetching happens on Dropbox's servers).
+- `checkDropboxStatus()`: [Check the status](https://dropbox.github.io/dropbox-sdk-js/Dropbox.html#filesSaveUrlCheckJobStatus) of an async Dropbox job.
+- `downloadAndUploadFile()`: [Alternative upload method](https://dropbox.github.io/dropbox-sdk-js/Dropbox.html#filesUpload) (the fetching happens on the local machine).
 
 <InlineAlert variant="info" slots="text1" />
 
@@ -1667,7 +1667,7 @@ export async function getExpressStatus(jobId) {
  * @returns {Promise<Object>} The export job information
  */
 export async function exportRendition(requestBody) {
-  const resp = await fetch(`${EXPRESS_ENDPOINT}/alpha/export-rendition`, {
+  const resp = await fetch(`${EXPRESS_ENDPOINT}/beta/export-rendition`, {
     method: "POST",
     headers,
     body: JSON.stringify(requestBody),
@@ -1689,7 +1689,7 @@ export async function exportRendition(requestBody) {
  * @returns {Promise<Object>} The variation job information
  */
 export async function generateVariations(requestBody) {
-  const resp = await fetch(`${EXPRESS_ENDPOINT}/alpha/generate-variation`, {
+  const resp = await fetch(`${EXPRESS_ENDPOINT}/beta/generate-variation`, {
     method: "POST",
     headers,
     body: JSON.stringify(requestBody),
@@ -1712,7 +1712,7 @@ export async function retrieveTagDetails(
 ) {
   const queryString = new URLSearchParams(queryParams).toString();
   const resp = await fetch(
-    `${EXPRESS_ENDPOINT}/alpha/tagged-documents/${documentId}?${queryString}`,
+    `${EXPRESS_ENDPOINT}/beta/tagged-documents/${documentId}?${queryString}`,
     {
       method: "GET",
       headers,
