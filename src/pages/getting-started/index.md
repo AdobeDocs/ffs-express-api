@@ -21,7 +21,7 @@ hideBreadcrumbNav: true
 
 # Authentication
 
-Use this guide once you have credentials from the Developer Console. If you still need to create a project, add **Adobe Express API**, or pick Web App, SPA, or Server-to-Server, follow **[Create credentials](../create-credentials/index.md)** first.
+Use this guide once you have credentials from the Developer Console. If you still need to create a project, add **Adobe Express API**, or pick Web App, SPA, or Server-to-Server, follow **[Create credentials](create-credentials/index.md)** first.
 
 ## Overview
 
@@ -34,7 +34,7 @@ How you obtain `<access_token>` depends on your credential type (user-based vs s
 
 ## Prerequisites
 
-- Credentials from your admin or your own [Adobe Developer Console](https://developer.adobe.com/) project with **Adobe Express API** configured — see [Create credentials](../create-credentials/)
+- Credentials from your admin or your own [Adobe Developer Console](https://developer.adobe.com/) project with **Adobe Express API** configured — see [Create credentials](create-credentials/index.md)
 - **Client ID** (API key); for OAuth Web App and Server-to-Server you also use the **client secret** where applicable
 
 ## Get an access token

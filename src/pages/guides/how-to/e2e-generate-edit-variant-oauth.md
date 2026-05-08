@@ -31,7 +31,7 @@ In this workflow, we present a Web App-based scenario where a user:
 
 ## Prerequisites
 
-- An Adobe Developer Console project with the **Adobe Express API** added and an [OAuth Web App credential](../concepts/create-credentials/index.md#user-authentication-oauth-webapp).
+- An Adobe Developer Console project with the **Adobe Express API** added and an [OAuth Web App credential](../../getting-started/create-credentials/index.md#oauth-web-app).
   - Make sure to have `openid`, `AdobeID`, and `ee.express_api` scopes added to the credential.
 - A redirect URI registered on the credential.
   - Use, e.g., `https://localhost:4000/callback` for local development (Adobe IMS requires HTTPS for redirect URIs even on localhost). Set this as both the **Default Redirect URI** and as the **Redirect URI pattern** (`https://localhost:4000/callback$`) on the credential.
@@ -446,4 +446,4 @@ The user lands on their freshly generated document inside Adobe Express, where t
 
 - Run the full flow end to end with the [companion sample app](https://github.com/AdobeDocs/express-api-samples) (Node/Express backend + a single static HTML page).
 - Need to export the variation as JPG/PNG/MP4/PDF programmatically rather than handing it back to the user? Add a [rendition export step](./export-document.md) right after step 5.
-- Building the company-owned-templates variant of this workflow with **Server-to-Server** auth instead of OAuth Web App? See [Server-to-Server Authentication](../concepts/create-credentials/index.md#server-to-server-authentication-1)—steps 2 through 6 above stay the same; only the first step changes.
+- Building the company-owned-templates variant of this workflow with **Server-to-Server** auth instead of OAuth Web App? See [Server-to-Server Authentication](../../getting-started/create-credentials/index.md#server-to-server)—steps 2 through 6 above stay the same; only the first step changes.
