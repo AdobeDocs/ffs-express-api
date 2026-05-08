@@ -39,7 +39,7 @@ In this workflow, we present a Web App-based scenario where a user:
 - At least one tagged Express document the signed-in user owns. Tag it with the [Tag Elements add-on](https://adobesparkpost.app.link/TR9Mb7TXFLb?mode=private&claimCode=wjmj67nj9:PLYN7XLJ).
 - Node.js 18+ (or any backend that can do an HTTPS POST and run a small redirect handler).
 
-The cURL and Python tabs in the steps below assume you already have an `ACCESS_TOKEN` from the OAuth flow in the [first step](#1-authenticate-the-user). During development, log it from your `/callback` handler the first time it succeeds and reuse it for the day. Tokens are valid roughly 24 hours; once a token expires the user must sign in again. If your credential has the `offline_access` scope available (check the **Available Scopes** section of your OAuth Web App credential in the Developer Console), you can also receive a refresh token — see the optional Step 1c below.
+The cURL and Python tabs in the steps below assume you already have an `ACCESS_TOKEN` from the OAuth flow in the [first step](#1-authenticate-the-user). During development, log it from your `/callback` handler the first time it succeeds and reuse it for the day. Tokens are valid roughly 24 hours; once a token expires the user must sign in again. If your credential has the `offline_access` scope available (check the **Available Scopes** section of your OAuth Web App credential in the Developer Console), you can also receive a refresh token.
 
 ## 1. Authenticate the user
 
@@ -60,7 +60,7 @@ https://ims-na1.adobelogin.com/ims/authorize/v2
   &state=<RANDOM_STATE>
 ```
 
-`state` is an opaque random string you generate and store in the user's session; verify it matches when Adobe calls you back to prevent Cross-Site Request Forgery (CSRF).
+`state` is an opaque random string you generate and store in the user's session; verify it matches when Adobe calls you back to prevent Cross-Site Request Forgery (CSRF). For a working `/login` + `/callback` pair (state generation, verification, and token exchange), see the [companion sample app](https://github.com/AdobeDocs/express-api-samples).
 
 When the user signs in, they will see the following consent screen:
 
@@ -127,6 +127,10 @@ Store `access_token`, `refresh_token`, and the absolute expiry time (`Date.now()
 
 Once you have an access token, list the user's tagged templates so they can pick one. Use the `Authorization: Bearer <ACCESS_TOKEN>` header from the first step and your `X-API-KEY` (the same `client_id` from your credential).
 
+<InlineAlert variant="warning" slots="text" />
+
+The JavaScript snippets in steps 2–5 show the raw API call for clarity. In a real web app you should never call `https://express-api.adobe.io` directly from the browser; keep the access token and `client_secret` on the server and expose your own thin proxy routes (e.g. `/api/templates`, `/api/generate`) that forward to Adobe. The [companion sample app](https://github.com/AdobeDocs/express-api-samples) shows this pattern end to end.
+
 <CodeBlock slots="heading, code" repeat="3" languages="bash, javascript, python" />
 
 #### cURL
@@ -177,7 +181,7 @@ Response shape:
       "thumbnailUrl": "https://aep-cs-blobstore-prod-irl1-data..."
     }
   ],
-  "paging": 	"paging": {
+  "paging": {
 		"totalRecords": 1,
 		"nextUrl": ""
 	}
@@ -229,6 +233,8 @@ detail = requests.get(url, headers={
 ```
 
 The response lists each page and its `taggedElements`. The `type` of each tag tells you what input to render: `text` accepts a plain string; `image` and `video` accept a pre-signed URL on an allowed domain (AWS, Dropbox, Azure).
+
+This endpoint is paginated by page: append `?start=<n>` to fetch tagged elements starting at page `n` if the template has more pages than the default page size returns.
 
 ```json
 {
