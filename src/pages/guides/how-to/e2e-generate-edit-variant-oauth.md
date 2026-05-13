@@ -417,33 +417,66 @@ When the job succeeds, you get the new document back:
 
 ![Variation created](./images/e2e-generate-edit-variant--variant-created.png)
 
-The variation is now stored in the user's account, inside an **Express API Documents** folder in **My Stuff**.
+The variation is now stored in the user's account, inside an **Express API Documents** folder in **My Stuff > Files**.
+
+<InlineAlert variant="warning" slots="text" />
+
+Variations are kept in the **Express API Documents** folder for 30 days before being automatically deleted. Move the variation to a different folder to retain it indefinitely.
 
 ![Variation in My Stuff](./images/e2e-generate-edit-variant--my-stuff.png)
 
-## 6. Open the variation in Adobe Express
+## 6. Open the variation with the Adobe Express Embed SDK
 
-Adobe Express can deep-link to a document by its URN. Build the URL from the `document.id` returned in step 5:
+The newly created document can be opened inside your own application using the Adobe Express Embed SDK. The Embed SDK exposes an **Editor Workflow** with an [`edit()`](https://developer.adobe.com/express/embed-sdk/docs/v4/sdk/src/workflows/3p/editor-workflow/classes/editor-workflow#edit) method that takes the same `documentId` (the variation URN returned in step 5) and launches the Full Editor experience in your page.
 
-```text
-https://express.adobe.com/id/<DOCUMENT_URN>
+### 6.1 Load and initialize the SDK
+
+Load the SDK script, then call `CCEverywhere.initialize` once with the Embed SDK's Client ID and an `appName` that matches the **Public App Name** you set in the Developer Console.
+
+<InlineAlert variant="info" slots="heading, text" />
+
+#### Embed SDK and Express API Client IDs
+
+The Embed SDK and Express API rely on **different Client IDs**. Both are generated when you create credentials in the Developer Console, but the Projects that contain them are independent.
+
+```js
+  await import('https://cc-embed.adobe.com/sdk/v4/CCEverywhere.js');
+
+  const hostInfo = {
+    clientId: '<CLIENT_ID>',
+    appName: 'Embed SDK & Express API integration',
+  };
+
+  // lets the user start interacting with the embedded editor; sign-in is only prompted when they save or export.
+  const configParams = { loginMode: 'delayed' };
+
+  const { editor } = await window.CCEverywhere.initialize(hostInfo, configParams);
 ```
 
-Render that as a button on your success view:
+### 6.2 Open the variation for editing
 
-```html
-<a href="https://express.adobe.com/id/urn:aaid:sc:EU:3da..."
-   target="_blank" rel="noopener">
-  Open in Adobe Express &rarr;
-</a>
+Pass the variation URN from step 5 as `documentId` and call `editor.edit()`:
+
+```js
+const docConfig = { documentId: '<DOCUMENT_URN>' };
+const appConfig = {};       // optional editor configuration
+const exportConfig = [];    // optional export targets
+const containerConfig = {}; // optional container configuration
+editor.edit(docConfig, appConfig, exportConfig);
 ```
 
-The user lands on their freshly generated document inside Adobe Express, where they can keep editing it like any other document.
+![Variation in Embed SDK](./images/e2e-generate-edit-variant--embed-sdk.png)
 
-![Variation in Adobe Express](./images/e2e-generate-edit-variant--adobe-express.png)
+For the full surface ([`appConfig`](https://developer.adobe.com/express/embed-sdk/docs/v4/shared/src/types/editor/app-config-types/interfaces/base-editor-app-config), [`exportConfig`](https://developer.adobe.com/express/embed-sdk/docs/v4/shared/src/types/export-config-types/type-aliases/export-options), [`containerConfig`](https://developer.adobe.com/express/embed-sdk/docs/v4/shared/src/types/container-config-types/type-aliases/container-config)), and other entry points available, please refer to the [Adobe Express Embed SDK documentation](https://developer.adobe.com/express/embed-sdk/docs/guides/).
+
+<InlineAlert variant="info" slots="heading, text" />
+
+#### Open in Adobe Express
+
+Alternatively, you can open the variation in Adobe Express (in a new Browser tab) by deep-linking to it via its URN: `https://express.adobe.com/id/<DOCUMENT_URN>`.
 
 ## Next steps
 
 - Run the full flow end to end with the [companion sample app](https://github.com/AdobeDocs/express-api-samples) (Node/Express backend + a single static HTML page).
 - Need to export the variation as JPG/PNG/MP4/PDF programmatically rather than handing it back to the user? Add a [rendition export step](./export-document.md) right after step 5.
-- Building the company-owned-templates variant of this workflow with **Server-to-Server** auth instead of OAuth Web App? See [Server-to-Server Authentication](../../getting-started/create-credentials/index.md#server-to-server)—steps 2 through 6 above stay the same; only the first step changes.
+- Building the company-owned-templates variant of this workflow with **Server-to-Server** auth instead of OAuth Web App? See [Generate and Edit a Variant (Server-to-Server)](./e2e-generate-edit-variant-s2s.md); steps 2 through 6 stay the same, only the first step changes.
