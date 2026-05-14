@@ -1,10 +1,10 @@
 {
-  "name": "ffs-express-api",
+  "name": "dev-docs-template",
   "version": "1.0.0",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/AdobeDocs/ffs-express-api"
+    "url": "https://github.com/AdobeDocs/dev-docs-template"
   },
   "author": {
     "name": "Tim Kim",
