@@ -34,8 +34,8 @@ How you obtain `<access_token>` depends on your credential type (user-based vs s
 
 ## Prerequisites
 
-* Credentials from your admin or your own [Adobe Developer Console](https://developer.adobe.com/) project with **Adobe Express API** configured — see [Create credentials](create-credentials/index.md)
-* **Client ID** (API key); for OAuth Web App and Server-to-Server you also use the **client secret** where applicable
+- Credentials from your admin or your own [Adobe Developer Console](https://developer.adobe.com/) project with **Adobe Express API** configured — see [Create credentials](create-credentials/index.md)
+- **Client ID** (API key); for OAuth Web App and Server-to-Server you also use the **client secret** where applicable
 
 ## Get an access token
 
@@ -57,10 +57,10 @@ The backend uses the `client_credentials` grant; there is no interactive user. C
 
 Send these headers on every request:
 
-| Header | Value |
-| ------ | ----- |
+| Header          | Value                   |
+| --------------- | ----------------------- |
 | `Authorization` | `Bearer <access_token>` |
-| `X-API-KEY` | `<client_id>` |
+| `X-API-KEY`     | `<client_id>`           |
 
 Tokens expire; refresh or re-issue them according to Adobe’s documentation for your credential type.
 

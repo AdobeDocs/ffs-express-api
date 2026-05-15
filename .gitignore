@@ -48,3 +48,6 @@ yalc.lock
 #txt
 linter-output.txt
 linter-report.txt
+
+# temp files
+TEMP/
