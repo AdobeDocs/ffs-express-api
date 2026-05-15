@@ -43,8 +43,8 @@
   - [Get Tagged Documents](guides/how-to/get-tagged-documents.md)
   - [Generate Variations](guides/how-to/generate-variations.md)
   - [Export Document Renditions](guides/how-to/export-document.md)
-  - [End-to-End Workflows](guides/how-to/e2e-generate-edit-variant-oauth.md)
-    - [Generate and Edit a Variant (OAuth)](guides/how-to/e2e-generate-edit-variant-oauth.md)
-    - [Generate and Edit a Variant (Server-to-Server)](guides/how-to/e2e-generate-edit-variant-s2s.md)
+  - [End-to-End Workflows](guides/how-to/e2e-generate-edit-variant-oauth-web-app.md)
+    - [Generate and Edit a Variant (OAuth)](guides/how-to/e2e-generate-edit-variant-oauth-web-app.md)
+    - [Generate and Edit a Variant (Server-to-Server)](guides/how-to/e2e-generate-edit-variant-oauth-s2s.md)
   - Tutorials header
   - [Dropbox Integration Workflow](guides/tutorials/dropbox-workflow.md)
