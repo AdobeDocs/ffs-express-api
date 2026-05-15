@@ -4,6 +4,7 @@ description: Build a self-service workflow where end users sign in with their Ad
 keywords:
   - Adobe Express
   - Adobe Express API
+  - Adobe Express Embed SDK
   - OAuth Web App
   - User Authentication
   - 3-legged OAuth
@@ -18,7 +19,7 @@ hideBreadcrumbNav: true
 
 # Generate and Edit a Variant (OAuth Web App)
 
-This guide walks through a complete end-to-end workflow using OAuth Web App authentication, covering template selection, variation generation, and final editing in Adobe Express.
+This guide walks through a complete end-to-end workflow using OAuth Web App authentication, covering template selection, variation generation, and final editing in Adobe Express using the Embed SDK.
 
 ## Overview
 
