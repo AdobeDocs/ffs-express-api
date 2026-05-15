@@ -4,6 +4,7 @@ description: Build a self-service workflow where end users pick from a catalog o
 keywords:
   - Adobe Express
   - Adobe Express API
+  - Adobe Express Embed SDK
   - Server-to-Server
   - OAuth S2S
   - client_credentials
@@ -19,44 +20,47 @@ hideBreadcrumbNav: true
 
 # Generate and Edit a Variant (Server-to-Server)
 
-This guide walks through a complete end-to-end workflow using OAuth Server-to-Server authentication, covering a catalog of company-owned templates, variation generation, and final editing in Adobe Express.
+This guide walks through a complete end-to-end workflow using OAuth Server-to-Server authentication, covering a catalog of company-owned templates, variation generation, and final editing in Adobe Express using the Embed SDK.
 
 ## Overview
 
 In this workflow, we present a Server-to-Server scenario where:
 
-1. The organization owns a small catalog of tagged Express templates that are shared with the **technical account** of the Server-to-Server credential.
+1. The **organization** owns a small catalog of tagged Express templates that are shared with the **technical account** of the Server-to-Server credential.
 2. End users browse that shared catalog inside your app—no per-user OAuth sign-in.
 3. Your backend generates a variation server-side using the technical account's access token.
-4. The variation lands in an Express **project shared with the end user**, so they can open it natively in Adobe Express and keep editing.
+4. The variation lands in an org-owned Express **Storage project shared with the end user**, so they can open it natively in the embedded Adobe Express experience and keep editing.
 
-This pairs naturally with the [OAuth Web App workflow](./e2e-generate-edit-variant-oauth.md): use OAuth when each user works on their own templates and the variation should land in their personal **My Stuff**; use Server-to-Server when the company curates the templates and you want a single backend integration to drive variation creation.
+This pairs naturally with the [OAuth Web App workflow](./e2e-generate-edit-variant-oauth.md): use **OAuth** when each user works on **their own templates** and the variation should land in **their personal folder** in Adobe Express; use **Server-to-Server** when the **company curates the templates** and you want a **single backend integration** to drive variation creation and sharing.
 
 ## Prerequisites
 
-<InlineAlert variant="info" slots="text" />
+Steps 1–5 below (token, list templates, inspect tags, generate, poll) work without any Admin Console setup—they rely only on the technical account's own capabilities and the templates you've directly shared with it. Only step 6 (the end user opening the variation via Embed SDK) requires the shared-project setup described under [Admin Console setup](#admin-console-setup).
 
-Steps 1–5 below (token, list templates, inspect tags, generate, poll) work without any Admin Console setup—they run against the technical account's own storage and the templates you've directly shared with it. Only step 6 (the end user opening the variation in Adobe Express to edit) requires the shared-project setup described under _Admin Console setup_.
+### Developer and template authoring setup
 
-### Developer / template-author setup
-
-You can complete all of this yourself, no admin rights required:
+You can complete all of this yourself, no Admin Console rights required:
 
 - An Adobe Developer Console project with the **Adobe Express API** added and an [OAuth Server-to-Server credential](../../getting-started/create-credentials/index.md#server-to-server).
 - Your `client_id` (API key), `client_secret`, and the **technical account email**—all visible on the credential overview page.
-- Scopes such as `openid`, `AdobeID`, `ee.express_api` (match the scope set your project requires; some orgs also need `read_organizations`). For the canonical token request and scope guidance, see [Getting started with Adobe Firefly Services](https://developer.adobe.com/firefly-services/docs/guides/get-started/).
-- At least one tagged Express template **shared with the technical account**. In Adobe Express, open the doc → **Share** → paste the technical account email → **Can edit**. Tag elements with the [Tag Elements add-on](https://adobesparkpost.app.link/TR9Mb7TXFLb?mode=private&claimCode=wjmj67nj9:PLYN7XLJ).
+- Scopes such as `openid`, `AdobeID`, `read_organizations`, and `ee.express_api`.
+- At least one tagged Express template **shared with the Technical Account**. In Adobe Express, open the doc → **Share** → paste the technical account email → **Can edit**. Tag elements with the [Tag Elements add-on](https://adobesparkpost.app.link/TR9Mb7TXFLb?mode=private&claimCode=wjmj67nj9:PLYN7XLJ).
 - Node.js 18+ (or any backend that can do an HTTPS POST).
 
-### Admin Console setup (one-time, requires an Adobe org admin)
+### Admin Console setup
 
-Needed only for the final hand-off, where the end user opens the variation in Adobe Express:
+<InlineAlert variant="info" slots="text" />
 
-- An Express **project** shared with the technical account (Can edit) **and** with the end-user accounts that will edit the variations. Project access is managed by an organization admin.
-- The **project URN** (visible in the project URL inside Adobe Express, or in the Admin Console project settings). You will pass this URN as `projectId` in step 4 so that variations land inside the shared project—not in the technical account's private storage. Without a `projectId`, end users won't see the variations.
-- The right entitlements on the technical account—Express product profile and, where applicable, **Storage administrator** and Enterprise Storage. See the _Grant the technical account access to documents and assets_ section of [Create credentials – Server-to-Server](../../getting-started/create-credentials/index.md#server-to-server) for the authoritative guidance.
+One-time setup, requires an Adobe org admin, needed only for the final hand-off to the end user.
 
-The cURL and Python tabs in the steps below assume you already have an `ACCESS_TOKEN` from the Server-to-Server flow in the [first step](#1-get-a-server-to-server-access-token). Tokens are typically valid for ~24 hours. Unlike the OAuth Web App flow, **your backend refreshes the token** by re-issuing the same `client_credentials` request before it expires—the end user is never prompted to sign in.
+- A **Storage project** shared with the Technical Account (Can edit) _and_ with the end-user accounts that will remix the templates. Project access is managed by an organization admin.
+- The **Storage project URN**. You will pass this URN as `projectId` in step 4 so that variations land inside the shared project—not in the technical account's private storage. Without a `projectId`, end users won't see the variations. The URN is visible in the Admin Console's project URL:
+
+```text
+https://adminconsole.adobe.com/<ORG_ID>/storage/projects/<PROJECT_URN>
+```
+
+- The right entitlements on the technical account—an **Express product profile** (assigned in Developer Console) and, where org-wide cloud storage access is needed, **Storage administrator** plus a product license that includes **Enterprise Storage** (assigned in Admin Console). See the _Grant the technical account access to documents and assets_ section of [Create credentials – Server-to-Server](../../getting-started/create-credentials/index.md#server-to-server) for the authoritative guidance.
 
 ## 1. Get a Server-to-Server access token
 
@@ -115,9 +119,7 @@ Cache `access_token` in memory (or your secret store) until `Date.now() + (expir
 
 ## 2. List company templates
 
-With the access token, list the templates available to the technical account. Send `Authorization: Bearer <ACCESS_TOKEN>` and `X-API-KEY: <CLIENT_ID>` (the same client ID from your credential).
-
-The response includes any document the technical account owns or has been shared on—i.e. your company-curated catalog, since you control which templates get shared with that account.
+With the access token, list the templates available to the technical account. Send `Authorization: Bearer <ACCESS_TOKEN>` and `X-API-KEY: <CLIENT_ID>` (the same client ID from your credential). The response includes any document the technical account owns or has been shared on—i.e. your company-curated catalog, since you control which templates get shared with that account.
 
 <InlineAlert variant="warning" slots="text" />
 
@@ -169,7 +171,7 @@ Response shape:
   "documents": [
     {
       "id": "urn:aaid:sc:EU:e6723...",
-      "name": "Express API Sample Template.express",
+      "name": "Demo Template.express",
       "thumbnailUrl": "https://aep-cs-blobstore-prod-irl1-data..."
     }
   ],
@@ -184,7 +186,7 @@ The API does not currently support filtering by tag name or category server-side
 
 Render each document's `thumbnailUrl` and `name` as a card and let the user click one. Keep the `id`—you need it for steps 3 and 4.
 
-![List the company's tagged templates](./images/e2e-generate-edit-variant--list-template.png)
+![List the company's tagged templates](./images/e2e-generate-edit-variant-s2s--list-template.png)
 
 ## 3. Inspect the template's tagged elements
 
@@ -233,22 +235,29 @@ This endpoint is paginated by page: append `?start=<n>` to fetch tagged elements
 ```json
 {
   "id": "urn:aaid:sc:EU:e6723...",
-  "name": "Express API Sample Template.express",
+  "name": "Demo Template.express",
   "documentPages": [
     {
       "pageNumber": 1,
       "pageTitle": "",
-      "size": { "width": 662, "height": 289 },
+      "size": { "width": 1080, "height": 1350 },
       "taggedElements": [
-        {
-          "name": "title", "type": "text",
-          "position": { "x": 209, "y": 185 },
-          "size": { "width": 662, "height": 289 }
-        },
+				{
+					"name": "use-case", "type": "text",
+					"position": { "x": 151, "y": 407 },
+					"size": { "width": 662, "height": 93 },
+					"value": "PRODUCTIVITY"
+				},
+				{
+					"name": "price", "type": "text",
+					"position": { "x": 611, "y": 1016 },
+					"size": { "width": 301, "height": 93 },
+					"value": "$875"
+				}
         {
           "name": "product-image", "type": "image",
-          "position": { "x":  346, "y":  -131 },
-          "size": { "width": 493, "height": 963 }
+          "position": { "x":  257, "y":  358 },
+          "size": { "width": 648, "height": 546 }
         }
       ],
       "thumbnailUrl": "https://aep-cs-blobstore-prod-irl1-data..."
@@ -257,7 +266,7 @@ This endpoint is paginated by page: append `?start=<n>` to fetch tagged elements
 }
 ```
 
-![Inspect the template's tagged elements](./images/e2e-generate-edit-variant--tag-details.png)
+![Inspect the template's tagged elements](./images/e2e-generate-edit-variant-s2s--tag-details.png)
 
 ## 4. Generate the variation
 
@@ -277,10 +286,11 @@ curl -s -X POST 'https://express-api.adobe.io/beta/generate-variation' \
   -d '{
     "id": "'"$DOCUMENT_ID"'",
     "variationDetails": {
-      "preferredDocumentName": "Apple green",
+      "preferredDocumentName": "Macbook Neo",
       "projectId": "'"$SHARED_PROJECT_ID"'",
       "tagMappings": {
-        "title": "APPLE GREEN",
+        "use-case": "EVERYDAY",
+        "price": "$520",
         "product-image": "https://uc4fcd1dc97e1127dcb839ff192c.dl..."
       }
     }
@@ -300,10 +310,11 @@ const resp = await fetch('https://express-api.adobe.io/beta/generate-variation',
   body: JSON.stringify({
     id: documentId,
     variationDetails: {
-      preferredDocumentName: 'Apple green',
+      preferredDocumentName: 'Macbook Neo',
       projectId: sharedProjectId,
       tagMappings: {
-        title: 'APPLE GREEN',
+        'use-case': "EVERYDAY",
+        'price': "$520",
         'product-image': 'https://uc4fcd1dc97e1127dcb839ff192c.dl...',
       },
     },
@@ -325,11 +336,12 @@ resp = requests.post(
     json={
         "id": document_id,
         "variationDetails": {
-            "preferredDocumentName": "Apple green",
+            "preferredDocumentName": "Macbook Neo",
             "projectId": shared_project_id,
             "tagMappings": {
-                "title": "APPLE GREEN",
-                "product-image": "https://uc4fcd1dc97e1127dcb839ff192c.dl...",
+                "use-case": "EVERYDAY",
+                "price": "$520",
+                "product-image": "https://uc4fcd1dc97e1127dcb839ff192c.dl..."
             },
         },
     },
@@ -350,7 +362,7 @@ The variation is created by the technical account. With a valid `projectId` and 
 
 Hold on to `jobId` for the next step.
 
-![Filled out tag mappings](./images/e2e-generate-edit-variant--filled-tag-details.png)
+![Filled out tag mappings](./images/e2e-generate-edit-variant-s2s--filled-tag-details.png)
 
 ## 5. Poll the job
 
@@ -410,61 +422,49 @@ When the job succeeds, you get the new document back:
   "status": "succeeded",
   "document": {
     "id": "urn:aaid:sc:EU:3da...",
-    "name": "Apple green",
+    "name": "Macbook Neo",
     "thumbnailUrl": "https://...signed-url..."
   }
 }
 ```
 
-![Variation created](./images/e2e-generate-edit-variant--variant-created.png)
+![Variation created](./images/e2e-generate-edit-variant-s2s--variant-created.png)
+
+The variation is now stored in the user's account. Check the **My Stuff > Projects** section, select the Project and then the **Express API Documents** folder to see the variation.
+
+<InlineAlert variant="warning" slots="text" />
+
+Variations are kept in the **Express API Documents** folder for 30 days before being automatically deleted. Move the variation to a different folder to retain it indefinitely.
+
+![Variation in My Stuff](./images/e2e-generate-edit-variant-s2s--my-stuff.png)
 
 ## 6. Open the variation with the Adobe Express Embed SDK
 
-The newly created document can be opened in Adobe Express, deep-linking to it via its URN:
-
-```text
-https://express.adobe.com/id/<DOCUMENT_URN>
-```
-
-Render that as a button on your success view:
-
-```html
-<a href="https://express.adobe.com/id/urn:aaid:sc:EU:3da..."
-   target="_blank" rel="noopener">
-  Open in Adobe Express &rarr;
-</a>
-```
-
-Or you can open it inside your own application using the Adobe Express Embed SDK. The Embed SDK exposes an **Editor Workflow** with an [`edit()`](https://developer.adobe.com/express/embed-sdk/docs/v4/sdk/src/workflows/3p/editor-workflow/classes/editor-workflow#edit) method that takes the same `documentId` (the variation URN returned in step 5) and renders Adobe Express directly in your page.
-
-<InlineAlert variant="info" slots="heading, text" />
-
-#### Embed SDK and Server-to-Server Client IDs
-
-The Embed SDK and the Server-to-Server credential rely on **different Client IDs**. The Embed SDK is user-facing and authenticates the end user against an OAuth credential—it does not use your Server-to-Server credential. To embed the editor, add an **OAuth Web App** (or **OAuth Single-page App**) credential to the same Developer Console project; the `clientId` you pass to `CCEverywhere.initialize` is that user-facing credential's `client_id`, not your S2S `client_id`. The variation URN works the same way in either case.
+The newly created document can be opened inside your own application using the Adobe Express Embed SDK. The Embed SDK exposes an **Editor Workflow** with an [`edit()`](https://developer.adobe.com/express/embed-sdk/docs/v4/sdk/src/workflows/3p/editor-workflow/classes/editor-workflow#edit) method that takes the same `documentId` (the variation URN returned in step 5) and launches the Full Editor experience in your page.
 
 ### 6.1 Load and initialize the SDK
 
-Load the SDK script, then call `CCEverywhere.initialize` once with the `clientId` from your OAuth Web App / SPA credential and an `appName` that matches the **Public App Name** you set in the Developer Console.
+Load the SDK script, then call `CCEverywhere.initialize` once with the Embed SDK's Client ID and an `appName` that matches the **Public App Name** you set in the Developer Console.
 
-```html
-<script type="module">
+<InlineAlert variant="info" slots="heading, text" />
+
+#### Embed SDK and Express API Client IDs
+
+The Embed SDK and Express API rely on **different Client IDs**. Both are generated when you create credentials in the Developer Console, but the Projects that contain them are independent.
+
+```js
   await import('https://cc-embed.adobe.com/sdk/v4/CCEverywhere.js');
 
   const hostInfo = {
-    clientId: '<OAUTH_CLIENT_ID>',
-    appName: 'My Variation App',
+    clientId: '<CLIENT_ID>',
+    appName: 'Embed SDK & Express API integration',
   };
 
-  const configParams = {
-    loginMode: 'delayed',
-  };
+  // lets the user start interacting with the embedded editor; sign-in is only prompted when they save or export.
+  const configParams = { loginMode: 'delayed' };
 
   const { editor } = await window.CCEverywhere.initialize(hostInfo, configParams);
-</script>
 ```
-
-`loginMode: 'delayed'` lets the user start interacting with the embedded editor before they sign in; sign-in is only prompted when they save or export. Because the variation lives in the project that's shared with the end user (see [Prerequisites](#prerequisites)), once they sign in they have edit access to the document.
 
 ### 6.2 Open the variation for editing
 
@@ -472,26 +472,24 @@ Pass the variation URN from step 5 as `documentId` and call `editor.edit()`:
 
 ```js
 const docConfig = { documentId: '<DOCUMENT_URN>' };
-const appConfig = {};      // optional editor configuration
-const exportConfig = [];   // optional export targets
+const appConfig = {};       // optional editor configuration
+const exportConfig = [];    // optional export targets
+const containerConfig = {}; // optional container configuration
 editor.edit(docConfig, appConfig, exportConfig);
 ```
 
-The Adobe Express editor opens in a modal (or in a container of your choice if you pass `containerConfig`). Because the variation was created in a project shared with the end user, they land directly inside the document and can keep editing it—no per-document share step is needed.
+![Variation in Embed SDK](./images/e2e-generate-edit-variant-s2s--embed-sdk.png)
 
-If the user lands on a "request access" or 404 screen instead (whether they used the deep link or the Embed SDK), the parent project isn't actually shared with their account. Revisit the _Admin Console setup_ in [Prerequisites](#prerequisites) and confirm:
+For the full surface ([`appConfig`](https://developer.adobe.com/express/embed-sdk/docs/v4/shared/src/types/editor/app-config-types/interfaces/base-editor-app-config), [`exportConfig`](https://developer.adobe.com/express/embed-sdk/docs/v4/shared/src/types/export-config-types/type-aliases/export-options), [`containerConfig`](https://developer.adobe.com/express/embed-sdk/docs/v4/shared/src/types/container-config-types/type-aliases/container-config)), and other entry points available, please refer to the [Adobe Express Embed SDK documentation](https://developer.adobe.com/express/embed-sdk/docs/guides/).
 
-- The technical account is a member of the project (Can edit).
-- The end-user account is a member of the same project.
-- The technical account has the right Express product profile and (where applicable) Storage administrator / Enterprise Storage entitlement.
+<InlineAlert variant="info" slots="heading, text" />
 
-For the full surface—`appConfig`, `exportConfig`, `containerConfig`, and the other editor entry points (`create`, `createWithAsset`, `createWithTemplate`)—see the [Adobe Express Embed SDK documentation](https://developer.adobe.com/express/embed-sdk/docs/guides/).
+#### Open in Adobe Express
 
-![Variation in Adobe Express](./images/e2e-generate-edit-variant--adobe-express.png)
+Alternatively, you can open the variation in Adobe Express (in a new Browser tab) by deep-linking to it via its URN: `https://express.adobe.com/id/<DOCUMENT_URN>`.
 
 ## Next steps
 
 - Run the full flow end to end with the [companion sample app](https://github.com/AdobeDocs/express-api-samples) (Node/Express backend + a single static HTML page, Server-to-Server variant).
 - Need to skip the "open in Express" hand-off entirely and just give the user a finished asset? Add a [rendition export step](./export-document.md) right after step 5 to return a JPG/PNG/MP4/PDF instead.
 - Building the per-user variant of this workflow where each user picks from their own templates and the variation lands in their personal **My Stuff**? See [Generate and Edit a Variant (OAuth Web App)](./e2e-generate-edit-variant-oauth.md)—steps 2 through 6 are identical; only step 1 differs.
-- Need per-document explicit sharing instead of a shared project? The Adobe Content Platform (ACPC) invitations service (`https://invitations.adobe.io/api/v4`) is the supported path for that pattern. It is out of scope for this guide.

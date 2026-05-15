@@ -45,5 +45,6 @@
   - [Export Document Renditions](guides/how-to/export-document.md)
   - [End-to-End Workflows](guides/how-to/e2e-generate-edit-variant-oauth.md)
     - [Generate and Edit a Variant (OAuth)](guides/how-to/e2e-generate-edit-variant-oauth.md)
+    - [Generate and Edit a Variant (Server-to-Server)](guides/how-to/e2e-generate-edit-variant-s2s.md)
   - Tutorials header
   - [Dropbox Integration Workflow](guides/tutorials/dropbox-workflow.md)
