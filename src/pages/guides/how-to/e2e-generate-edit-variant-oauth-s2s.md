@@ -432,10 +432,6 @@ When the job succeeds, you get the new document back:
 
 The variation is now stored in the user's account. Check the **My Stuff > Projects** section, select the Project and then the **Express API Documents** folder to see the variation.
 
-<InlineAlert variant="warning" slots="text" />
-
-Variations are kept in the **Express API Documents** folder for 30 days before being automatically deleted. Move the variation to a different folder to retain it indefinitely.
-
 ![Variation in My Stuff](./images/e2e-generate-edit-variant-s2s--my-stuff.png)
 
 ## 6. Open the variation with the Adobe Express Embed SDK
