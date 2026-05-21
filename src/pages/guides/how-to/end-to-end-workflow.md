@@ -38,8 +38,8 @@ The example script provided performs the following tasks:
 
 1. Fetches tagged documents and prints the details to the console.
 2. Exports a rendition of the original document ID specified.
-2. Generates a variation of the original document with the substituted tags.
-3. Exports a rendition of the generated variation, based on the new document ID returned in the result.
+3. Generates a variation of the original document with the substituted tags.
+4. Exports a rendition of the generated variation, based on the new document ID returned in the result.
 
 ## Prerequisites
 
@@ -94,22 +94,22 @@ const variationDetails = {
     "pages": "1",
     "preferredDocumentName": "New document variation",
     "tagMappings": {
-        "brandTag": "My Brand",        
+        "brandTag": "My Brand",
         "brandLogo": "https://my-bucket.s3.us-east-2.amazonaws.com/logo.jpg",
-        "actionVideo": "https://my-bucket.s3.us-east-2.amazonaws.com/action.mp4"        
-    }   
+        "actionVideo": "https://my-bucket.s3.us-east-2.amazonaws.com/action.mp4"
+    }
 };
 
 // Fetch tagged documents
 async function getTaggedDocuments() {
     try {
-        const url = `${BASE}/beta/tagged-documents?start=0&limit=10&sortBy=modifiedDate`;        
+        const url = `${BASE}/beta/tagged-documents?start=0&limit=10&sortBy=modifiedDate`;
         const response = await fetch(url, { headers });
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        
+
         // Process the documents
         const documents = data.documents || [];
         documents.forEach(doc => {
@@ -117,47 +117,47 @@ async function getTaggedDocuments() {
         });
     } catch (error) {
         console.error(`Failed to fetch documents: ${error}`);
-    }      
+    }
 }
 
 // Export rendition
 async function exportRendition(id, pages, options) {
     let body = {
-        id, 
+        id,
         pages,
-        options     
+        options
     }
-    
+
     let resp = await fetch(`${BASE}/beta/export-rendition`, {
         method:'POST',
         headers: {
             'Authorization': `Bearer ${process.env.AUTH_TOKEN}`,
             'X-API-KEY': process.env.API_KEY,
             'Content-Type':'application/json'
-        }, 
+        },
         body: JSON.stringify(body)
     });
-    
+
     return await resp.json();
 }
 
 // Generate variation
 async function generateVariation(id, variationDetails) {
     let body = {
-        id, 
-        variationDetails     
+        id,
+        variationDetails
     }
-        
+
     let resp = await fetch(`${BASE}/beta/generate-variation`, {
         method:'POST',
         headers: {
             'Authorization': `Bearer ${process.env.AUTH_TOKEN}`,
             'X-API-KEY': process.env.API_KEY,
             'Content-Type':'application/json'
-        }, 
+        },
         body: JSON.stringify(body)
     });
-    
+
     return await resp.json();
 }
 
@@ -193,7 +193,7 @@ async function getJobResult(result, endpoint) {
             if (endpoint==='export-rendition') {
                 console.log(`\t-> Opening Exported Rendition ${jobResult.pageRenditionsResult[0].renditionUrl}`);
                 open(jobResult.pageRenditionsResult[0].renditionUrl);
-            }            
+            }
         } else {
             console.log(endpoint + ` job failed with status: ${jobResult.status}`);
         }
@@ -262,15 +262,15 @@ node e2e-workflow.mjs
   Fetch tagged documents and print the details to the console:
 
   ```js
-  async function getTaggedDocuments() {        
+  async function getTaggedDocuments() {
     try {
-        const url = `${BASE}/beta/tagged-documents?start=0&limit=10&sortBy=modifiedDate`;        
+        const url = `${BASE}/beta/tagged-documents?start=0&limit=10&sortBy=modifiedDate`;
         const response = await fetch(url, { headers });
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        
+
         // Process the documents
         const documents = data.documents || [];
         documents.forEach(doc => {
@@ -287,22 +287,22 @@ node e2e-workflow.mjs
   Generate a variation of the document with the supplied document ID and variation details:
 
   ```js
-  async function generateVariation(id, variationDetails) {       
+  async function generateVariation(id, variationDetails) {
     let body = {
-        id, 
-        variationDetails     
+        id,
+        variationDetails
     }
-        
+
     let resp = await fetch(`${BASE}/beta/generate-variation`, {
         method:'POST',
         headers: {
             'Authorization': `Bearer ${process.env.AUTH_TOKEN}`,
             'X-API-KEY': process.env.API_KEY,
             'Content-Type':'application/json'
-        }, 
+        },
         body: JSON.stringify(body)
     });
-    
+
     return await resp.json();
   }
   ```
@@ -314,110 +314,110 @@ node e2e-workflow.mjs
   ```js
   async function exportRendition(id, pages, options) {
     let body = {
-        id, 
+        id,
         pages,
-        options     
+        options
     }
-    
+
     let resp = await fetch(`${BASE}/beta/export-rendition`, {
         method:'POST',
         headers: {
             'Authorization': `Bearer ${process.env.AUTH_TOKEN}`,
             'X-API-KEY': process.env.API_KEY,
             'Content-Type':'application/json'
-        }, 
+        },
         body: JSON.stringify(body)
     });
-    
+
     return await resp.json();
   }
   ```
 
 - **Polling Job Results**
 
- Poll for the job status until it is complete. If the job status is "succeeded", open the exported rendition or generated variation returned in the browser:
+Poll for the job status until it is complete. If the job status is "succeeded", open the exported rendition or generated variation returned in the browser:
 
-  ```js
-  async function getJobResult(result, endpoint) {
-    // If the status URL is present, poll the job until it is complete
-    if (result.statusUrl) {
-        let jobResult = await pollJob(result.statusUrl, process.env.API_KEY, process.env.AUTH_TOKEN);
-        console.log(jobResult);
-        if (jobResult.status === 'succeeded') {
-            if (endpoint==='export-rendition') {
-                console.log(`\t-> Opening Exported Rendition ${jobResult.pageRenditionsResult[0].renditionUrl}`);
-                open(jobResult.pageRenditionsResult[0].renditionUrl);
-            }
-            if (endpoint==='generate-variation') {
-                console.log(`\t-> Generated Variation Successful - new document ID: ` + jobResult.document.id + ` URL ${jobResult.document.thumbnailUrl}`);
-                // Now export the rendition of the generated variation
-                console.log("\n\n\n**** Now exporting rendition of generated variation ****\n");
-                await delay(3000); // wait for 3 seconds to ensure the variation is ready
-                result = await exportRendition(jobResult.document.id, pages, options);
-                console.log(result);
-                getJobResult(result, 'export-rendition');
-            }
-        } else {
-            console.log(endpoint + ` job failed with status: ${jobResult.status}`);
-        }
-    }
+```js
+async function getJobResult(result, endpoint) {
+  // If the status URL is present, poll the job until it is complete
+  if (result.statusUrl) {
+      let jobResult = await pollJob(result.statusUrl, process.env.API_KEY, process.env.AUTH_TOKEN);
+      console.log(jobResult);
+      if (jobResult.status === 'succeeded') {
+          if (endpoint==='export-rendition') {
+              console.log(`\t-> Opening Exported Rendition ${jobResult.pageRenditionsResult[0].renditionUrl}`);
+              open(jobResult.pageRenditionsResult[0].renditionUrl);
+          }
+          if (endpoint==='generate-variation') {
+              console.log(`\t-> Generated Variation Successful - new document ID: ` + jobResult.document.id + ` URL ${jobResult.document.thumbnailUrl}`);
+              // Now export the rendition of the generated variation
+              console.log("\n\n\n**** Now exporting rendition of generated variation ****\n");
+              await delay(3000); // wait for 3 seconds to ensure the variation is ready
+              result = await exportRendition(jobResult.document.id, pages, options);
+              console.log(result);
+              getJobResult(result, 'export-rendition');
+          }
+      } else {
+          console.log(endpoint + ` job failed with status: ${jobResult.status}`);
+      }
   }
-  ```
+}
+```
 
 - **Utility Functions**
 
   Since the `generate-variation` and `export-rendition` endpoints are asynchronous, we need two utility functions to use for setting a timeout interval to use for polling the job status:
 
-    ```js
-    async function delay(x) {
-        return new Promise(resolve => {
-            setTimeout(() => {
-                resolve();
-            }, x);
-        });
-    }
+  ```js
+  async function delay(x) {
+      return new Promise(resolve => {
+          setTimeout(() => {
+              resolve();
+          }, x);
+      });
+  }
 
-    async function pollJob(jobUrl, id, token) {
-        let status = '';
+  async function pollJob(jobUrl, id, token) {
+      let status = '';
 
-        while(status !== 'succeeded' && status !== 'failed') {
-            let resp = await fetch(jobUrl, {
-                headers: {
-                    'Authorization': `Bearer ${process.env.AUTH_TOKEN}`,
-                    'X-API-KEY': process.env.API_KEY,
-                }
-            });
+      while(status !== 'succeeded' && status !== 'failed') {
+          let resp = await fetch(jobUrl, {
+              headers: {
+                  'Authorization': `Bearer ${process.env.AUTH_TOKEN}`,
+                  'X-API-KEY': process.env.API_KEY,
+              }
+          });
 
-            let data = await resp.json();
-            status = data.status;
+          let data = await resp.json();
+          status = data.status;
 
-            // delay is a utility to 'pause' for X ms
-            if (status !== 'succeeded' && status !== 'failed') await delay(3000); // wait for 3 seconds
-            if (status === 'succeeded') return data;
-        }
+          // delay is a utility to 'pause' for X ms
+          if (status !== 'succeeded' && status !== 'failed') await delay(3000); // wait for 3 seconds
+          if (status === 'succeeded') return data;
+      }
 
-        return status;
-    }
-    ```
+      return status;
+  }
+  ```
 
 - **API Calls**
 
   Call each API and print the result to the terminal. For the async API endpoints, poll for the job status at a specified interval (in this example, 1 second, but you can adjust as necessary):
 
-    ```js
-    console.log("\n\n\n**** GET TAGGED DOCUMENTS ****\n");
-    await getTaggedDocuments();
+  ```js
+  console.log("\n\n\n**** GET TAGGED DOCUMENTS ****\n");
+  await getTaggedDocuments();
 
-    console.log("\n\n\n**** GENERATING VARIATION ****\n");
-    let result = await generateVariation(documentId, variationDetails);
-    console.log(result);
-    getJobResult(result, 'generate-variation');
+  console.log("\n\n\n**** GENERATING VARIATION ****\n");
+  let result = await generateVariation(documentId, variationDetails);
+  console.log(result);
+  getJobResult(result, 'generate-variation');
 
-    console.log("\n\n\n**** EXPORTING RENDITION ****\n");
-    result = await exportRendition(documentId, pages, options);
-    console.log(result);
-    getJobResult(result, 'export-rendition');
-    ```
+  console.log("\n\n\n**** EXPORTING RENDITION ****\n");
+  result = await exportRendition(documentId, pages, options);
+  console.log(result);
+  getJobResult(result, 'export-rendition');
+  ```
 
 ## Example Output
 

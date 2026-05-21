@@ -32,11 +32,11 @@ By the end of this guide you will have:
 
 Adobe Express API supports three authentication flows. Pick the one that matches how and where your application runs.
 
-| Flow | Best for | Needs a client secret? | Calls run as |
-| ---- | -------- | ---------------------- | ------------ |
-| **Server-to-Server** | Backend integrations acting for your organization | Yes (stored on your server) | Technical account |
-| **OAuth Web App** | Web apps with a frontend **and** a backend server | Yes (stored on your server) | End user |
-| **OAuth Single-page App (SPA)** | Browser-only apps with no backend | No (uses PKCE) | End user |
+| Flow                            | Best for                                          | Needs a client secret?      | Calls run as      |
+| ------------------------------- | ------------------------------------------------- | --------------------------- | ----------------- |
+| **Server-to-Server**            | Backend integrations acting for your organization | Yes (stored on your server) | Technical account |
+| **OAuth Web App**               | Web apps with a frontend **and** a backend server | Yes (stored on your server) | End user          |
+| **OAuth Single-page App (SPA)** | Browser-only apps with no backend                 | No (uses PKCE)              | End user          |
 
 Learn more about [authentication](https://developer.adobe.com/developer-console/docs/guides/authentication/UserAuthentication/) in the Adobe Developer Console docs.
 
@@ -53,7 +53,7 @@ Sign in at [Adobe Developer Console](https://developer.adobe.com/console/home), 
 On the Adobe Express API product card, click **Create project**.
 
 ![Express API product card](../images/dev-console.png)
-*Adobe Express API product card in the Developer Console*
+_Adobe Express API product card in the Developer Console_
 
 **3. Register your project name**
 
@@ -85,7 +85,7 @@ Select the product profiles your admin assigned for Express. These control what 
 Click **Save configured API**. On the credential overview, copy your **client ID (API key)** and **client secret**, and note the **technical account email**—you'll need it for document and asset access.
 
 ![Server-to-Server Credentials](../images/server-credentials.png)
-*Server-to-Server credentials overview showing client ID (API key) and technical account email*
+_Server-to-Server credentials overview showing client ID (API key) and technical account email_
 
 **4. Generate access tokens**
 
@@ -95,9 +95,9 @@ Use the token endpoint and scopes for your credential (see **Generate access tok
 
 API calls run as the **technical account** tied to your OAuth Server-to-Server credential—not as an end user. Anything your integration must read or edit (templates, Express documents, cloud assets) must be reachable by that technical account.
 
-| Approach | When to use |
-| -------- | ----------- |
-| **Share in Express** | You need access to specific Express documents or projects. Open the share experience for the doc or project, paste the **technical account email** from the credential overview into the share field, and grant at least **Can edit** (or the minimum permission your workflow needs). This is the most direct way to give the technical account access to a given asset. |
+| Approach                             | When to use                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Share in Express**                 | You need access to specific Express documents or projects. Open the share experience for the doc or project, paste the **technical account email** from the credential overview into the share field, and grant at least **Can edit** (or the minimum permission your workflow needs). This is the most direct way to give the technical account access to a given asset.                                                                                                                                                                                                                                                |
 | **Storage administrator (org-wide)** | You need the technical account to work across Adobe cloud storage in your organization (for example, broader asset management). In [Adobe Admin Console](https://adminconsole.adobe.com/), an org administrator must grant the technical account **Storage administrator** and ensure it has a product license that includes Enterprise Storage where required. Follow [Technical account setup for Adobe Cloud Storage](https://developer.adobe.com/cloud-storage/guides/getting-started/technical-account-setup)—including verifying the identity is a **Technical Account** (Enterprise ID), not a personal Adobe ID. |
 
 If documents or assets are still inaccessible, confirm sharing with the technical account email, product profile assignment in Developer Console, and (for cloud storage) Storage administrator assignment and Enterprise Storage licensing per the guide above.
@@ -122,7 +122,7 @@ Provide a **Default Redirect URI** and a **Redirect URI pattern**. These are the
 - Select **OAuth Web App** from the left navigation to view or retrieve your **client secret**.
 
 ![OAuth WebApp Credentials](../images/oauth-web-credentials.png)
-*OAuth Web App credentials overview showing client ID (API key) and secret retrieval*
+_OAuth Web App credentials overview showing client ID (API key) and secret retrieval_
 
 **4. Manage beta access**
 
@@ -134,7 +134,7 @@ Provide a **Default Redirect URI** and a **Redirect URI pattern**. These are the
 
 - Authenticate requests using the client ID (API key) and client secret from the credential overview.
 - Store the client secret only on your backend server and fetch tokens from there, so credentials are never exposed in the frontend.
-- For end-to-end guidance, see the [OAuth Web App implementation guide](https://developer.adobe.com/developer-console/docs/guides/authentication/UserAuthentication/implementation#web-app).
+- For end-to-end guidance, see the [OAuth Web App implementation guide](https://developer.adobe.com/developer-console/docs/guides/authentication/UserAuthentication/implementation#oauth-web-app-credential).
 
 ### OAuth Single-page App
 
@@ -154,7 +154,7 @@ Provide a **Default Redirect URI** and a **Redirect URI pattern**. These are the
 Click **Save configured API**. On the next screen you'll see your **client ID (API key)**. No client secret is issued for SPA credentials.
 
 ![OAuth SPA Credentials](../images/oauth-spa-credentials.png)
-*OAuth SPA credentials overview showing client ID (API key)*
+_OAuth SPA credentials overview showing client ID (API key)_
 
 **4. Manage beta access**
 
@@ -166,7 +166,7 @@ Click **Save configured API**. On the next screen you'll see your **client ID (A
 
 - Authenticate requests using the client ID (API key) from the credential overview.
 - Implement the [OAuth 2.0 PKCE](https://oauth.net/2/pkce/) flow in your frontend for secure token generation—no client secret is needed, as authentication happens directly in the browser.
-- For end-to-end guidance, see the [OAuth Single-page App implementation guide](https://developer.adobe.com/developer-console/docs/guides/authentication/UserAuthentication/implementation#single-page-app).
+- For end-to-end guidance, see the [OAuth Single-page App implementation guide](https://developer.adobe.com/developer-console/docs/guides/authentication/UserAuthentication/implementation#oauth-single-page-app-credential).
 
 **6. Push to production**
 
@@ -177,11 +177,11 @@ Once you push a Single-page App project to production, you cannot move it back i
 When you finish development, click **Push to production**.
 
 ![Push to prod](../images/push-to-prod.png)
-*Project overview showing push to production button*
+_Project overview showing push to production button_
 
 ## User consent flow
 
 When users authenticate through OAuth Web App or OAuth Single-page App, they see a consent screen. Users must click **Allow Access** to grant the requested permissions.
 
 ![OAuth Consent Screen](../images/oauth-consent.png)
-*Example of the OAuth consent screen shown to users*
+_Example of the OAuth consent screen shown to users_
