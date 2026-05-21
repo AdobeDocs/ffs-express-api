@@ -424,7 +424,9 @@ The variation is now stored in the user's account, inside an **Express API Docum
 
 ## 6. Open the variation with the Adobe Express Embed SDK
 
-The newly created document can be opened inside your own application using the Adobe Express Embed SDK. The Embed SDK exposes an **Editor Workflow** with an [`edit()`](https://developer.adobe.com/express/embed-sdk/docs/v4/sdk/src/workflows/3p/editor-workflow/classes/editor-workflow#edit) method that takes the same `documentId` (the variation URN returned in step 5) and launches the Full Editor experience in your page.
+After the backend generates the variation, users can immediately customize or export the final result using the Adobe Express editor _without leaving your experience_ thanks to the [Embed SDK](https://developer.adobe.com/express/embed-sdk/docs/guides/). This is especially useful in self-service scenarios where business users start from company-approved templates but still need lightweight creative control over the generated variation.
+
+The Embed SDK exposes an **Editor Workflow** with an [`edit()`](https://developer.adobe.com/express/embed-sdk/docs/v4/sdk/src/workflows/3p/editor-workflow/classes/editor-workflow#edit) method that takes the same `documentId` (the variation URN returned in step 5) and launches the Full Editor experience in your page.
 
 ### 6.1 Load and initialize the SDK
 

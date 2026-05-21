@@ -54,7 +54,10 @@ You can complete all of this yourself, no Admin Console rights required:
 One-time setup, requires an Adobe org admin, needed only for the final hand-off to the end user.
 
 - A **Storage project** shared with the Technical Account (Can edit) _and_ with the end-user accounts that will remix the templates. Project access is managed by an organization admin.
-- The **Storage project URN**. You will pass this URN as `projectId` in step 4 so that variations land inside the shared project—not in the technical account's private storage. Without a `projectId`, end users won't see the variations. The URN is visible in the Admin Console's project URL:
+
+![Storage project](./images/e2e-generate-edit-variant-s2s--storage-project.png)
+
+- The **Storage project URN**. You will pass this URN as `projectId` in step 4 so that variations land inside the shared project—not in the technical account's private storage. Without a `projectId`, end users won't see the variations. The URN is visible in the Admin Console's project URL, when you select one of the available projects:
 
 ```text
 https://adminconsole.adobe.com/<ORG_ID>/storage/projects/<PROJECT_URN>
@@ -117,7 +120,7 @@ tokens = resp.json()
 
 Cache `access_token` in memory (or your secret store) until `Date.now() + (expires_in - 60) * 1000`. The token is org-scoped—every request below runs as the technical account, not as an end user. Keep both `client_secret` and the access token on the server.
 
-## 2. List company templates
+## 2. List available templates
 
 With the access token, list the templates available to the technical account. Send `Authorization: Bearer <ACCESS_TOKEN>` and `X-API-KEY: <CLIENT_ID>` (the same client ID from your credential). The response includes any document the technical account owns or has been shared on—i.e. your company-curated catalog, since you control which templates get shared with that account.
 
@@ -436,7 +439,9 @@ The variation is now stored in the user's account. Check the **My Stuff > Projec
 
 ## 6. Open the variation with the Adobe Express Embed SDK
 
-The newly created document can be opened inside your own application using the Adobe Express Embed SDK. The Embed SDK exposes an **Editor Workflow** with an [`edit()`](https://developer.adobe.com/express/embed-sdk/docs/v4/sdk/src/workflows/3p/editor-workflow/classes/editor-workflow#edit) method that takes the same `documentId` (the variation URN returned in step 5) and launches the Full Editor experience in your page.
+After the backend generates the variation, users can immediately customize or export the final result using the Adobe Express editor _without leaving your experience_ thanks to the [Embed SDK](https://developer.adobe.com/express/embed-sdk/docs/guides/). This is especially useful in self-service scenarios where business users start from company-approved templates but still need lightweight creative control over the generated variation.
+
+The Embed SDK exposes an **Editor Workflow** with an [`edit()`](https://developer.adobe.com/express/embed-sdk/docs/v4/sdk/src/workflows/3p/editor-workflow/classes/editor-workflow#edit) method that takes the same `documentId` (the variation URN returned in step 5) and launches the Full Editor experience in your page.
 
 ### 6.1 Load and initialize the SDK
 
