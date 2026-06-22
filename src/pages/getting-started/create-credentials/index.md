@@ -38,7 +38,7 @@ Adobe Express API supports three authentication flows. Pick the one that matches
 | **OAuth Web App**               | Web apps with a frontend **and** a backend server | Yes (stored on your server) | End user          |
 | **OAuth Single-page App (SPA)** | Browser-only apps with no backend                 | No (uses PKCE)              | End user          |
 
-Learn more about [authentication](https://developer.adobe.com/developer-console/docs/guides/authentication/UserAuthentication/) in the Adobe Developer Console docs.
+Learn more about [authentication](https://developer.adobe.com/developer-console/docs/guides/authentication/UserAuthentication) in the Adobe Developer Console docs.
 
 ## Set up your project
 
@@ -69,7 +69,7 @@ To call the Adobe Express API, developers need a valid client ID (API key) and a
 
 ### Server-to-Server
 
-Server-to-Server authentication lets your backend generate access tokens and call Adobe APIs on behalf of your organization using the OAuth 2.0 `client_credentials` grant. The steps below follow the same Developer Console pattern used across Firefly Services APIs. For the full walkthrough—including console access, scopes, and sample token requests—see [Getting started with Adobe Firefly Services](https://developer.adobe.com/firefly-services/docs/guides/get-started/).
+Server-to-Server authentication lets your backend generate access tokens and call Adobe APIs on behalf of your organization using the OAuth 2.0 `client_credentials` grant. The steps below follow the same Developer Console pattern used across Firefly Services APIs. For the full walkthrough—including console access, scopes, and sample token requests—see [Getting started with Adobe Firefly Services](https://developer.adobe.com/firefly-services/docs/guides/get-started).
 
 **1. Add the Adobe Express API**
 
@@ -89,7 +89,7 @@ _Server-to-Server credentials overview showing client ID (API key) and technical
 
 **4. Generate access tokens**
 
-Use the token endpoint and scopes for your credential (see **Generate access token** in the [Firefly Services getting started](https://developer.adobe.com/firefly-services/docs/guides/get-started/) guide linked above). When calling Express API, send the token and client ID as described in [Authentication – Call the Express API](../index.md#call-the-express-api). Store your client secret only on the server.
+Use the token endpoint and scopes for your credential (see **Generate access token** in the [Firefly Services getting started](https://developer.adobe.com/firefly-services/docs/guides/get-started) guide linked above). When calling Express API, send the token and client ID as described in [Authentication – Call the Express API](../index.md#call-the-express-api). Store your client secret only on the server.
 
 **5. Grant the technical account access to documents and assets**
 
