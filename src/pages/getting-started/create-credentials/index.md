@@ -84,9 +84,17 @@ Select the product profiles your admin assigned for Express. These control what 
 
 <InlineAlert variant="info" slots="text" />
 
-Product profiles must include **Adobe Express**, **Adobe Firefly Services**, and **non-Premium Fonts** access. As shown below, a Default Free Membership and Firefly Creative Production for Enterprise configurations will suffice. Please note that access to **Premium Fonts will cause a rejection**.
+Product profiles must include **Adobe Express**, **Adobe Firefly Services**, and **non-Premium Fonts** access. As shown below, a **Default Free Membership** and **Firefly Creative Production for Enterprise** configurations will suffice. Please note that access to Premium Fonts will cause a rejection.
 
 ![Server-to-Server Product Profiles selection](../images/create-credentials--product-profiles-2.png)
+
+<InlineAlert variant="warning" slots="heading, text1, text2" />
+
+#### Admin Console Product Provisioning
+
+If you have problems finding the correct Product Profiles in the Developer Console, ask your administrator to verify that the correct Products have been assigned to your User in the Admin Console.
+
+![Admin Console User Products](../images/create-credentials--admin-console.png)
 
 **3. Save and retrieve credentials**
 
