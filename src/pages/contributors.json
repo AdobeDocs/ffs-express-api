@@ -1,7 +1,7 @@
 {
-  "total": 22,
+  "total": 23,
   "offset": 0,
-  "limit": 22,
+  "limit": 23,
   "data": [
     {
       "page": "/",
@@ -31,7 +31,7 @@
         "https://avatars.githubusercontent.com/u/359935?v=4",
         "https://avatars.githubusercontent.com/u/41382203?v=4"
       ],
-      "lastUpdated": "5/15/2026"
+      "lastUpdated": "6/30/2026"
     },
     {
       "page": "/getting-started/",
@@ -167,6 +167,13 @@
         "https://avatars.githubusercontent.com/u/41382203?v=4"
       ],
       "lastUpdated": "4/17/2026"
+    },
+    {
+      "page": "/guides/how-to/handle-webhook-events",
+      "avatars": [
+        "https://avatars.githubusercontent.com/u/5939127?v=4"
+      ],
+      "lastUpdated": "6/30/2026"
     },
     {
       "page": "/guides/how-to/tag-documents",
