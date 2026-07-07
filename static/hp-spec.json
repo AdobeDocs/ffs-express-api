@@ -1,0 +1,2514 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "Express API — HP Partner",
+        "description": "Express APIs for HP partner integration: tagged-document discovery, variation creation (single and bulk), and rendition export.",
+        "version": "alpha + beta",
+        "contact": {
+            "name": "Express API support",
+            "email": "express-api-support@adobe.com"
+        },
+        "x-spec-type": "hp"
+    },
+    "servers": [
+        {
+            "url": "https://express-api.adobe.io",
+            "description": "Prod endpoint"
+        }
+    ],
+    "paths": {
+        "/beta/tagged-documents": {
+            "get": {
+                "summary": "Tagged documents",
+                "description": "This API retrieves a list of tagged documents that users can access, including those they own or those shared with them, along with relevant metadata. It supports pagination and sorting, allowing users to specify the starting point, define the number of documents to return, and choose the order in which to list them. The response includes the requested documents and their metadata.",
+                "operationId": "taggedDocuments",
+                "parameters": [
+                    {
+                        "name": "start",
+                        "in": "query",
+                        "required": false,
+                        "description": "Pagination start index. Default is 0.",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "description": "Pagination limit. Default is 10 and maximum value allowed is 25.",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "sortBy",
+                        "in": "query",
+                        "required": false,
+                        "description": "Use `sortBy` to sort the response.",
+                        "schema": {
+                            "$ref": "#/components/schemas/TaggedDocumentsSortBy"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved the tagged documents.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaggedDocumentsResponse"
+                                },
+                                "examples": {
+                                    "taggedDocumentsResponseSample": {
+                                        "$ref": "#/components/examples/taggedDocumentsResponseSample"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsBadRequest": {
+                                        "$ref": "#/components/examples/errorResponseDetailsBadRequest"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsUnauthorized": {
+                                        "$ref": "#/components/examples/errorResponseDetailsUnauthorized"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsForbidden": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbidden"
+                                    },
+                                    "errorResponseDetailsForbiddenMissingExpressEntitlement": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbiddenMissingExpressEntitlement"
+                                    },
+                                    "errorResponseDetailsForbiddenMissingExpressApiEntitlement": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbiddenMissingExpressApiEntitlement"
+                                    },
+                                    "errorResponseDetailsForbiddenExpressApiRequiresPremiumAccount": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbiddenExpressApiRequiresPremiumAccount"
+                                    },
+                                    "errorResponseDetailsForbiddenMissingTypekitEntitlement": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbiddenMissingTypekitEntitlement"
+                                    },
+                                    "errorResponseDetailsForbiddenTechnicalAccountNonFreeTypekit": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbiddenTechnicalAccountNonFreeTypekit"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsNotFound": {
+                                        "$ref": "#/components/examples/errorResponseDetailsNotFound"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsUnprocessableEntity": {
+                                        "$ref": "#/components/examples/errorResponseDetailsUnprocessableEntity"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsTooManyRequests": {
+                                        "$ref": "#/components/examples/errorResponseDetailsTooManyRequests"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsRuntimeError": {
+                                        "$ref": "#/components/examples/errorResponseDetailsRuntimeError"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsServiceUnavailable": {
+                                        "$ref": "#/components/examples/errorResponseDetailsServiceUnavailable"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/beta/tagged-documents/{documentId}": {
+            "get": {
+                "summary": "Tagged Document Details",
+                "description": "This API retrieves details of the pages and tagged elements within a specified document. It returns a paginated list of the document's pages and metadata about each page. If the document has tagged elements, the API includes their respective details, such as size and position. If the document does not have tagged elements, it returns an empty array. The response includes pagination information to help users navigate the document's pages. A maximum of 10 pages can be returned in 1 API call.",
+                "operationId": "taggedDocumentDetails",
+                "parameters": [
+                    {
+                        "name": "documentId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "The unique identifier of the document."
+                    },
+                    {
+                        "name": "start",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "Specifies the starting document page number from which details need to be fetched. Default is 1."
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved the details of the tagged document.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaggedDocumentDetailsResponse"
+                                },
+                                "examples": {
+                                    "taggedDocumentDetailsResponseSampleOne": {
+                                        "$ref": "#/components/examples/taggedDocumentDetailsResponseSampleOne"
+                                    },
+                                    "taggedDocumentDetailsResponseSampleTwo": {
+                                        "$ref": "#/components/examples/taggedDocumentDetailsResponseSampleTwo"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsBadRequest": {
+                                        "$ref": "#/components/examples/errorResponseDetailsBadRequest"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsUnauthorized": {
+                                        "$ref": "#/components/examples/errorResponseDetailsUnauthorized"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsUnprocessableEntity": {
+                                        "$ref": "#/components/examples/errorResponseDetailsUnprocessableEntity"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsRuntimeError": {
+                                        "$ref": "#/components/examples/errorResponseDetailsRuntimeError"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/beta/export-rendition": {
+            "post": {
+                "summary": "Export rendition",
+                "description": "Export one or more pages from an Adobe Express document in supported formats. This endpoint accepts an export request and returns pre-signed URLs for accessing the rendered files.\n\n**Supported formats:**\n- Image formats: `image/jpeg` (JPG), `image/png` (PNG)\n- Video format: `video/mp4` (MP4)\n- Document format: `application/pdf` (PDF)\n\n**Rendition availability:**\n- Image renditions: Valid for 4 hours, maximum size 8192px on the longest side\n- Video and PDF renditions: Valid for 24 hours, maximum size 4096px on the longest side\n\n**Asynchronous processing:**\nExport requests are processed asynchronously. The response includes a `jobId` and `statusUrl` that you can use to track the export progress and retrieve the final rendition URLs.\n\n**Restrictions:**\n\n| Condition | Behavior | Error |\n| --- | --- | --- |\n| Public templates (Adobe-owned documents not copied to the user account) | Export is not allowed | `400 bad_request` |\n| Document contains Adobe Stock–licensed assets | Export fails | `422 stock_content_detected` |",
+                "operationId": "exportRendition",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ExportRenditionRequest"
+                            },
+                            "examples": {
+                                "exportRenditionRequestSampleOne": {
+                                    "$ref": "#/components/examples/exportRenditionRequestSampleOne"
+                                },
+                                "exportRenditionRequestSampleTwo": {
+                                    "$ref": "#/components/examples/exportRenditionRequestSampleTwo"
+                                },
+                                "exportRenditionRequestSampleThree": {
+                                    "$ref": "#/components/examples/exportRenditionRequestSampleThree"
+                                },
+                                "exportRenditionRequestSampleFour": {
+                                    "$ref": "#/components/examples/exportRenditionRequestSampleFour"
+                                },
+                                "exportRenditionRequestSampleFive": {
+                                    "$ref": "#/components/examples/exportRenditionRequestSampleFive"
+                                },
+                                "exportRenditionRequestSampleSix": {
+                                    "$ref": "#/components/examples/exportRenditionRequestSampleSix"
+                                },
+                                "exportRenditionRequestSampleSeven": {
+                                    "$ref": "#/components/examples/exportRenditionRequestSampleSeven"
+                                },
+                                "exportRenditionRequestPublicTemplate": {
+                                    "$ref": "#/components/examples/exportRenditionRequestPublicTemplate"
+                                },
+                                "exportRenditionRequestStockContent": {
+                                    "$ref": "#/components/examples/exportRenditionRequestStockContent"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "202": {
+                        "description": "The request has been accepted and the job is in progress.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/JobResponse"
+                                },
+                                "examples": {
+                                    "jobResponseSample": {
+                                        "$ref": "#/components/examples/jobResponseSample"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsBadRequest": {
+                                        "$ref": "#/components/examples/errorResponseDetailsBadRequest"
+                                    },
+                                    "errorResponseDetailsPublicTemplate": {
+                                        "$ref": "#/components/examples/errorResponseDetailsPublicTemplate"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsUnauthorized": {
+                                        "$ref": "#/components/examples/errorResponseDetailsUnauthorized"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsForbidden": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbidden"
+                                    },
+                                    "errorResponseDetailsForbiddenMissingExpressEntitlement": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbiddenMissingExpressEntitlement"
+                                    },
+                                    "errorResponseDetailsForbiddenMissingExpressApiEntitlement": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbiddenMissingExpressApiEntitlement"
+                                    },
+                                    "errorResponseDetailsForbiddenExpressApiRequiresPremiumAccount": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbiddenExpressApiRequiresPremiumAccount"
+                                    },
+                                    "errorResponseDetailsForbiddenMissingTypekitEntitlement": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbiddenMissingTypekitEntitlement"
+                                    },
+                                    "errorResponseDetailsForbiddenTechnicalAccountNonFreeTypekit": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbiddenTechnicalAccountNonFreeTypekit"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsNotFound": {
+                                        "$ref": "#/components/examples/errorResponseDetailsNotFound"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsUnprocessableEntity": {
+                                        "$ref": "#/components/examples/errorResponseDetailsUnprocessableEntity"
+                                    },
+                                    "errorResponseDetailsStockContent": {
+                                        "$ref": "#/components/examples/errorResponseDetailsStockContent"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsTooManyRequests": {
+                                        "$ref": "#/components/examples/errorResponseDetailsTooManyRequests"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsRuntimeError": {
+                                        "$ref": "#/components/examples/errorResponseDetailsRuntimeError"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsServiceUnavailable": {
+                                        "$ref": "#/components/examples/errorResponseDetailsServiceUnavailable"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/alpha/create-variation": {
+            "post": {
+                "summary": "Create a variation",
+                "description": "This API creates a single variation of an Express document by applying tag mappings to a template. The variation is generated asynchronously. Use the returned status URL to poll for job completion and retrieve the result.",
+                "operationId": "createVariation",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateVariationRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "202": {
+                        "description": "The request has been accepted and the job is in progress.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/JobResponse"
+                                },
+                                "examples": {
+                                    "jobResponseSample": {
+                                        "$ref": "#/components/examples/jobResponseSample"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsBadRequest": {
+                                        "$ref": "#/components/examples/errorResponseDetailsBadRequest"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsUnauthorized": {
+                                        "$ref": "#/components/examples/errorResponseDetailsUnauthorized"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsForbidden": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbidden"
+                                    },
+                                    "errorResponseDetailsForbiddenMissingExpressEntitlement": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbiddenMissingExpressEntitlement"
+                                    },
+                                    "errorResponseDetailsForbiddenMissingExpressApiEntitlement": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbiddenMissingExpressApiEntitlement"
+                                    },
+                                    "errorResponseDetailsForbiddenExpressApiRequiresPremiumAccount": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbiddenExpressApiRequiresPremiumAccount"
+                                    },
+                                    "errorResponseDetailsForbiddenMissingTypekitEntitlement": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbiddenMissingTypekitEntitlement"
+                                    },
+                                    "errorResponseDetailsForbiddenTechnicalAccountNonFreeTypekit": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbiddenTechnicalAccountNonFreeTypekit"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsUnprocessableEntity": {
+                                        "$ref": "#/components/examples/errorResponseDetailsUnprocessableEntity"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsTooManyRequests": {
+                                        "$ref": "#/components/examples/errorResponseDetailsTooManyRequests"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsRuntimeError": {
+                                        "$ref": "#/components/examples/errorResponseDetailsRuntimeError"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsServiceUnavailable": {
+                                        "$ref": "#/components/examples/errorResponseDetailsServiceUnavailable"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/alpha/bulk-create-variation": {
+            "post": {
+                "summary": "Bulk create variations",
+                "description": "This API creates multiple variations of an Express document in bulk by reading tag mappings from a data source. The job runs asynchronously. Use the returned status URL to poll for job completion and retrieve results.\n\nNote: Any string value that contains emojis will be skipped. If skipping the emoji causes the entire string to become empty, it will be replaced with \"-\".",
+                "operationId": "bulkCreateVariation",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BulkCreateVariationRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "202": {
+                        "description": "The request has been accepted and the bulk job is in progress.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BulkJobResponse"
+                                },
+                                "examples": {
+                                    "jobResponseSample": {
+                                        "$ref": "#/components/examples/jobResponseSample"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsBadRequest": {
+                                        "$ref": "#/components/examples/errorResponseDetailsBadRequest"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsUnauthorized": {
+                                        "$ref": "#/components/examples/errorResponseDetailsUnauthorized"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsForbidden": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbidden"
+                                    },
+                                    "errorResponseDetailsForbiddenMissingExpressEntitlement": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbiddenMissingExpressEntitlement"
+                                    },
+                                    "errorResponseDetailsForbiddenMissingExpressApiEntitlement": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbiddenMissingExpressApiEntitlement"
+                                    },
+                                    "errorResponseDetailsForbiddenExpressApiRequiresPremiumAccount": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbiddenExpressApiRequiresPremiumAccount"
+                                    },
+                                    "errorResponseDetailsForbiddenMissingTypekitEntitlement": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbiddenMissingTypekitEntitlement"
+                                    },
+                                    "errorResponseDetailsForbiddenTechnicalAccountNonFreeTypekit": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbiddenTechnicalAccountNonFreeTypekit"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsUnprocessableEntity": {
+                                        "$ref": "#/components/examples/errorResponseDetailsUnprocessableEntity"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsTooManyRequests": {
+                                        "$ref": "#/components/examples/errorResponseDetailsTooManyRequests"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsRuntimeError": {
+                                        "$ref": "#/components/examples/errorResponseDetailsRuntimeError"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsServiceUnavailable": {
+                                        "$ref": "#/components/examples/errorResponseDetailsServiceUnavailable"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/status/{jobId}": {
+            "get": {
+                "summary": "Job status",
+                "description": "Retrieve a job's status by its `jobId`. Depending on the job type, the response may include job-specific details.",
+                "operationId": "getJobStatus",
+                "parameters": [
+                    {
+                        "name": "jobId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "The unique identifier of the job."
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response with job status and details.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "$ref": "#/components/schemas/JobStatusResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/ExportRenditionResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/CreateVariationStatusResponse"
+                                        }
+                                    ]
+                                },
+                                "examples": {
+                                    "jobStatusResponseSampleOne": {
+                                        "$ref": "#/components/examples/jobStatusResponseSampleOne"
+                                    },
+                                    "jobStatusResponseSampleTwo": {
+                                        "$ref": "#/components/examples/jobStatusResponseSampleTwo"
+                                    },
+                                    "jobStatusResponseSampleThree": {
+                                        "$ref": "#/components/examples/jobStatusResponseSampleThree"
+                                    },
+                                    "exportRenditionResponseSampleOne": {
+                                        "$ref": "#/components/examples/exportRenditionResponseSampleOne"
+                                    },
+                                    "exportRenditionResponseSampleTwo": {
+                                        "$ref": "#/components/examples/exportRenditionResponseSampleTwo"
+                                    },
+                                    "exportRenditionResponseSampleThree": {
+                                        "$ref": "#/components/examples/exportRenditionResponseSampleThree"
+                                    },
+                                    "exportPdfRenditionResponseSampleOne": {
+                                        "$ref": "#/components/examples/exportPdfRenditionResponseSampleOne"
+                                    },
+                                    "exportPdfRenditionResponseSampleTwo": {
+                                        "$ref": "#/components/examples/exportPdfRenditionResponseSampleTwo"
+                                    },
+                                    "createVariationStatusResponseSample": {
+                                        "$ref": "#/components/examples/createVariationStatusResponseSample"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsNotFound": {
+                                        "$ref": "#/components/examples/errorResponseDetailsNotFound"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsRuntimeError": {
+                                        "$ref": "#/components/examples/errorResponseDetailsRuntimeError"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/cancel/{jobId}": {
+            "post": {
+                "summary": "Cancel job",
+                "description": "Request cancellation of a running bulk-create-variation job. Only bulk jobs support cancellation; single create-variation jobs cannot be cancelled. If the cancel request is accepted, the response will be 202 Accepted. Poll the job status endpoint to confirm the job's terminal state (for example, cancelled). If the job is already in a terminal state or cannot be cancelled, the endpoint returns 400 Bad Request with an appropriate error_code.",
+                "operationId": "cancelJob",
+                "parameters": [
+                    {
+                        "name": "jobId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "The unique identifier of the job to cancel."
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": "Cancel request accepted. The job will transition to a terminal state; poll the status endpoint to confirm.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/JobStatusResponse"
+                                },
+                                "examples": {
+                                    "cancelJobResponseSample": {
+                                        "$ref": "#/components/examples/bulkCreateVariationStatusResponseSampleCancelled"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request (e.g. job does not support cancellation or is already in a terminal state).",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsBadRequest": {
+                                        "$ref": "#/components/examples/errorResponseDetailsBadRequest"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsUnauthorized": {
+                                        "$ref": "#/components/examples/errorResponseDetailsUnauthorized"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsForbidden": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbidden"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsNotFound": {
+                                        "$ref": "#/components/examples/errorResponseDetailsNotFound"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsRuntimeError": {
+                                        "$ref": "#/components/examples/errorResponseDetailsRuntimeError"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "apiKey": {
+                "type": "apiKey",
+                "name": "X-API-KEY",
+                "in": "header"
+            },
+            "Authorization": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        },
+        "schemas": {
+            "TaggedDocumentsSortBy": {
+                "description": "Represents the sortBy field enum for tagged documents.",
+                "enum": [
+                    "+modifiedDate",
+                    "+name",
+                    "-modifiedDate",
+                    "-name",
+                    "-relevance",
+                    "modifiedDate",
+                    "name",
+                    "relevance"
+                ],
+                "type": "string"
+            },
+            "TaggedDocumentsResponse": {
+                "description": "Response payload for GET \"/tagged-documents\" API.",
+                "type": "object",
+                "properties": {
+                    "paging": {
+                        "description": "Pagination details of the response.",
+                        "$ref": "#/components/schemas/Pagination"
+                    },
+                    "documents": {
+                        "description": "A list of documents accessible (both owned and shared with) to the user.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ExpressDocument"
+                        }
+                    }
+                }
+            },
+            "TaggedDocumentDetailsResponse": {
+                "description": "Response payload for GET \"/tagged-documents/\\{documentId\\}\" API.",
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "description": "The name of the document.",
+                        "type": "string"
+                    },
+                    "id": {
+                        "description": "The unique identifier of the document.",
+                        "type": "string"
+                    },
+                    "paging": {
+                        "description": "Pagination details of the response.",
+                        "$ref": "#/components/schemas/Pagination"
+                    },
+                    "documentPages": {
+                        "description": "List of the pages from Express Document.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DocumentPageDetails"
+                        }
+                    }
+                },
+                "required": [
+                    "documentPages",
+                    "id",
+                    "name"
+                ]
+            },
+            "ExportRenditionRequest": {
+                "description": "Payload for requesting rendition of a document.",
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "description": "The identifier of the document that needs to be rendered.",
+                        "type": "string"
+                    },
+                    "pages": {
+                        "description": "A comma-separated string of page numbers for which the rendition request is made. For example, \"1,2,3\".\nPage ranges can also be specified. For example, \"1-3\" includes pages 1, 2, and 3.\nAnother example is \"1,3-5\", which includes pages 1, 3, 4, and 5.\n\"1-\" can be used to specify all pages, while \"5-\" indicates page 5 to the last page.\nIf not provided, the first page is considered by default. Page numbers start from 1.",
+                        "type": "string"
+                    },
+                    "options": {
+                        "description": "Options for the requested rendition.",
+                        "anyOf": [
+                            {
+                                "$ref": "#/components/schemas/ImageRenditionOptions"
+                            },
+                            {
+                                "$ref": "#/components/schemas/VideoRenditionOptions"
+                            },
+                            {
+                                "$ref": "#/components/schemas/PdfRenditionOptions"
+                            }
+                        ]
+                    }
+                },
+                "required": [
+                    "id",
+                    "options"
+                ]
+            },
+            "CreateVariationRequest": {
+                "description": "Request payload for the POST \"/create-variation\" API.\nCreates a variation from a template or document with specified tag mappings\nand produces one or more output types in a single request.",
+                "type": "object",
+                "properties": {
+                    "templateOrDocument": {
+                        "$ref": "#/components/schemas/CreativeCloudFileIdResource",
+                        "description": "The source template or document on which the variation will be applied.\nSpecified as a creative cloud file id."
+                    },
+                    "input": {
+                        "$ref": "#/components/schemas/CreateVariationInput",
+                        "description": "The variation input details including tag mappings and optional page overrides."
+                    },
+                    "outputs": {
+                        "description": "The desired output types for the variation.\nAt least one output must be specified. Supported output types are image renditions and document.",
+                        "type": "array",
+                        "items": {
+                            "anyOf": [
+                                {
+                                    "$ref": "#/components/schemas/ImageOutput"
+                                },
+                                {
+                                    "$ref": "#/components/schemas/DocumentOutput"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "required": [
+                    "input",
+                    "outputs",
+                    "templateOrDocument"
+                ]
+            },
+            "BulkCreateVariationRequest": {
+                "description": "Request payload for the POST \"/bulk-create-variation\" API.\nCreates variations at scale from a single template or document\nusing an input manifest that references NDJSON chunk files.\n\nThe \"outputs\" configuration applies uniformly to every row in the NDJSON input.",
+                "type": "object",
+                "properties": {
+                    "templateOrDocument": {
+                        "$ref": "#/components/schemas/CreativeCloudFileIdResource",
+                        "description": "The source template or document on which all variations will be applied.\nSpecified as a creative cloud file id resource."
+                    },
+                    "input": {
+                        "$ref": "#/components/schemas/BulkInputSource",
+                        "description": "Reference to a manifest JSON file that describes the input files.\nThe manifest contains a list of NDJSON chunk URLs, each containing\nvariation input rows conforming to the {@link CreateVariationInput} schema."
+                    },
+                    "outputs": {
+                        "description": "The desired output types for every variation in the bulk job.\nSupported output types are image renditions and document.",
+                        "type": "array",
+                        "items": {
+                            "anyOf": [
+                                {
+                                    "$ref": "#/components/schemas/ImageOutput"
+                                },
+                                {
+                                    "$ref": "#/components/schemas/DocumentOutput"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "required": [
+                    "input",
+                    "outputs",
+                    "templateOrDocument"
+                ]
+            },
+            "JobResponse": {
+                "description": "Response payload returned by any asynchronous endpoint.",
+                "type": "object",
+                "properties": {
+                    "jobId": {
+                        "description": "The identifier of the job.",
+                        "type": "string"
+                    },
+                    "statusUrl": {
+                        "description": "A URL using which the status of the job can be fetched.",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "jobId",
+                    "statusUrl"
+                ]
+            },
+            "BulkJobResponse": {
+                "description": "Response payload returned by the bulk-create-variation API upon initial submission.\nExtends the standard async JobResponse with a cancel URL.",
+                "type": "object",
+                "properties": {
+                    "cancelUrl": {
+                        "description": "A URL that may be used to cancel the bulk operation.",
+                        "type": "string"
+                    },
+                    "jobId": {
+                        "description": "The identifier of the job.",
+                        "type": "string"
+                    },
+                    "statusUrl": {
+                        "description": "A URL using which the status of the job can be fetched.",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "cancelUrl",
+                    "jobId",
+                    "statusUrl"
+                ]
+            },
+            "ErrorResponseDetails": {
+                "description": "Details of the error response.",
+                "type": "object",
+                "properties": {
+                    "error_code": {
+                        "description": "The error code.",
+                        "type": "string"
+                    },
+                    "message": {
+                        "description": "The error message.",
+                        "type": "string"
+                    },
+                    "validation_errors": {
+                        "description": "Validation error messages.",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "required": [
+                    "error_code"
+                ]
+            },
+            "JobStatusResponse": {
+                "description": "Base response payload returned by Job Status API.",
+                "type": "object",
+                "properties": {
+                    "jobId": {
+                        "description": "The identifier of the job.",
+                        "type": "string"
+                    },
+                    "status": {
+                        "$ref": "#/components/schemas/JobStatus",
+                        "description": "The status of the job."
+                    }
+                },
+                "required": [
+                    "jobId",
+                    "status"
+                ]
+            },
+            "ExportRenditionResponse": {
+                "description": "Response payload for the \"export-rendition\" API.",
+                "anyOf": [
+                    {
+                        "$ref": "#/components/schemas/PageRenditionResponse"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PdfRenditionResponse"
+                    }
+                ]
+            },
+            "CreateVariationStatusResponse": {
+                "description": "Response payload returned by the Job Status API for create-variation and bulk-create-variation jobs.",
+                "type": "object",
+                "properties": {
+                    "jobId": {
+                        "description": "The identifier of the job.",
+                        "type": "string"
+                    },
+                    "status": {
+                        "$ref": "#/components/schemas/JobStatus",
+                        "description": "The status of the job."
+                    },
+                    "outputs": {
+                        "description": "The output results for the variation(s) produced.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/VariationOutputResult"
+                        }
+                    }
+                },
+                "required": [
+                    "jobId",
+                    "status"
+                ]
+            },
+            "VariationOutputResult": {
+                "description": "Result of a single variation output (image rendition or document).",
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "description": "The type of output produced.",
+                        "type": "string",
+                        "enum": [
+                            "image",
+                            "document"
+                        ]
+                    },
+                    "renditionUrl": {
+                        "description": "Pre-signed URL where the image rendition can be downloaded from. Present only for image outputs.",
+                        "type": "string"
+                    },
+                    "document": {
+                        "$ref": "#/components/schemas/ExpressDocument",
+                        "description": "The generated Express document. Present only for document outputs."
+                    },
+                    "variationRequestId": {
+                        "description": "The client-provided identifier echoed back from the variation input.",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "type"
+                ]
+            },
+            "Pagination": {
+                "description": "Pagination details of the response.",
+                "type": "object",
+                "properties": {
+                    "nextUrl": {
+                        "description": "A URL using which the next page of the response can be fetched.",
+                        "type": "string"
+                    },
+                    "totalRecords": {
+                        "description": "Total number of items available that match the query.",
+                        "type": "number"
+                    }
+                },
+                "required": [
+                    "nextUrl",
+                    "totalRecords"
+                ]
+            },
+            "ExpressDocument": {
+                "description": "Details of the Express document.",
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "description": "The unique identifier of the document.",
+                        "type": "string"
+                    },
+                    "name": {
+                        "description": "The name or title of the document.",
+                        "type": "string"
+                    },
+                    "thumbnailUrl": {
+                        "description": "Pre-signed URL for the Document's thumbnail rendition.\nThe size of the rendition will be `640 pixels` along the longest side. The format of the rendition will be a `PNG` image.",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "id",
+                    "name",
+                    "thumbnailUrl"
+                ]
+            },
+            "DocumentPageDetails": {
+                "description": "The details of a single page in the Express Document.",
+                "type": "object",
+                "properties": {
+                    "pageNumber": {
+                        "description": "The number of the page starting from 1.",
+                        "type": "number"
+                    },
+                    "pageTitle": {
+                        "description": "The title of the page.",
+                        "type": "string"
+                    },
+                    "thumbnailUrl": {
+                        "description": "Pre-signed URL for the page's thumbnail rendition valid for 4 hours.\nThe size of the rendition will be 640 pixels along the longest side. The format of the rendition will be a PNG image.",
+                        "type": "string"
+                    },
+                    "size": {
+                        "$ref": "#/components/schemas/Size",
+                        "description": "The original width and height of the page."
+                    },
+                    "taggedElements": {
+                        "description": "List of all the tagged elements on this page.\nIf this page do not have any tagged element, this field will be undefined.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/TaggedElement"
+                        }
+                    }
+                },
+                "required": [
+                    "pageNumber",
+                    "pageTitle",
+                    "size",
+                    "thumbnailUrl"
+                ]
+            },
+            "Size": {
+                "description": "Represents a dimension within a Page.",
+                "type": "object",
+                "properties": {
+                    "width": {
+                        "description": "The width in pixels ( px ).",
+                        "type": "number"
+                    },
+                    "height": {
+                        "description": "The height in pixels ( px ).",
+                        "type": "number"
+                    }
+                },
+                "required": [
+                    "height",
+                    "width"
+                ]
+            },
+            "TaggedElement": {
+                "description": "The details of a tag element inside the page.",
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "description": "The name of the tag. Following rules apply to the tag name:\n\n1. In the same page, tag names should be unique.\n2. Across different pages, tags of same element type can have same name.\n3. The tag name is case-sensitive.",
+                        "type": "string"
+                    },
+                    "type": {
+                        "$ref": "#/components/schemas/TaggedElementType",
+                        "description": "The type of the tagged element."
+                    },
+                    "position": {
+                        "$ref": "#/components/schemas/Point",
+                        "description": "The x and y coordinates of the tagged element on the document's page, relative to the original page size."
+                    },
+                    "size": {
+                        "$ref": "#/components/schemas/Size",
+                        "description": "The width and height of the tagged element in the document's page relative to the original page size."
+                    },
+                    "value": {
+                        "description": "The value of the tagged element. Present only for element types that carry a value (e.g. text).",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "name",
+                    "position",
+                    "size",
+                    "type"
+                ]
+            },
+            "TaggedElementType": {
+                "description": "The supported tag types in a document.",
+                "enum": [
+                    "image",
+                    "text",
+                    "video"
+                ],
+                "type": "string"
+            },
+            "Point": {
+                "description": "Represents position within a page. 0,0 represents the top-left corner of a page.",
+                "type": "object",
+                "properties": {
+                    "x": {
+                        "description": "The left co-ordinate position in px.",
+                        "type": "number"
+                    },
+                    "y": {
+                        "description": "The top co-ordinate position in px.",
+                        "type": "number"
+                    }
+                },
+                "required": [
+                    "x",
+                    "y"
+                ]
+            },
+            "CreativeCloudFileIdResource": {
+                "description": "A Resource object referencing an ACP asset by its file identifier.",
+                "type": "object",
+                "properties": {
+                    "creativeCloudFileId": {
+                        "description": "The identifier of an asset stored in ACP.\nExample: \"urn:aaid:sc:US:a21c8629-413f-55d9-9e65-83330a277ac1\"",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "creativeCloudFileId"
+                ]
+            },
+            "CreateVariationInput": {
+                "description": "Input details for a single variation request.\nAlso serves as the schema for each row in a bulk-create-variation NDJSON input file.",
+                "type": "object",
+                "properties": {
+                    "mappings": {
+                        "$ref": "#/components/schemas/TagMappings",
+                        "description": "Tag mappings to apply to the template or document."
+                    },
+                    "variationRequestId": {
+                        "description": "The client-provided identifier for the variation request.\nIf supplied, the service echoes it back in the corresponding response\nto simplify client-side correlation.",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "mappings"
+                ]
+            },
+            "TagMappings": {
+                "description": "Collection of tag-to-value mappings for a variation, organized by element type.",
+                "type": "object",
+                "properties": {
+                    "textMappings": {
+                        "description": "Mappings for text-type tagged elements.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/TextMapping"
+                        }
+                    },
+                    "imageMappings": {
+                        "description": "Mappings for image-type tagged elements.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ImageMapping"
+                        }
+                    }
+                }
+            },
+            "TextMapping": {
+                "description": "A mapping that replaces a text-type tagged element.",
+                "type": "object",
+                "properties": {
+                    "tagName": {
+                        "description": "The name of the text tag to replace. Must match a tag name\nreturned by the tagged-documents API.",
+                        "type": "string"
+                    },
+                    "text": {
+                        "description": "The replacement text value.",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "tagName",
+                    "text"
+                ]
+            },
+            "ImageMapping": {
+                "description": "A mapping that replaces an image-type tagged element.",
+                "type": "object",
+                "properties": {
+                    "tagName": {
+                        "description": "The name of the image tag to replace. Must match a tag name\nreturned by the tagged-documents API.",
+                        "type": "string"
+                    },
+                    "source": {
+                        "$ref": "#/components/schemas/UrlResource",
+                        "description": "The source of the replacement image, specified as a pre-signed URL."
+                    }
+                },
+                "required": [
+                    "source",
+                    "tagName"
+                ]
+            },
+            "UrlResource": {
+                "description": "A Resource object referencing an asset via a pre-signed URL.\nUsed for customer-supplied storage or Adobe-owned temporary storage.",
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "description": "An absolute pre-signed URL used to GET an input asset or PUT an output asset.\nAllowed domains include AWS S3, Azure Blob Storage, and Dropbox.",
+                        "type": "string"
+                    },
+                    "storageType": {
+                        "description": "Required only for output parameters when the URL targets\nAzure BlobStore or Dropbox storage.",
+                        "enum": [
+                            "Azure",
+                            "Dropbox"
+                        ],
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "url"
+                ]
+            },
+            "ImageOutput": {
+                "description": "Requested image rendition output configuration.",
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "description": "Discriminator indicating image output type.",
+                        "type": "string",
+                        "enum": [
+                            "image"
+                        ]
+                    },
+                    "mediaType": {
+                        "$ref": "#/components/schemas/ImageRenditionFormat",
+                        "description": "The media type of the image rendition."
+                    },
+                    "size": {
+                        "description": "The size of the image rendition on the longest side in pixels.\nThe aspect ratio is maintained. Min: 1, Max: 8192.\nIf not provided, the default size of page is considered.",
+                        "type": "number"
+                    }
+                },
+                "required": [
+                    "mediaType",
+                    "type"
+                ]
+            },
+            "DocumentOutput": {
+                "description": "Requested Express document output configuration.\nWhen specified, the service persists the generated variation as an Express document.",
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "description": "Discriminator indicating document output type.",
+                        "type": "string",
+                        "enum": [
+                            "document"
+                        ]
+                    },
+                    "preferredDocumentName": {
+                        "description": "The preferred name for the generated document.\nIf not provided or already in use, a unique name is auto-generated.",
+                        "type": "string"
+                    },
+                    "destinationFolder": {
+                        "$ref": "#/components/schemas/DestinationFolderResource",
+                        "description": "The ACP folder where the generated document should be saved.\nIf not provided, the document is saved to the user's default storage."
+                    }
+                },
+                "required": [
+                    "type"
+                ]
+            },
+            "DestinationFolderResource": {
+                "description": "A Resource object specifying an ACP folder as a destination for output assets.\nWhen used, the service chooses unique file names within the specified folder.",
+                "type": "object",
+                "properties": {
+                    "creativeCloudProjectId": {
+                        "description": "The identifier of a project to store output assets in.",
+                        "type": "string"
+                    },
+                    "creativeCloudFolderId": {
+                        "description": "The identifier of a folder to store output assets in.",
+                        "type": "string"
+                    }
+                }
+            },
+            "BulkInputSource": {
+                "description": "The input source for a bulk operation, referencing a manifest JSON file\nthat contains references to NDJSON chunk files with variation input rows.",
+                "type": "object",
+                "properties": {
+                    "source": {
+                        "$ref": "#/components/schemas/UrlResource",
+                        "description": "A pre-signed URL pointing to the manifest JSON file.\nThe manifest describes the total record count and references to NDJSON\nchunk files, each containing variation input rows conforming to\nthe {@link CreateVariationInput} schema."
+                    },
+                    "mediaType": {
+                        "description": "The media type of the input manifest file. Must be \"application/json\".",
+                        "type": "string",
+                        "enum": [
+                            "application/json"
+                        ]
+                    }
+                },
+                "required": [
+                    "mediaType",
+                    "source"
+                ]
+            },
+            "ImageRenditionFormat": {
+                "description": "The format of the bitmap rendition.",
+                "enum": [
+                    "image/jpeg",
+                    "image/png"
+                ],
+                "type": "string"
+            },
+            "ImageRenditionOptions": {
+                "description": "Options for the image rendition request.",
+                "type": "object",
+                "properties": {
+                    "format": {
+                        "$ref": "#/components/schemas/ImageRenditionFormat",
+                        "description": "Image rendition format"
+                    },
+                    "size": {
+                        "description": "The size of the \"image\" rendition on the longest side. The aspect ratio is maintained.\nFor image the minimum size supported is 1px and maximum size supported is 8192px.\n\nIf not provided, the default size of page is considered.",
+                        "type": "number"
+                    }
+                },
+                "required": [
+                    "format"
+                ]
+            },
+            "VideoRenditionOptions": {
+                "description": "Options for the video rendition request.",
+                "type": "object",
+                "properties": {
+                    "format": {
+                        "description": "video rendition format",
+                        "type": "string",
+                        "enum": [
+                            "video/mp4"
+                        ]
+                    },
+                    "size": {
+                        "description": "The size of the \"video\" rendition on the longest side. The aspect ratio is maintained.\nFor video the minimum size supported is 146px and maximum size supported is 4096px.\n\nIf not provided, the default size of page is considered.",
+                        "type": "number"
+                    }
+                },
+                "required": [
+                    "format"
+                ]
+            },
+            "PdfRenditionOptions": {
+                "description": "Options for the requested PDF rendition.",
+                "type": "object",
+                "properties": {
+                    "format": {
+                        "description": "PDF rendition format",
+                        "type": "string",
+                        "enum": [
+                            "application/pdf"
+                        ]
+                    },
+                    "pdfType": {
+                        "description": "The type of PDF rendition. Default is \"standard\".",
+                        "enum": [
+                            "print",
+                            "standard"
+                        ],
+                        "type": "string"
+                    },
+                    "downloadIndividualPdfFiles": {
+                        "description": "Controls whether pages are downloaded as separate PDF files.\nWhen true, each page is downloaded as its own PDF file.\nWhen false, all pages are combined into a single PDF file.\n\nDefaults to false.",
+                        "type": "boolean"
+                    },
+                    "config": {
+                        "description": "Configuration for the provided PDF type.",
+                        "anyOf": [
+                            {
+                                "$ref": "#/components/schemas/PrintConfig"
+                            },
+                            {
+                                "$ref": "#/components/schemas/StandardConfig"
+                            }
+                        ]
+                    }
+                },
+                "required": [
+                    "format"
+                ]
+            },
+            "PrintConfig": {
+                "description": "Configuration options for print-ready PDF renditions.",
+                "type": "object",
+                "properties": {
+                    "bleed": {
+                        "description": "Controls whether to include bleed settings in the PDF.\nDefaults to false.",
+                        "type": "boolean"
+                    },
+                    "bleedSettings": {
+                        "description": "Configuration settings for bleed margins.\nOnly applies when bleed is true.\nDefault value is 0.125 <unit>.",
+                        "$ref": "#/components/schemas/ValueWithUnit"
+                    },
+                    "cropMargins": {
+                        "description": "Controls whether to include crop margins in the PDF.\nDefaults to false.",
+                        "type": "boolean"
+                    },
+                    "cropMarginsSettings": {
+                        "description": "Configuration settings for crop margins.\nOnly applies when cropMargins is true.\nDefault value is 0.125 <unit>.",
+                        "$ref": "#/components/schemas/ValueWithUnit"
+                    }
+                }
+            },
+            "ValueWithUnit": {
+                "description": "Configuration settings for the \"print\" PDF rendition.\nIt includes values to adjust the amount and unit of measurement.",
+                "type": "object",
+                "properties": {
+                    "amount": {
+                        "description": "The amount of bleed or crop margin.\nIt can be a positive or negative value.",
+                        "type": "number"
+                    },
+                    "unit": {
+                        "$ref": "#/components/schemas/PdfMarginUnit",
+                        "description": "The unit of measurement for the bleed or crop margin."
+                    }
+                },
+                "required": [
+                    "amount",
+                    "unit"
+                ]
+            },
+            "PdfMarginUnit": {
+                "description": "The unit of measurement for the bleed or crop margin.",
+                "enum": [
+                    "in",
+                    "mm"
+                ],
+                "type": "string"
+            },
+            "StandardConfig": {
+                "description": "Configuration settings for standard PDF rendition.",
+                "type": "object",
+                "properties": {
+                    "accessibilityTags": {
+                        "description": "Controls whether accessibility tags are included in the PDF.\nWhen true, accessibility tags will be embedded in the PDF.\nWhen false, accessibility tags will be omitted.\n\nDefaults to false.",
+                        "type": "boolean"
+                    }
+                }
+            },
+            "JobStatus": {
+                "description": "Various statuses of a job.",
+                "enum": [
+                    "cancel_requested",
+                    "cancelled",
+                    "failed",
+                    "partially_succeeded",
+                    "pending",
+                    "running",
+                    "succeeded"
+                ],
+                "type": "string"
+            },
+            "PageRenditionResponse": {
+                "description": "Response payload for the \"export-rendition\" API when exporting page renditions.",
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "description": "The identifier of the document for which the rendition request was made.",
+                        "type": "string"
+                    },
+                    "pageRenditionsResult": {
+                        "description": "The exported renditions outcome indicates whether they were successful or failed.",
+                        "type": "array",
+                        "items": {
+                            "anyOf": [
+                                {
+                                    "$ref": "#/components/schemas/SuccessfulPageRendition"
+                                },
+                                {
+                                    "$ref": "#/components/schemas/FailedPageRendition"
+                                }
+                            ]
+                        }
+                    },
+                    "jobId": {
+                        "description": "The identifier of the job.",
+                        "type": "string"
+                    },
+                    "status": {
+                        "$ref": "#/components/schemas/JobStatus",
+                        "description": "The status of the job."
+                    }
+                },
+                "required": [
+                    "id",
+                    "jobId",
+                    "pageRenditionsResult",
+                    "status"
+                ]
+            },
+            "SuccessfulPageRendition": {
+                "description": "Details of the page rendition that was successfully exported.",
+                "type": "object",
+                "properties": {
+                    "pageNumber": {
+                        "description": "The page number for which the rendition export request was made.",
+                        "type": "number"
+                    },
+                    "renditionUrl": {
+                        "description": "Pre-signed URL where the rendition result can be downloaded from.",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "pageNumber",
+                    "renditionUrl"
+                ]
+            },
+            "FailedPageRendition": {
+                "description": "Details of the page rendition that failed to export.",
+                "type": "object",
+                "properties": {
+                    "pageNumber": {
+                        "description": "The page number for which the rendition export request was made.",
+                        "type": "number"
+                    },
+                    "error": {
+                        "$ref": "#/components/schemas/ErrorResponseDetails",
+                        "description": "Error object indicating the reason for the failure."
+                    }
+                },
+                "required": [
+                    "error",
+                    "pageNumber"
+                ]
+            },
+            "PdfRenditionResponse": {
+                "description": "Response payload for the \"export-rendition\" API when exporting PDF rendition.",
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "description": "The identifier of the document for which the rendition request was made.",
+                        "type": "string"
+                    },
+                    "pageRenditionsResult": {
+                        "description": "The exported PDF rendition outcome.",
+                        "type": "array",
+                        "items": {
+                            "anyOf": [
+                                {
+                                    "$ref": "#/components/schemas/SuccessfulPdfRendition"
+                                },
+                                {
+                                    "$ref": "#/components/schemas/FailedPdfRendition"
+                                }
+                            ]
+                        }
+                    },
+                    "jobId": {
+                        "description": "The identifier of the job.",
+                        "type": "string"
+                    },
+                    "status": {
+                        "$ref": "#/components/schemas/JobStatus",
+                        "description": "The status of the job."
+                    }
+                },
+                "required": [
+                    "id",
+                    "jobId",
+                    "pageRenditionsResult",
+                    "status"
+                ]
+            },
+            "SuccessfulPdfRendition": {
+                "description": "Result of a successful PDF rendition export.",
+                "type": "object",
+                "properties": {
+                    "renditionUrl": {
+                        "description": "The URL of the PDF rendition.",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "renditionUrl"
+                ]
+            },
+            "FailedPdfRendition": {
+                "description": "Result of a failed PDF rendition export.",
+                "type": "object",
+                "properties": {
+                    "error": {
+                        "$ref": "#/components/schemas/ErrorResponseDetails",
+                        "description": "Error object indicating the reason for the failure."
+                    }
+                },
+                "required": [
+                    "error"
+                ]
+            }
+        },
+        "examples": {
+            "jobResponseSample": {
+                "summary": "Job Response Sample",
+                "value": {
+                    "jobId": "af121560-218e-4dd9-918d-add12b3b6d98",
+                    "statusUrl": "https://example.com/status/af121560-218e-4dd9-918d-add12b3b6d98"
+                }
+            },
+            "errorResponseDetailsBadRequest": {
+                "summary": "Bad Request",
+                "value": {
+                    "error_code": "client_error",
+                    "message": "Client Error"
+                }
+            },
+            "errorResponseDetailsUnauthorized": {
+                "summary": "Unauthorized",
+                "value": {
+                    "error_code": "unauthorized_error",
+                    "message": "Not authorized"
+                }
+            },
+            "errorResponseDetailsForbidden": {
+                "summary": "Forbidden",
+                "value": {
+                    "error_code": "access_error",
+                    "message": "Not allowed"
+                }
+            },
+            "errorResponseDetailsForbiddenMissingExpressEntitlement": {
+                "summary": "Forbidden - Missing Adobe Express entitlement",
+                "value": {
+                    "error_code": "access_error",
+                    "message": "The account associated with the provided access token does not have Adobe Express entitlements"
+                }
+            },
+            "errorResponseDetailsForbiddenMissingExpressApiEntitlement": {
+                "summary": "Forbidden - Missing Express API entitlement",
+                "value": {
+                    "error_code": "access_error",
+                    "message": "The account associated with the provided access token does not have Express API entitlements"
+                }
+            },
+            "errorResponseDetailsForbiddenExpressApiRequiresPremiumAccount": {
+                "summary": "Forbidden - Premium Adobe Express account required",
+                "value": {
+                    "error_code": "access_error",
+                    "message": "Access to the Express API requires a premium Adobe Express account"
+                }
+            },
+            "errorResponseDetailsForbiddenMissingTypekitEntitlement": {
+                "summary": "Forbidden - Missing Typekit entitlement",
+                "value": {
+                    "error_code": "access_error",
+                    "message": "The account associated with the provided access token does not have 'typekit' entitlement"
+                }
+            },
+            "errorResponseDetailsForbiddenTechnicalAccountNonFreeTypekit": {
+                "summary": "Forbidden - Technical account has non-free Typekit entitlement",
+                "value": {
+                    "error_code": "access_error",
+                    "message": "The account associated with the provided access token has 'typekit' entitlements beyond the free tier, which is not permitted for API access"
+                }
+            },
+            "errorResponseDetailsUnprocessableEntity": {
+                "summary": "Unprocessable Entity",
+                "value": {
+                    "error_code": "validation_error",
+                    "message": "Validation error",
+                    "validation_errors": [
+                        "The input value is invalid"
+                    ]
+                }
+            },
+            "errorResponseDetailsTooManyRequests": {
+                "summary": "Too Many Requests",
+                "value": {
+                    "error_code": "rate_limited",
+                    "message": "Too many requests"
+                }
+            },
+            "errorResponseDetailsRuntimeError": {
+                "summary": "Runtime Error",
+                "value": {
+                    "error_code": "runtime_error",
+                    "message": "Runtime error"
+                }
+            },
+            "errorResponseDetailsServiceUnavailable": {
+                "summary": "Service Unavailable",
+                "value": {
+                    "error_code": "service_unavailable",
+                    "message": "The service is temporarily unable to handle the request"
+                }
+            },
+            "errorResponseDetailsNotFound": {
+                "summary": "Not Found",
+                "value": {
+                    "error_code": "not_found",
+                    "message": "Requested resource not found"
+                }
+            },
+            "errorResponseDetailsPublicTemplate": {
+                "summary": "Bad Request - Public Template",
+                "value": {
+                    "error_code": "client_error",
+                    "message": "Document is a public template and cannot be exported directly. Please create a copy first."
+                }
+            },
+            "errorResponseDetailsStockContent": {
+                "summary": "Unprocessable Entity - Stock Content Detected",
+                "value": {
+                    "error_code": "stock_content_detected",
+                    "message": "Document contains stock-licensed content and cannot be used for rendition generation"
+                }
+            },
+            "taggedDocumentsResponseSample": {
+                "summary": "Tagged Documents Response Sample",
+                "value": {
+                    "documents": [
+                        {
+                            "id": "urn:aaid:sc:AP:0000aaaa-0000-000a-0000-000000aaaaaa",
+                            "name": "Sample Document 1",
+                            "thumbnailUrl": "https://example.com/thumbnail1.png"
+                        },
+                        {
+                            "id": "urn:aaid:sc:AP:0000aaaa-0000-000a-0000-000000aaaaaa",
+                            "name": "Sample Document 2",
+                            "thumbnailUrl": "https://example.com/thumbnail2.png"
+                        },
+                        {
+                            "id": "urn:aaid:sc:AP:0000aaaa-0000-000a-0000-000000aaaaaa",
+                            "name": "Sample Document 3",
+                            "thumbnailUrl": "https://example.com/thumbnail3.png"
+                        },
+                        {
+                            "id": "urn:aaid:sc:AP:0000aaaa-0000-000a-0000-000000aaaaaa",
+                            "name": "Sample Document 4",
+                            "thumbnailUrl": "https://example.com/thumbnail4.png"
+                        },
+                        {
+                            "id": "urn:aaid:sc:AP:0000aaaa-0000-000a-0000-000000aaaaaa",
+                            "name": "Sample Document 5",
+                            "thumbnailUrl": "https://example.com/thumbnail5.png"
+                        }
+                    ],
+                    "paging": {
+                        "nextUrl": "https://example.com/beta/tagged-documents?start=5",
+                        "totalRecords": 14
+                    }
+                }
+            },
+            "taggedDocumentDetailsResponseSampleOne": {
+                "summary": "Tagged Document Details Response Sample 1",
+                "value": {
+                    "documentPages": [
+                        {
+                            "pageNumber": 1,
+                            "pageTitle": "Introduction",
+                            "size": {
+                                "height": 792,
+                                "width": 612
+                            },
+                            "taggedElements": [
+                                {
+                                    "name": "HeaderTitle",
+                                    "position": {
+                                        "x": 100,
+                                        "y": 150
+                                    },
+                                    "size": {
+                                        "height": 50,
+                                        "width": 200
+                                    },
+                                    "type": "text",
+                                    "value": "Welcome to Our Project"
+                                },
+                                {
+                                    "name": "CompanyLogo",
+                                    "position": {
+                                        "x": 50,
+                                        "y": 50
+                                    },
+                                    "size": {
+                                        "height": 100,
+                                        "width": 100
+                                    },
+                                    "type": "image"
+                                }
+                            ],
+                            "thumbnailUrl": "https://example.com/page1-thumbnail.png"
+                        },
+                        {
+                            "pageNumber": 2,
+                            "pageTitle": "Project Details",
+                            "size": {
+                                "height": 792,
+                                "width": 612
+                            },
+                            "taggedElements": [
+                                {
+                                    "name": "Subheading",
+                                    "position": {
+                                        "x": 120,
+                                        "y": 180
+                                    },
+                                    "size": {
+                                        "height": 40,
+                                        "width": 250
+                                    },
+                                    "type": "text",
+                                    "value": "Project Overview"
+                                }
+                            ],
+                            "thumbnailUrl": "https://example.com/page2-thumbnail.png"
+                        }
+                    ],
+                    "id": "urn:aaid:sc:AP:0000aaaa-0000-000a-0000-000000aaaaaa",
+                    "name": "Project Proposal",
+                    "paging": {
+                        "nextUrl": "https://example.com/api/tagged-documents/urn:aaid:sc:AP:0000aaaa-0000-000a-0000-000000aaaaaa?start=3",
+                        "totalRecords": 14
+                    }
+                }
+            },
+            "taggedDocumentDetailsResponseSampleTwo": {
+                "summary": "Tagged Document Details Response Sample 2 - No tagged elements",
+                "value": {
+                    "documentPages": [
+                        {
+                            "pageNumber": 1,
+                            "pageTitle": "Introduction",
+                            "size": {
+                                "height": 792,
+                                "width": 612
+                            },
+                            "taggedElements": [],
+                            "thumbnailUrl": "https://example.com/page1-thumbnail.png"
+                        }
+                    ],
+                    "id": "urn:aaid:sc:AP:0000aaaa-0000-000a-0000-000000aaaaaa",
+                    "name": "Project Proposal"
+                }
+            },
+            "exportRenditionRequestSampleOne": {
+                "summary": "Export Rendition Request Sample 1",
+                "value": {
+                    "id": "urn:aaid:sc:AP:0000aaaa-0000-000a-0000-000000aaaaaa",
+                    "pages": "1,2,3",
+                    "options": {
+                        "format": "image/jpeg",
+                        "size": 1024
+                    }
+                }
+            },
+            "exportRenditionRequestSampleTwo": {
+                "summary": "Export Rendition Request Sample 2",
+                "value": {
+                    "id": "urn:aaid:sc:AP:33e40394-0000-000c-0002-a27de4c3d2b8",
+                    "options": {
+                        "format": "image/jpeg"
+                    }
+                }
+            },
+            "exportRenditionRequestSampleThree": {
+                "summary": "Export Rendition Request Sample 3",
+                "value": {
+                    "id": "urn:aaid:sc:AP:33e40394-0000-000c-0001-a27de4c3d2b8",
+                    "pages": "1-5",
+                    "options": {
+                        "format": "image/png",
+                        "size": 2048
+                    }
+                }
+            },
+            "exportRenditionRequestSampleFour": {
+                "summary": "Export Rendition Request Sample 4",
+                "value": {
+                    "id": "urn:aaid:sc:AP:33e40394-0000-000c-0001-a27de4c3d2b8",
+                    "pages": "1-",
+                    "options": {
+                        "format": "video/mp4"
+                    }
+                }
+            },
+            "exportRenditionRequestSampleFive": {
+                "summary": "Export Rendition Request Sample 5",
+                "value": {
+                    "id": "urn:aaid:sc:AP:33e40394-0000-000c-0001-a27de4c3d2b8",
+                    "pages": "1,2",
+                    "options": {
+                        "format": "video/mp4",
+                        "size": 1080
+                    }
+                }
+            },
+            "exportRenditionRequestSampleSix": {
+                "summary": "Export PDF Rendition - Standard PDF",
+                "value": {
+                    "id": "urn:aaid:sc:AP:33e40394-0000-000c-0001-a27de4c3d2b8",
+                    "pages": "1-3",
+                    "options": {
+                        "format": "application/pdf",
+                        "pdfType": "standard",
+                        "downloadIndividualPdfFiles": true,
+                        "config": {
+                            "accessibilityTags": true
+                        }
+                    }
+                }
+            },
+            "exportRenditionRequestSampleSeven": {
+                "summary": "Export PDF Rendition - Print PDF",
+                "value": {
+                    "id": "urn:aaid:sc:AP:33e40394-0000-000c-0001-a27de4c3d2b8",
+                    "pages": "1-5",
+                    "options": {
+                        "format": "application/pdf",
+                        "pdfType": "print",
+                        "downloadIndividualPdfFiles": false,
+                        "config": {
+                            "bleed": true,
+                            "bleedSettings": {
+                                "amount": 0.125,
+                                "unit": "in"
+                            },
+                            "cropMargins": true,
+                            "cropMarginsSettings": {
+                                "amount": 0.125,
+                                "unit": "in"
+                            }
+                        }
+                    }
+                }
+            },
+            "exportRenditionRequestPublicTemplate": {
+                "summary": "Export Rendition - Public Template (returns 400)",
+                "description": "Requesting rendition of a public template that has not been copied to the user's account will return a 400 Bad Request.",
+                "value": {
+                    "id": "urn:aaid:sc:VA6C2:5d99ac75-fb85-5ee7-b73d-ab51929c0cb5",
+                    "pages": "1",
+                    "options": {
+                        "format": "image/jpeg",
+                        "size": 1024
+                    }
+                }
+            },
+            "exportRenditionRequestStockContent": {
+                "summary": "Export Rendition - Document with Stock Assets (returns 422)",
+                "description": "Requesting rendition of a document that contains Adobe Stock-licensed assets will return a 422 Unprocessable Entity.",
+                "value": {
+                    "id": "urn:aaid:sc:AP:c129e458-8cc9-5c73-a44d-710796fea23a",
+                    "pages": "1",
+                    "options": {
+                        "format": "image/jpeg",
+                        "size": 1024
+                    }
+                }
+            },
+            "jobStatusResponseSampleOne": {
+                "summary": "Job status response running",
+                "value": {
+                    "jobId": "af121560-218e-4dd9-918d-add12b3b6d98",
+                    "status": "running"
+                }
+            },
+            "jobStatusResponseSampleTwo": {
+                "summary": "Job status response succeeded",
+                "value": {
+                    "jobId": "af121560-218e-4dd9-918d-add12b3b6d98",
+                    "status": "succeeded"
+                }
+            },
+            "jobStatusResponseSampleThree": {
+                "summary": "Job status response failed",
+                "value": {
+                    "jobId": "af121560-218e-4dd9-918d-add12b3b6d98",
+                    "status": "failed"
+                }
+            },
+            "exportRenditionResponseSampleOne": {
+                "summary": "Export Rendition Response Sample 1",
+                "value": {
+                    "jobId": "af121560-218e-4dd9-918d-add12b3b6d98",
+                    "status": "succeeded",
+                    "id": "urn:aaid:sc:AP:0000aaaa-0000-000a-0000-000000aaaaaa",
+                    "pageRenditionsResult": [
+                        {
+                            "pageNumber": 1,
+                            "renditionUrl": "https://example.com/rendition/page1.jpg"
+                        },
+                        {
+                            "pageNumber": 2,
+                            "renditionUrl": "https://example.com/rendition/page2.jpg"
+                        },
+                        {
+                            "pageNumber": 3,
+                            "renditionUrl": "https://example.com/rendition/page3.jpg"
+                        }
+                    ]
+                }
+            },
+            "exportRenditionResponseSampleTwo": {
+                "summary": "Export Rendition Response Sample 2",
+                "value": {
+                    "jobId": "af121560-218e-4dd9-918d-add12b3b6d98",
+                    "status": "partially_succeeded",
+                    "id": "urn:aaid:sc:AP:0000aaaa-0000-000a-0000-000000aaaaaa",
+                    "pageRenditionsResult": [
+                        {
+                            "pageNumber": 1,
+                            "renditionUrl": "https://example.com/rendition/page1.jpg"
+                        },
+                        {
+                            "pageNumber": 2,
+                            "error": {
+                                "error_code": "access_error",
+                                "message": "Not allowed"
+                            }
+                        },
+                        {
+                            "pageNumber": 3,
+                            "renditionUrl": "https://example.com/rendition/page3.jpg"
+                        }
+                    ]
+                }
+            },
+            "exportRenditionResponseSampleThree": {
+                "summary": "Export Rendition Response Sample 3",
+                "value": {
+                    "jobId": "af121560-218e-4dd9-918d-add12b3b6d98",
+                    "status": "failed",
+                    "id": "urn:aaid:sc:AP:0000aaaa-0000-000a-0000-000000aaaaaa",
+                    "pageRenditionsResult": [
+                        {
+                            "pageNumber": 1,
+                            "error": {
+                                "error_code": "runtime_error",
+                                "message": "Runtime error"
+                            }
+                        },
+                        {
+                            "pageNumber": 2,
+                            "error": {
+                                "error_code": "runtime_error",
+                                "message": "Runtime error"
+                            }
+                        }
+                    ]
+                }
+            },
+            "exportPdfRenditionResponseSampleOne": {
+                "summary": "Export PDF Rendition Response - Succeeded",
+                "value": {
+                    "jobId": "af121560-218e-4dd9-918d-add12b3b6d98",
+                    "status": "succeeded",
+                    "id": "urn:aaid:sc:AP:0000aaaa-0000-000a-0000-000000aaaaaa",
+                    "pageRenditionsResult": [
+                        {
+                            "renditionUrl": "https://example.com/rendition/document.pdf"
+                        }
+                    ]
+                }
+            },
+            "exportPdfRenditionResponseSampleTwo": {
+                "summary": "Export PDF Rendition Response - Failed",
+                "value": {
+                    "jobId": "af121560-218e-4dd9-918d-add12b3b6d98",
+                    "status": "failed",
+                    "id": "urn:aaid:sc:AP:0000aaaa-0000-000a-0000-000000aaaaaa",
+                    "pageRenditionsResult": [
+                        {
+                            "error": {
+                                "error_code": "runtime_error",
+                                "message": "Runtime error"
+                            }
+                        }
+                    ]
+                }
+            },
+            "createVariationStatusResponseSample": {
+                "summary": "Create Variation Status Response - Succeeded",
+                "value": {
+                    "jobId": "af121560-218e-4dd9-918d-add12b3b6d98",
+                    "status": "succeeded",
+                    "outputs": [
+                        {
+                            "type": "image",
+                            "renditionUrl": "https://example.com/rendition/variation1.jpg",
+                            "variationRequestId": "row-001"
+                        },
+                        {
+                            "type": "document",
+                            "document": {
+                                "id": "urn:aaid:sc:AP:0000aaaa-0000-000a-0000-000000aaaaaa",
+                                "name": "Variation 1",
+                                "thumbnailUrl": "https://example.com/thumbnails/variation1.png"
+                            },
+                            "variationRequestId": "row-001"
+                        }
+                    ]
+                }
+            },
+            "bulkCreateVariationStatusResponseSampleCancelled": {
+                "summary": "Cancel job response — cancelled",
+                "value": {
+                    "jobId": "af121560-218e-4dd9-918d-add12b3b6d98",
+                    "status": "cancelled"
+                }
+            }
+        }
+    },
+    "security": [
+        {
+            "apiKey": [],
+            "Authorization": []
+        }
+    ]
+}
