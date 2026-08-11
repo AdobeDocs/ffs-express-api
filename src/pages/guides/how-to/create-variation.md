@@ -409,8 +409,6 @@ export AUTH_TOKEN=yourTokenHere
 node index.mjs
 ```
 
-{/_ SCREENSHOT: terminal output showing the job id followed by the image output download URL _/}
-
 ## Find your generated documents
 
 `document` outputs are stored in your Adobe Express account and remain available for **30 days**, after which they are automatically removed. Find them in Adobe Express:
@@ -420,7 +418,5 @@ node index.mjs
 3. View or modify your API-generated documents within the 30-day window.
 
 Rendition outputs (`image`, `pdf`, `video`) are returned as pre-signed `destination.url`s in the status response—download them before the URLs expire.
-
-{/_ SCREENSHOT: the Express API Documents folder under Your Stuff in Adobe Express _/}
 
 For the full request and response surface, see the [API Reference](../../api/index.md).
