@@ -52,7 +52,7 @@ Create Variation will supersede Generate Variation and Export Rendition. While b
 | Template reference | `id` (tagged document URN)                     | `templateOrDocument.creativeCloudFileId`                                                                |
 | Element mappings   | Flat `tagMappings` (name → string or URL)      | Typed arrays: `textMappings`, `imageMappings`, `videoMappings`                                          |
 | Per-page control   | None                                           | `pageOverrides` (different values per page)                                                             |
-| Output             | One Express document (stored 30 days)          | `outputs[]`—any of `image`, `document`, `pdf`, `video`, each with its own page range and format options |
+| Output             | One Express document                           | `outputs[]`—any of `image`, `document`, `pdf`, `video`, each with its own page range and format options |
 
 In short, **Create Variation** folds document creation _and_ rendition export into one call—request an image, a PDF, a video, and a persisted document from the same variation, and target specific pages for each.
 
@@ -411,11 +411,11 @@ node index.mjs
 
 ## Find your generated documents
 
-`document` outputs are stored in your Adobe Express account and remain available for **30 days**, after which they are automatically removed. Find them in Adobe Express:
+`document` outputs are stored in your Adobe Express account; find them in Adobe Express:
 
 1. Go to **Your Stuff**.
 2. Select **Express API Documents**.
-3. View or modify your API-generated documents within the 30-day window.
+3. View or modify your API-generated documents.
 
 Rendition outputs (`image`, `pdf`, `video`) are returned as pre-signed `destination.url`s in the status response—download them before the URLs expire.
 
