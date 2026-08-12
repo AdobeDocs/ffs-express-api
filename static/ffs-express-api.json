@@ -490,7 +490,7 @@
         "/beta/create-variation": {
             "post": {
                 "summary": "Create variation",
-                "description": "This API creates a single variation of an Express document by applying tag mappings to a template. The variation is generated asynchronously. Use the returned status URL to poll for job completion and retrieve the result.",
+                "description": "This API creates a single variation of a tagged Express template or document and renders it into one or more outputs (image, Express document, PDF, or video) in a single request. The variation is generated asynchronously; use the returned status URL to poll for job completion and retrieve the result.",
                 "operationId": "createVariation",
                 "requestBody": {
                     "required": true,
