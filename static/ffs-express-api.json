@@ -318,7 +318,13 @@
                 "summary": "Generate variation",
                 "description": "This API creates a document variation based on provided input parameters. After processing, it temporarily stores the generated document and makes it available to the user within a designated folder. The document remains accessible for 30 days, after which the system automatically removes it.",
                 "operationId": "generateVariation",
-                "deprecated": true,
+                "x-badges": [
+                    {
+                        "name": "Deprecated",
+                        "color": "red",
+                        "position": "before"
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
