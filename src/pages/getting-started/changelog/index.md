@@ -30,7 +30,7 @@ hideBreadcrumbNav: true
 
 A list of updates to Adobe Express API.
 
-## 2026-08-11
+## 2026-08-13
 
 ### Added
 
@@ -47,7 +47,7 @@ Please note that the Create Variation API is currently in beta and may be subjec
 
 ### Deprecated
 
-- **Generate Variation and Export Rendition**: The [Generate Variation](../../guides/how-to/generate-variations.md) (`POST /beta/generate-variation`) and [Export Rendition](../../guides/how-to/export-document.md) (`POST /beta/export-rendition`) endpoints are deprecated in favor of Create Variation, which folds document creation and rendition export into a single call. Both remain available during beta; plan to migrate to `create-variation` ahead of general availability.
+- **Generate Variation**: The [Generate Variation](../../guides/how-to/generate-variations.md) (`POST /beta/generate-variation`) endpoint is deprecated in favor of Create Variation, which folds document creation and rendition export into a single call. It remains available during beta; plan to migrate to `create-variation` ahead of general availability.
 
 ## 2026-04-24
 
