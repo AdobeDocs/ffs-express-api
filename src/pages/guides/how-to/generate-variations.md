@@ -11,9 +11,15 @@ contributors:
 hideBreadcrumbNav: true
 ---
 
-# Generate Document Variations
+# Generate a Document Variation
 
 Learn how to generate a single document variation based on a list of element variations and other details.
+
+<InlineAlert variant="warning" slots="heading, text" />
+
+#### Deprecated API
+
+The Generate Variation API is deprecated and will be removed in a future release. Please use the [Create Variation API](./create-variation.md) instead.
 
 ## Overview
 
@@ -41,7 +47,7 @@ Make a POST request to `/generate-variation` with:
 Example tag mapping:
 
 ```json
-"tagMappings": {        
+"tagMappings": {
     "brandText": "Adidas",
     "soccerBallImage": "https://my-bucket.s3.us-east-2.amazonaws.com/ball.jpg",
     "actionVideo": "https://my-bucket.s3.us-east-2.amazonaws.com/soccer-action.mp4"
@@ -96,12 +102,12 @@ curl -i -X POST \
 
 The `tagMappings` object in the request payload is where you should map your tagged elements to the desired modified values. You will specify the tag name for each element as the key, with the new value you want to see in the variation.
 
-Text, image and video elements can be tagged, with all text element tags set to a `string` value, and all image and video values set to a pre-signed URL. 
+Text, image and video elements can be tagged, with all text element tags set to a `string` value, and all image and video values set to a pre-signed URL.
 
 For example, if you have a tag named `brandText`, a tag named `soccerBallImage`, and a tag named `actionVideo` in your document, you would map them as follows:
 
 ```js
-"tagMappings": {        
+"tagMappings": {
     "brandText": "Adidas",
     "soccerBallImage": "https://my-bucket.s3.us-east-2.amazonaws.com/ball.jpg",
     "actionVideo": "https://my-bucket.s3.us-east-2.amazonaws.com/soccer-action.mp4"
@@ -162,37 +168,37 @@ touch index.mjs
 Next, open the `index.mjs` and add the following code to generate a document variation with the supplied variation details. Replace the `id` and `variationDetails` with your own values.
 
 ```js
-let BASE = 'https://express-api.adobe.io';
+let BASE = "https://express-api.adobe.io";
 
 async function generateVariation(id, variationDetails) {
+  let body = {
+    id,
+    variationDetails,
+  };
 
-    let body = {
-        id, 
-        variationDetails     
-    }
-    
-    let resp = await fetch(`${BASE}/beta/generate-variation`, {
-        method:'POST',
-        headers: {
-            'Authorization': `Bearer ${process.env.AUTH_TOKEN}`,
-            'X-API-KEY': process.env.API_KEY,
-            'Content-Type':'application/json'
-        }, 
-        body: JSON.stringify(body)
-    });
-    
-    return await resp.json();
+  let resp = await fetch(`${BASE}/beta/generate-variation`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${process.env.AUTH_TOKEN}`,
+      "X-API-KEY": process.env.API_KEY,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+
+  return await resp.json();
 }
 
 const id = "urn:aaid:sc:VA6C2:4e4cccff-055f-3b57-8196-607cc3a1e4f2";
 const variationDetails = {
-    "pages": "1",
-    "preferredDocumentName": "New soccer ad",
-    "tagMappings": {
-        "brandText": "Adidas",
-        "soccerBallImage": "https://my-bucket.s3.us-east-2.amazonaws.com/ball.jpg",
-        "actionVideo": "https://my-bucket.s3.us-east-2.amazonaws.com/soccer-action.mp4"        
-    }   
+  pages: "1",
+  preferredDocumentName: "New soccer ad",
+  tagMappings: {
+    brandText: "Adidas",
+    soccerBallImage: "https://my-bucket.s3.us-east-2.amazonaws.com/ball.jpg",
+    actionVideo:
+      "https://my-bucket.s3.us-east-2.amazonaws.com/soccer-action.mp4",
+  },
 };
 
 let result = await generateVariation(id, variationDetails);
@@ -215,45 +221,48 @@ Next, update your `index.mjs` file with the following code, which polls for the 
 ```js
 // If the status URL is present, poll the job until it is complete
 if (result.statusUrl) {
-    let jobResult = await pollJob(result.statusUrl, process.env.API_KEY, process.env.AUTH_TOKEN);
-    console.log(jobResult);
-    if (jobResult.status === 'succeeded') {
-        console.log(`Thumbnail URL: ${jobResult.document.thumbnailUrl}`);
-        open(jobResult.document.thumbnailUrl);
-    } else {
-        console.log(`Job failed with status: ${jobResult.status}`);
-    }
+  let jobResult = await pollJob(
+    result.statusUrl,
+    process.env.API_KEY,
+    process.env.AUTH_TOKEN,
+  );
+  console.log(jobResult);
+  if (jobResult.status === "succeeded") {
+    console.log(`Thumbnail URL: ${jobResult.document.thumbnailUrl}`);
+    open(jobResult.document.thumbnailUrl);
+  } else {
+    console.log(`Job failed with status: ${jobResult.status}`);
+  }
 }
 
 async function delay(x) {
-    return new Promise(resolve => {
-        setTimeout(() => {
-            resolve();
-        }, x);
-    });
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, x);
+  });
 }
 
 async function pollJob(jobUrl, id, token) {
-    let status = '';
+  let status = "";
 
-    while(status !== 'succeeded' && status !== 'failed') {
+  while (status !== "succeeded" && status !== "failed") {
+    let resp = await fetch(jobUrl, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "x-api-key": id,
+      },
+    });
 
-        let resp = await fetch(jobUrl, {
-            headers: {
-                'Authorization':`Bearer ${token}`,
-                'x-api-key': id
-            }
-        });
+    let data = await resp.json();
+    status = data.status;
 
-        let data = await resp.json();
-        status = data.status;
+    // delay is a utility to 'pause' for X ms
+    if (status !== "succeeded" && status !== "failed") await delay(1000);
+    if (status === "succeeded") return data;
+  }
 
-        // delay is a utility to 'pause' for X ms
-        if (status !== 'succeeded' && status !== 'failed') await delay(1000);
-        if (status === 'succeeded') return data;
-    }
-
-    return status;
+  return status;
 }
 ```
 
@@ -262,39 +271,39 @@ async function pollJob(jobUrl, id, token) {
 Below is the complete script for generating document variations in Node.js:
 
 ```js
-import open from 'open';
+import open from "open";
 
-let BASE = 'https://express-api.adobe.io';
+let BASE = "https://express-api.adobe.io";
 
 async function generateVariation(id, variationDetails) {
+  let body = {
+    id,
+    variationDetails,
+  };
 
-    let body = {
-        id, 
-        variationDetails     
-    }
-    
-    let resp = await fetch(`${BASE}/beta/generate-variation`, {
-        method:'POST',
-        headers: {
-            'Authorization': `Bearer ${process.env.AUTH_TOKEN}`,
-            'X-API-KEY': process.env.API_KEY,
-            'Content-Type':'application/json'
-        }, 
-        body: JSON.stringify(body)
-    });
-    
-    return await resp.json();
+  let resp = await fetch(`${BASE}/beta/generate-variation`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${process.env.AUTH_TOKEN}`,
+      "X-API-KEY": process.env.API_KEY,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+
+  return await resp.json();
 }
 
 const id = "urn:aaid:sc:VA6C2:4e4cccff-055f-3b57-8196-607cc3a1e4f2"; // replace with your document ID
 const variationDetails = {
-    "pages": "1",
-    "preferredDocumentName": "New ad variation",
-    "tagMappings": {
-        "brandTag": "Adidas",
-        "soccerBallImage": "https://my-bucket.s3.us-east-2.amazonaws.com/ball.jpg",
-        "actionVideo": "https://my-bucket.s3.us-east-2.amazonaws.com/soccer-action.mp4"
-    }   
+  pages: "1",
+  preferredDocumentName: "New ad variation",
+  tagMappings: {
+    brandTag: "Adidas",
+    soccerBallImage: "https://my-bucket.s3.us-east-2.amazonaws.com/ball.jpg",
+    actionVideo:
+      "https://my-bucket.s3.us-east-2.amazonaws.com/soccer-action.mp4",
+  },
 };
 
 let result = await generateVariation(id, variationDetails);
@@ -302,47 +311,49 @@ console.log(result);
 
 // If the status URL is present, poll the job until it is complete
 if (result.statusUrl) {
-    let jobResult = await pollJob(result.statusUrl, process.env.API_KEY, process.env.AUTH_TOKEN);
-    console.log(jobResult);
-    if (jobResult.status === 'succeeded') {
-        console.log(`Thumbnail URL: ${jobResult.document.thumbnailUrl}`);
-        open(jobResult.document.thumbnailUrl);
-    } else {
-        console.log(`Job failed with status: ${jobResult.status}`);
-    }
+  let jobResult = await pollJob(
+    result.statusUrl,
+    process.env.API_KEY,
+    process.env.AUTH_TOKEN,
+  );
+  console.log(jobResult);
+  if (jobResult.status === "succeeded") {
+    console.log(`Thumbnail URL: ${jobResult.document.thumbnailUrl}`);
+    open(jobResult.document.thumbnailUrl);
+  } else {
+    console.log(`Job failed with status: ${jobResult.status}`);
+  }
 }
 
 async function delay(x) {
-    return new Promise(resolve => {
-        setTimeout(() => {
-            resolve();
-        }, x);
-    });
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, x);
+  });
 }
 
 async function pollJob(jobUrl, id, token) {
-    let status = '';
+  let status = "";
 
-    while(status !== 'succeeded' && status !== 'failed') {
+  while (status !== "succeeded" && status !== "failed") {
+    let resp = await fetch(jobUrl, {
+      headers: {
+        Authorization: `Bearer ${process.env.AUTH_TOKEN}`,
+        "x-api-key": process.env.API_KEY,
+      },
+    });
 
-        let resp = await fetch(jobUrl, {
-            headers: {
-                'Authorization': `Bearer ${process.env.AUTH_TOKEN}`,
-                'x-api-key': process.env.API_KEY,
-            }
-        });
+    let data = await resp.json();
+    status = data.status;
 
-        let data = await resp.json();
-        status = data.status;
+    // delay is a utility to 'pause' for X ms
+    if (status !== "succeeded" && status !== "failed") await delay(1000);
+    if (status === "succeeded") return data;
+  }
 
-        // delay is a utility to 'pause' for X ms
-        if (status !== 'succeeded' && status !== 'failed') await delay(1000);
-        if (status === 'succeeded') return data;
-    }
-
-    return status;
+  return status;
 }
-
 ```
 
 For more details, check out the [API Reference](../../api/index.md).

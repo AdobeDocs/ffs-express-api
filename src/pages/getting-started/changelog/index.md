@@ -30,6 +30,25 @@ hideBreadcrumbNav: true
 
 A list of updates to Adobe Express API.
 
+## 2026-08-13
+
+### Added
+
+- **Create Variation API (beta)**: New `POST /beta/create-variation` endpoint that creates a document variation and returns one or more outputs in a single asynchronous call.
+  - **Typed element mappings**: replace text, image, and video elements via `textMappings`, `imageMappings`, and `videoMappings`.
+  - **Per-page overrides**: apply different values to specific pages with `pageOverrides`.
+  - **Multiple output formats in one request**: request any combination of `image`, `document`, `pdf`, and `video` outputs from the same variation, each with its own page range and format options.
+  - Returns a `jobId` and `statusUrl`; poll `GET /status/{jobId}` for results. Rate-limited to 5 requests per minute (rpm) by default during beta.
+  - See the new [Create Document Variations guide](../../guides/how-to/create-variation.md) and the [API reference](../../api/index.md).
+
+<InlineAlert variant="warning" slots="text" />
+
+Please note that the Create Variation API is currently in beta and may be subject to changes before general availability.
+
+### Deprecated
+
+- **Generate Variation**: The [Generate Variation](../../guides/how-to/generate-variations.md) (`POST /beta/generate-variation`) endpoint is deprecated in favor of Create Variation, which folds document creation and rendition export into a single call. It remains available during beta; plan to migrate to `create-variation` ahead of general availability.
+
 ## 2026-04-24
 
 ### Added
@@ -73,7 +92,6 @@ A list of updates to Adobe Express API.
   - Enhanced error logging documentation to include video format validation
 
 - **API Specification Updates**: All OpenAPI specifications now include consistent video support
-
   - `beta-generate-variation.json`: Video tag type and mapping support
   - `beta-tagged-documents.json` and `beta-tagged-documents-documentId.json`: Video tag type support
   - `beta-export-rendition.json`: Already had comprehensive video support

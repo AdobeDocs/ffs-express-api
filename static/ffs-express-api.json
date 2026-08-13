@@ -208,7 +208,7 @@
         },
         "/beta/tagged-documents/{documentId}": {
             "get": {
-                "summary": "Tagged document details",
+                "summary": "Tagged Document Details",
                 "description": "This API retrieves details of the pages and tagged elements within a specified document. It returns a paginated list of the document's pages and metadata about each page. If the document has tagged elements, the API includes their respective details, such as size and position. If the document does not have tagged elements, it returns an empty array. The response includes pagination information to help users navigate the document’s pages. A maximum of 10 pages can be returned in 1 API call.",
                 "operationId": "taggedDocumentDetails",
                 "parameters": [
@@ -318,6 +318,7 @@
                 "summary": "Generate variation",
                 "description": "This API creates a document variation based on provided input parameters. After processing, it temporarily stores the generated document and makes it available to the user within a designated folder. The document remains accessible for 30 days, after which the system automatically removes it.",
                 "operationId": "generateVariation",
+                "deprecated": true,
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -328,6 +329,195 @@
                             "examples": {
                                 "generateVariationRequestSample": {
                                     "$ref": "#/components/examples/generateVariationRequestSample"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "202": {
+                        "description": "The request has been accepted and the job is in progress.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/JobResponse"
+                                },
+                                "examples": {
+                                    "jobResponseSample": {
+                                        "$ref": "#/components/examples/jobResponseSample"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsBadRequest": {
+                                        "$ref": "#/components/examples/errorResponseDetailsBadRequest"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsUnauthorized": {
+                                        "$ref": "#/components/examples/errorResponseDetailsUnauthorized"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsForbidden": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbidden"
+                                    },
+                                    "errorResponseDetailsForbiddenMissingExpressEntitlement": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbiddenMissingExpressEntitlement"
+                                    },
+                                    "errorResponseDetailsForbiddenMissingExpressApiEntitlement": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbiddenMissingExpressApiEntitlement"
+                                    },
+                                    "errorResponseDetailsForbiddenExpressApiRequiresPremiumAccount": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbiddenExpressApiRequiresPremiumAccount"
+                                    },
+                                    "errorResponseDetailsForbiddenMissingTypekitEntitlement": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbiddenMissingTypekitEntitlement"
+                                    },
+                                    "errorResponseDetailsForbiddenTechnicalAccountNonFreeTypekit": {
+                                        "$ref": "#/components/examples/errorResponseDetailsForbiddenTechnicalAccountNonFreeTypekit"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsNotFound": {
+                                        "$ref": "#/components/examples/errorResponseDetailsNotFound"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsUnprocessableEntity": {
+                                        "$ref": "#/components/examples/errorResponseDetailsUnprocessableEntity"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsTooManyRequests": {
+                                        "$ref": "#/components/examples/errorResponseDetailsTooManyRequests"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsRuntimeError": {
+                                        "$ref": "#/components/examples/errorResponseDetailsRuntimeError"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDetails"
+                                },
+                                "examples": {
+                                    "errorResponseDetailsServiceUnavailable": {
+                                        "$ref": "#/components/examples/errorResponseDetailsServiceUnavailable"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/beta/create-variation": {
+            "post": {
+                "summary": "Create variation",
+                "description": "This API creates a single variation of a tagged Express template or document and renders it into one or more outputs (image, Express document, PDF, or video) in a single request. The variation is generated asynchronously; use the returned status URL to poll for job completion and retrieve the result.",
+                "operationId": "createVariation",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateVariationRequest"
+                            },
+                            "examples": {
+                                "createVariationRequestSample": {
+                                    "$ref": "#/components/examples/createVariationRequestSample"
+                                },
+                                "createVariationRequestAllMappings": {
+                                    "$ref": "#/components/examples/createVariationRequestAllMappings"
+                                },
+                                "createVariationRequestPageOverrides": {
+                                    "$ref": "#/components/examples/createVariationRequestPageOverrides"
+                                },
+                                "createVariationRequestDocumentOutput": {
+                                    "$ref": "#/components/examples/createVariationRequestDocumentOutput"
+                                },
+                                "createVariationRequestPdfOutput": {
+                                    "$ref": "#/components/examples/createVariationRequestPdfOutput"
+                                },
+                                "createVariationRequestVideoOutput": {
+                                    "$ref": "#/components/examples/createVariationRequestVideoOutput"
                                 }
                             }
                         }
@@ -713,7 +903,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "oneOf": [
+                                    "anyOf": [
                                         {
                                             "$ref": "#/components/schemas/JobStatusResponse"
                                         },
@@ -722,6 +912,9 @@
                                         },
                                         {
                                             "$ref": "#/components/schemas/GenerateVariationResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/CreateVariationStatusResponse"
                                         }
                                     ]
                                 },
@@ -752,6 +945,9 @@
                                     },
                                     "generateVariationResponseSample": {
                                         "$ref": "#/components/examples/generateVariationResponseSample"
+                                    },
+                                    "createVariationStatusResponseSample": {
+                                        "$ref": "#/components/examples/createVariationStatusResponseSample"
                                     }
                                 }
                             }
@@ -1123,6 +1319,10 @@
                     "size": {
                         "$ref": "#/components/schemas/Size",
                         "description": "The width and height of the tagged element in the document's page relative to the original page size."
+                    },
+                    "value": {
+                        "description": "Represents the value of the tagged element. Use this field only for value-bearing element types, such as text.",
+                        "type": "string"
                     }
                 },
                 "required": [
@@ -1479,11 +1679,453 @@
                 "required": [
                     "error"
                 ]
+            },
+            "CreateVariationRequest": {
+                "description": "Request payload for the POST \"/create-variation\" API.\nCreates a variation from a template or document with specified tag mappings\nand produces one or more output types in a single request.",
+                "type": "object",
+                "properties": {
+                    "templateOrDocument": {
+                        "$ref": "#/components/schemas/CreativeCloudFileIdResource",
+                        "description": "The source template or document on which the variation will be applied.\nSpecified as a creative cloud file id."
+                    },
+                    "input": {
+                        "$ref": "#/components/schemas/CreateVariationInput",
+                        "description": "The variation input details including tag mappings and optional page overrides."
+                    },
+                    "outputs": {
+                        "description": "The desired output types for the variation.\nNote: Only one image type output is supported currently.\n(e.g., an image rendition ).",
+                        "type": "array",
+                        "items": {
+                            "description": "Union of all output types that can be requested from a create-variation operation.",
+                            "anyOf": [
+                                {
+                                    "$ref": "#/components/schemas/ImageOutput"
+                                },
+                                {
+                                    "$ref": "#/components/schemas/DocumentOutput"
+                                },
+                                {
+                                    "$ref": "#/components/schemas/PdfOutput"
+                                },
+                                {
+                                    "$ref": "#/components/schemas/VideoOutput"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "required": [
+                    "input",
+                    "outputs",
+                    "templateOrDocument"
+                ]
+            },
+            "CreateVariationInput": {
+                "description": "Input details for a single variation request.",
+                "type": "object",
+                "properties": {
+                    "mappings": {
+                        "$ref": "#/components/schemas/TagMappings",
+                        "description": "Tag mappings to apply to the template or document."
+                    },
+                    "pageOverrides": {
+                        "description": "Page-specific mapping overrides for multi-page documents.\nEach entry targets a specific page number with its own set of mappings.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PageOverride"
+                        }
+                    },
+                    "variationRequestId": {
+                        "description": "The client-provided identifier for the variation request.\nIf supplied, the service echoes it back in the corresponding response\nto simplify client-side correlation.",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "mappings"
+                ]
+            },
+            "TagMappings": {
+                "description": "Collection of tag-to-value mappings for a variation, organized by element type.",
+                "type": "object",
+                "properties": {
+                    "textMappings": {
+                        "description": "Mappings for text-type tagged elements.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/TextMapping"
+                        }
+                    },
+                    "imageMappings": {
+                        "description": "Mappings for image-type tagged elements.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ImageMapping"
+                        }
+                    },
+                    "videoMappings": {
+                        "description": "Mappings for video-type tagged elements.\nEach entry replaces a video placeholder in the template with the\nvideo at the given pre-signed URL.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/VideoMapping"
+                        }
+                    }
+                }
+            },
+            "TextMapping": {
+                "description": "A mapping that replaces a text-type tagged element.",
+                "type": "object",
+                "properties": {
+                    "tagName": {
+                        "description": "The name of the text tag to replace. Must match a tag name\nreturned by the tagged-documents API.",
+                        "type": "string"
+                    },
+                    "text": {
+                        "description": "The replacement text value.",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "tagName",
+                    "text"
+                ]
+            },
+            "ImageMapping": {
+                "description": "A mapping that replaces an image-type tagged element.",
+                "type": "object",
+                "properties": {
+                    "tagName": {
+                        "description": "The name of the tag to replace. Must match a tag name\nreturned by the tagged-documents API.",
+                        "type": "string"
+                    },
+                    "source": {
+                        "$ref": "#/components/schemas/UrlResource",
+                        "description": "The source of the replacement media, specified as a pre-signed URL."
+                    }
+                },
+                "required": [
+                    "source",
+                    "tagName"
+                ]
+            },
+            "VideoMapping": {
+                "description": "A mapping that replaces a video-type tagged element.\nThe URL must resolve to a supported video MIME type (mp4, quicktime, etc.).",
+                "type": "object",
+                "properties": {
+                    "tagName": {
+                        "description": "The name of the tag to replace. Must match a tag name\nreturned by the tagged-documents API.",
+                        "type": "string"
+                    },
+                    "source": {
+                        "$ref": "#/components/schemas/UrlResource",
+                        "description": "The source of the replacement media, specified as a pre-signed URL."
+                    }
+                },
+                "required": [
+                    "source",
+                    "tagName"
+                ]
+            },
+            "PageOverride": {
+                "description": "Page-specific mapping overrides for multi-page documents.",
+                "type": "object",
+                "properties": {
+                    "pageNumber": {
+                        "description": "The page number to apply overrides to. Page numbers start from 1.",
+                        "type": "number"
+                    },
+                    "mappings": {
+                        "$ref": "#/components/schemas/TagMappings",
+                        "description": "Tag mappings specific to this page, overriding any top-level mappings."
+                    }
+                },
+                "required": [
+                    "mappings",
+                    "pageNumber"
+                ]
+            },
+            "ImageOutput": {
+                "description": "Requested image rendition output configuration.",
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "description": "Discriminator indicating image output type.",
+                        "type": "string",
+                        "enum": [
+                            "image"
+                        ]
+                    },
+                    "mediaType": {
+                        "$ref": "#/components/schemas/ImageRenditionFormat",
+                        "description": "The media type of the image rendition."
+                    },
+                    "size": {
+                        "description": "The size of the image rendition on the longest side in pixels.\nThe aspect ratio is maintained. Min: 1, Max: 8192.\nIf not provided, the default size of page is considered.",
+                        "type": "number"
+                    },
+                    "pages": {
+                        "description": "A comma-separated string of page numbers to render as image renditions. For example, \"1,2,3\".\nPage ranges can also be specified. For example, \"1-3\" includes pages 1, 2, and 3.\nAnother example is \"1,3-5\", which includes pages 1, 3, 4, and 5.\n\"1-\" can be used to specify all pages, while \"5-\" indicates page 5 to the last page.\nIf not provided, all pages are considered. Page numbers start from 1.",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "mediaType",
+                    "type"
+                ]
+            },
+            "DocumentOutput": {
+                "description": "Requested Express document output configuration.",
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "description": "Discriminator indicating document output type.",
+                        "type": "string",
+                        "enum": [
+                            "document"
+                        ]
+                    },
+                    "preferredDocumentName": {
+                        "description": "The preferred name for the generated document.\nIf not provided or already in use, a unique name is auto-generated.",
+                        "type": "string"
+                    },
+                    "destinationFolder": {
+                        "description": "The ACP folder where the generated document should be saved.\nIf not provided, the document is saved to the user's default storage.",
+                        "$ref": "#/components/schemas/DestinationFolderResource"
+                    }
+                },
+                "required": [
+                    "type"
+                ]
+            },
+            "PdfOutput": {
+                "description": "Requested PDF rendition output configuration.",
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "description": "Discriminator indicating PDF output type.",
+                        "type": "string",
+                        "enum": [
+                            "pdf"
+                        ]
+                    },
+                    "pdfType": {
+                        "description": "The PDF rendering profile. Defaults to \"standard\".",
+                        "enum": [
+                            "print",
+                            "standard"
+                        ],
+                        "type": "string"
+                    },
+                    "downloadIndividualPdfFiles": {
+                        "description": "When true, each page is exported as a separate PDF file.\nWhen false or omitted, all pages are combined into a single PDF.",
+                        "type": "boolean"
+                    },
+                    "config": {
+                        "description": "Optional bleed/accessibility configuration for the PDF rendition.",
+                        "anyOf": [
+                            {
+                                "$ref": "#/components/schemas/PrintConfig"
+                            },
+                            {
+                                "$ref": "#/components/schemas/StandardConfig"
+                            }
+                        ]
+                    },
+                    "pages": {
+                        "description": "A comma-separated string of page numbers to include in the PDF rendition. For example, \"1,2,3\".\nPage ranges can also be specified. For example, \"1-3\" includes pages 1, 2, and 3.\nAnother example is \"1,3-5\", which includes pages 1, 3, 4, and 5.\n\"1-\" can be used to specify all pages, while \"5-\" indicates page 5 to the last page.\nIf not provided, all pages are considered. Page numbers start from 1.",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "type"
+                ]
+            },
+            "VideoOutput": {
+                "description": "Requested video rendition output configuration.",
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "description": "Discriminator indicating video output type.",
+                        "type": "string",
+                        "enum": [
+                            "video"
+                        ]
+                    },
+                    "mediaType": {
+                        "description": "The media type of the video rendition.",
+                        "type": "string",
+                        "enum": [
+                            "video/mp4"
+                        ]
+                    },
+                    "size": {
+                        "description": "The size of the video rendition on the longest side in pixels.\nThe aspect ratio is maintained. Min: 146, Max: 4096.\nIf not provided, the default size of the page is considered.",
+                        "type": "number"
+                    },
+                    "pages": {
+                        "description": "The pages to export video renditions for, as a comma-separated string of page numbers.\nFor example, \"1,2,3\". Page ranges can also be specified: \"1-3\" includes pages 1, 2, and 3;\n\"1,3-5\" includes pages 1, 3, 4, and 5; \"1-\" is page 1 to the last page; \"5-\" is page 5 to the\nlast page. Page numbers start from 1. If not provided, all pages that support video export are\nexported. Pages that do not support video export are reported as per-page errors.",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "mediaType",
+                    "type"
+                ]
+            },
+            "CreativeCloudFileIdResource": {
+                "description": "A Resource object referencing an ACP asset by its file identifier.",
+                "type": "object",
+                "properties": {
+                    "creativeCloudFileId": {
+                        "description": "The identifier of an asset stored in ACP.\nExample: \"urn:aaid:sc:US:a21c8629-413f-55d9-9e65-83330a277ac1\"",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "creativeCloudFileId"
+                ]
+            },
+            "UrlResource": {
+                "description": "A Resource object referencing an asset via a pre-signed URL.\nUsed for customer-supplied storage or Adobe-owned temporary storage.",
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "description": "An absolute pre-signed URL used to GET an input asset or PUT an output asset.\nAllowed domains include AWS S3, Azure Blob Storage, and Dropbox.",
+                        "type": "string"
+                    },
+                    "storageType": {
+                        "description": "Required only for output parameters when the URL targets\nAzure BlobStore or Dropbox storage.",
+                        "enum": [
+                            "Azure",
+                            "Dropbox"
+                        ],
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "url"
+                ]
+            },
+            "DestinationFolderResource": {
+                "description": "A Resource object specifying an ACP folder as a destination for output assets.\nWhen used, the service chooses unique file names within the specified folder.",
+                "type": "object",
+                "properties": {
+                    "creativeCloudProjectId": {
+                        "description": "The identifier of a project to store output assets in.",
+                        "type": "string"
+                    },
+                    "creativeCloudFolderId": {
+                        "description": "The identifier of a folder to store output assets in.",
+                        "type": "string"
+                    }
+                }
+            },
+            "CreateVariationStatusResponse": {
+                "description": "Status response for the create-variation API.\nReturned when polling the job status URL.\n\nSupports \"succeeded\", and \"failed\" statuses.\nper the Firefly Services API Style Guide async response conventions.",
+                "type": "object",
+                "properties": {
+                    "variationRequestId": {
+                        "description": "The client-provided identifier from the request, echoed back if one was supplied.\nFor single create-variation calls the jobId (inherited from JobStatusResponse)\nis the primary correlation key; this field is a convenience pass-through.",
+                        "type": "string"
+                    },
+                    "outputs": {
+                        "description": "The successfully generated outputs.\nPresent when status is \"succeeded\".",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ImageOutputResult"
+                        }
+                    },
+                    "errors": {
+                        "description": "Details of outputs that failed to generate.\nPresent when status is \"partially_succeeded\" or \"failed\".",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/OutputError"
+                        }
+                    },
+                    "jobId": {
+                        "description": "The identifier of the job.",
+                        "type": "string"
+                    },
+                    "status": {
+                        "$ref": "#/components/schemas/JobStatus",
+                        "description": "The status of the job."
+                    }
+                },
+                "required": [
+                    "jobId",
+                    "status"
+                ]
+            },
+            "ImageOutputResult": {
+                "description": "Result of a successful image rendition output.",
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "description": "Discriminator indicating this is an image output result.",
+                        "type": "string",
+                        "enum": [
+                            "image"
+                        ]
+                    },
+                    "mediaType": {
+                        "$ref": "#/components/schemas/ImageRenditionFormat",
+                        "description": "The media type of the generated image rendition."
+                    },
+                    "pageNumber": {
+                        "description": "The page number from which this rendition was generated.",
+                        "type": "number"
+                    },
+                    "destination": {
+                        "$ref": "#/components/schemas/UrlResource",
+                        "description": "The location where the image rendition can be downloaded from."
+                    }
+                },
+                "required": [
+                    "destination",
+                    "mediaType",
+                    "pageNumber",
+                    "type"
+                ]
+            },
+            "OutputError": {
+                "description": "Error details for a specific output that failed during a create-variation operation.",
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "description": "The output type that failed.",
+                        "enum": [
+                            "document",
+                            "image"
+                        ],
+                        "type": "string"
+                    },
+                    "pageNumber": {
+                        "description": "The page number associated with the failure, if applicable.",
+                        "type": "number"
+                    },
+                    "error_code": {
+                        "description": "The error code.",
+                        "type": "string"
+                    },
+                    "message": {
+                        "description": "The error message.",
+                        "type": "string"
+                    },
+                    "validation_errors": {
+                        "description": "Validation error messages.",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "required": [
+                    "error_code"
+                ]
             }
         },
         "examples": {
             "taggedDocumentsResponseSample": {
-                "summary": "Tagged Documents response sample",
+                "summary": "Tagged Documents Response Sample",
                 "value": {
                     "documents": [
                         {
@@ -1638,7 +2280,7 @@
                 }
             },
             "taggedDocumentDetailsResponseSampleOne": {
-                "summary": "Tagged document details response sample 1",
+                "summary": "Tagged Document Details Response Sample 1",
                 "value": {
                     "documentPages": [
                         {
@@ -1659,7 +2301,8 @@
                                         "height": 50,
                                         "width": 200
                                     },
-                                    "type": "text"
+                                    "type": "text",
+                                    "value": "Welcome to Our Project"
                                 },
                                 {
                                     "name": "CompanyLogo",
@@ -1694,7 +2337,8 @@
                                         "height": 40,
                                         "width": 250
                                     },
-                                    "type": "text"
+                                    "type": "text",
+                                    "value": "Project Overview"
                                 }
                             ],
                             "thumbnailUrl": "https://example.com/page2-thumbnail.png"
@@ -1717,7 +2361,8 @@
                                         "height": 40,
                                         "width": 250
                                     },
-                                    "type": "text"
+                                    "type": "text",
+                                    "value": "Brand Identity"
                                 }
                             ],
                             "thumbnailUrl": "https://example.com/page3-thumbnail.png"
@@ -1740,7 +2385,8 @@
                                         "height": 40,
                                         "width": 250
                                     },
-                                    "type": "text"
+                                    "type": "text",
+                                    "value": "Campaign Banner"
                                 }
                             ],
                             "thumbnailUrl": "https://example.com/page4-thumbnail.png"
@@ -1763,7 +2409,8 @@
                                         "height": 40,
                                         "width": 250
                                     },
-                                    "type": "text"
+                                    "type": "text",
+                                    "value": "Background Information"
                                 }
                             ],
                             "thumbnailUrl": "https://example.com/page5-thumbnail.png"
@@ -1786,7 +2433,8 @@
                                         "height": 40,
                                         "width": 250
                                     },
-                                    "type": "text"
+                                    "type": "text",
+                                    "value": "Timeline & Milestones"
                                 }
                             ],
                             "thumbnailUrl": "https://example.com/page6-thumbnail.png"
@@ -1809,7 +2457,8 @@
                                         "height": 40,
                                         "width": 250
                                     },
-                                    "type": "text"
+                                    "type": "text",
+                                    "value": "Team Members"
                                 }
                             ],
                             "thumbnailUrl": "https://example.com/page7-thumbnail.png"
@@ -1832,7 +2481,8 @@
                                         "height": 40,
                                         "width": 250
                                     },
-                                    "type": "text"
+                                    "type": "text",
+                                    "value": "Budget Overview"
                                 }
                             ],
                             "thumbnailUrl": "https://example.com/page8-thumbnail.png"
@@ -1855,7 +2505,8 @@
                                         "height": 40,
                                         "width": 250
                                     },
-                                    "type": "text"
+                                    "type": "text",
+                                    "value": "Risk Assessment"
                                 }
                             ],
                             "thumbnailUrl": "https://example.com/page9-thumbnail.png"
@@ -1878,7 +2529,8 @@
                                         "height": 40,
                                         "width": 250
                                     },
-                                    "type": "text"
+                                    "type": "text",
+                                    "value": "Next Steps"
                                 }
                             ],
                             "thumbnailUrl": "https://example.com/page10-thumbnail.png"
@@ -1893,7 +2545,7 @@
                 }
             },
             "taggedDocumentDetailsResponseSampleTwo": {
-                "summary": "Tagged document details response sample 2",
+                "summary": "Tagged Document Details Response Sample 2",
                 "value": {
                     "documentPages": [
                         {
@@ -1975,7 +2627,7 @@
                 }
             },
             "jobResponseSample": {
-                "summary": "Job response sample",
+                "summary": "Job Response Sample",
                 "value": {
                     "jobId": "af121560-218e-4dd9-918d-add12b3b6d98",
                     "statusUrl": "https://example.com/status/af121560-218e-4dd9-918d-add12b3b6d98"
@@ -2132,7 +2784,7 @@
                 }
             },
             "exportRenditionResponseSampleOne": {
-                "summary": "Export Rendition response sample 1",
+                "summary": "Export Rendition Response Sample 1",
                 "value": {
                     "jobId": "af121560-218e-4dd9-918d-add12b3b6d98",
                     "status": "succeeded",
@@ -2162,7 +2814,7 @@
                 }
             },
             "exportRenditionResponseSampleTwo": {
-                "summary": "Export Rendition response sample 2",
+                "summary": "Export Rendition Response Sample 2",
                 "value": {
                     "jobId": "af121560-218e-4dd9-918d-add12b3b6d98",
                     "status": "partially_succeeded",
@@ -2187,7 +2839,7 @@
                 }
             },
             "exportRenditionResponseSampleThree": {
-                "summary": "Export Rendition response sample 3",
+                "summary": "Export Rendition Response Sample 3",
                 "value": {
                     "jobId": "af121560-218e-4dd9-918d-add12b3b6d98",
                     "status": "failed",
@@ -2249,6 +2901,243 @@
                         "name": "Generated Document",
                         "thumbnailUrl": "https://example.com/thumbnails/generated-doc.png"
                     }
+                }
+            },
+            "createVariationRequestSample": {
+                "summary": "Text + image mappings → image output",
+                "value": {
+                    "templateOrDocument": {
+                        "creativeCloudFileId": "urn:aaid:sc:AP:0000aaaa-0000-000a-0000-000000aaaaaa"
+                    },
+                    "input": {
+                        "mappings": {
+                            "textMappings": [
+                                {
+                                    "tagName": "headline",
+                                    "text": "Summer Sale"
+                                }
+                            ],
+                            "imageMappings": [
+                                {
+                                    "tagName": "heroImage",
+                                    "source": {
+                                        "url": "https://example.com/image.jpg"
+                                    }
+                                }
+                            ]
+                        },
+                        "variationRequestId": "variation-001"
+                    },
+                    "outputs": [
+                        {
+                            "type": "image",
+                            "mediaType": "image/jpeg",
+                            "size": 1024,
+                            "pages": "1"
+                        }
+                    ]
+                }
+            },
+            "createVariationRequestAllMappings": {
+                "summary": "Text + image + video mappings → image output",
+                "value": {
+                    "templateOrDocument": {
+                        "creativeCloudFileId": "urn:aaid:sc:AP:0000aaaa-0000-000a-0000-000000aaaaaa"
+                    },
+                    "input": {
+                        "mappings": {
+                            "textMappings": [
+                                {
+                                    "tagName": "headline",
+                                    "text": "Summer Sale"
+                                },
+                                {
+                                    "tagName": "subtitle",
+                                    "text": "Up to 50% off"
+                                }
+                            ],
+                            "imageMappings": [
+                                {
+                                    "tagName": "heroImage",
+                                    "source": {
+                                        "url": "https://example.com/image.jpg"
+                                    }
+                                }
+                            ],
+                            "videoMappings": [
+                                {
+                                    "tagName": "promoVideo",
+                                    "source": {
+                                        "url": "https://example.com/video.mp4"
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "outputs": [
+                        {
+                            "type": "image",
+                            "mediaType": "image/png",
+                            "size": 2048
+                        }
+                    ]
+                }
+            },
+            "createVariationRequestPageOverrides": {
+                "summary": "Global mappings + per-page overrides → image output",
+                "value": {
+                    "templateOrDocument": {
+                        "creativeCloudFileId": "urn:aaid:sc:AP:0000aaaa-0000-000a-0000-000000aaaaaa"
+                    },
+                    "input": {
+                        "mappings": {
+                            "textMappings": [
+                                {
+                                    "tagName": "headline",
+                                    "text": "Global Headline"
+                                }
+                            ]
+                        },
+                        "pageOverrides": [
+                            {
+                                "pageNumber": 2,
+                                "mappings": {
+                                    "textMappings": [
+                                        {
+                                            "tagName": "headline",
+                                            "text": "Page 2 Headline"
+                                        }
+                                    ],
+                                    "imageMappings": [
+                                        {
+                                            "tagName": "heroImage",
+                                            "source": {
+                                                "url": "https://example.com/page2.jpg"
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ],
+                        "variationRequestId": "variation-042"
+                    },
+                    "outputs": [
+                        {
+                            "type": "image",
+                            "mediaType": "image/jpeg"
+                        }
+                    ]
+                }
+            },
+            "createVariationRequestDocumentOutput": {
+                "summary": "Document output saved to a destination folder",
+                "value": {
+                    "templateOrDocument": {
+                        "creativeCloudFileId": "urn:aaid:sc:AP:0000aaaa-0000-000a-0000-000000aaaaaa"
+                    },
+                    "input": {
+                        "mappings": {
+                            "textMappings": [
+                                {
+                                    "tagName": "headline",
+                                    "text": "Q4 Report"
+                                }
+                            ]
+                        }
+                    },
+                    "outputs": [
+                        {
+                            "type": "document",
+                            "preferredDocumentName": "Generated Q4 Report",
+                            "destinationFolder": {
+                                "creativeCloudFolderId": "urn:aaid:sc:AP:1111bbbb-1111-111b-1111-111111bbbbbb"
+                            }
+                        }
+                    ]
+                }
+            },
+            "createVariationRequestPdfOutput": {
+                "summary": "Print-ready PDF output with bleed/crop config",
+                "value": {
+                    "templateOrDocument": {
+                        "creativeCloudFileId": "urn:aaid:sc:AP:0000aaaa-0000-000a-0000-000000aaaaaa"
+                    },
+                    "input": {
+                        "mappings": {
+                            "textMappings": [
+                                {
+                                    "tagName": "headline",
+                                    "text": "Event Flyer"
+                                }
+                            ]
+                        }
+                    },
+                    "outputs": [
+                        {
+                            "type": "pdf",
+                            "pdfType": "print",
+                            "downloadIndividualPdfFiles": false,
+                            "config": {
+                                "bleed": true,
+                                "bleedSettings": {
+                                    "amount": 0.125,
+                                    "unit": "in"
+                                },
+                                "cropMargins": true,
+                                "cropMarginsSettings": {
+                                    "amount": 0.125,
+                                    "unit": "in"
+                                }
+                            },
+                            "pages": "1-3"
+                        }
+                    ]
+                }
+            },
+            "createVariationRequestVideoOutput": {
+                "summary": "Video mapping → MP4 video output",
+                "value": {
+                    "templateOrDocument": {
+                        "creativeCloudFileId": "urn:aaid:sc:AP:0000aaaa-0000-000a-0000-000000aaaaaa"
+                    },
+                    "input": {
+                        "mappings": {
+                            "videoMappings": [
+                                {
+                                    "tagName": "promoVideo",
+                                    "source": {
+                                        "url": "https://example.com/video.mp4"
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "outputs": [
+                        {
+                            "type": "video",
+                            "mediaType": "video/mp4",
+                            "size": 1080,
+                            "pages": "1"
+                        }
+                    ]
+                }
+            },
+            "createVariationStatusResponseSample": {
+                "summary": "Create variation request succeeded",
+                "value": {
+                    "jobId": "af121560-218e-4dd9-918d-add12b3b6d98",
+                    "status": "succeeded",
+                    "variationRequestId": "my-variation-001",
+                    "outputs": [
+                        {
+                            "type": "image",
+                            "mediaType": "image/jpeg",
+                            "pageNumber": 1,
+                            "destination": {
+                                "url": "https://example.com/renditions/variation-page-1.jpeg"
+                            }
+                        }
+                    ]
                 }
             }
         }

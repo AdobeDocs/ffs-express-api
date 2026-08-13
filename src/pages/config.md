@@ -41,7 +41,8 @@
   - How Tos header
   - [Tag Documents](guides/how-to/tag-documents.md)
   - [Get Tagged Documents](guides/how-to/get-tagged-documents.md)
-  - [Generate Variations](guides/how-to/generate-variations.md)
+  - [Create Variation](guides/how-to/create-variation.md)
+  - [Generate Variation](guides/how-to/generate-variations.md)
   - [Export Document Renditions](guides/how-to/export-document.md)
   - [End-to-End Workflows](guides/how-to/e2e-generate-edit-variant-oauth-web-app.md)
     - [Generate and Edit a Variant (OAuth)](guides/how-to/e2e-generate-edit-variant-oauth-web-app.md)

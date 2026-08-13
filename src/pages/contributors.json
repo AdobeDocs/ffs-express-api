@@ -1,7 +1,7 @@
 {
-  "total": 23,
+  "total": 24,
   "offset": 0,
-  "limit": 23,
+  "limit": 24,
   "data": [
     {
       "page": "/",
@@ -31,7 +31,7 @@
         "https://avatars.githubusercontent.com/u/359935?v=4",
         "https://avatars.githubusercontent.com/u/41382203?v=4"
       ],
-      "lastUpdated": "7/8/2026"
+      "lastUpdated": "8/11/2026"
     },
     {
       "page": "/getting-started/",
@@ -45,10 +45,11 @@
     {
       "page": "/getting-started/changelog/",
       "avatars": [
+        "https://avatars.githubusercontent.com/u/5939127?v=4",
         "https://avatars.githubusercontent.com/u/77717258?v=4",
         "https://avatars.githubusercontent.com/u/195011431?v=4"
       ],
-      "lastUpdated": "4/29/2026"
+      "lastUpdated": "8/13/2026"
     },
     {
       "page": "/getting-started/create-credentials/",
@@ -122,6 +123,13 @@
       "lastUpdated": "4/24/2026"
     },
     {
+      "page": "/guides/how-to/create-variation",
+      "avatars": [
+        "https://avatars.githubusercontent.com/u/5939127?v=4"
+      ],
+      "lastUpdated": "8/13/2026"
+    },
+    {
       "page": "/guides/how-to/e2e-generate-edit-variant-oauth-s2s",
       "avatars": [
         "https://avatars.githubusercontent.com/u/5939127?v=4"
@@ -147,18 +155,20 @@
     {
       "page": "/guides/how-to/export-document",
       "avatars": [
+        "https://avatars.githubusercontent.com/u/5939127?v=4",
         "https://avatars.githubusercontent.com/u/195011431?v=4",
         "https://avatars.githubusercontent.com/u/41382203?v=4"
       ],
-      "lastUpdated": "4/17/2026"
+      "lastUpdated": "8/13/2026"
     },
     {
       "page": "/guides/how-to/generate-variations",
       "avatars": [
+        "https://avatars.githubusercontent.com/u/5939127?v=4",
         "https://avatars.githubusercontent.com/u/195011431?v=4",
         "https://avatars.githubusercontent.com/u/41382203?v=4"
       ],
-      "lastUpdated": "4/17/2026"
+      "lastUpdated": "8/13/2026"
     },
     {
       "page": "/guides/how-to/get-tagged-documents",
