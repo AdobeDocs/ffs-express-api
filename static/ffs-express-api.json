@@ -903,7 +903,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "oneOf": [
+                                    "anyOf": [
                                         {
                                             "$ref": "#/components/schemas/JobStatusResponse"
                                         },
@@ -912,6 +912,9 @@
                                         },
                                         {
                                             "$ref": "#/components/schemas/GenerateVariationResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/CreateVariationStatusResponse"
                                         }
                                     ]
                                 },
@@ -942,6 +945,9 @@
                                     },
                                     "generateVariationResponseSample": {
                                         "$ref": "#/components/examples/generateVariationResponseSample"
+                                    },
+                                    "createVariationStatusResponseSample": {
+                                        "$ref": "#/components/examples/createVariationStatusResponseSample"
                                     }
                                 }
                             }
@@ -2012,6 +2018,109 @@
                         "type": "string"
                     }
                 }
+            },
+            "CreateVariationStatusResponse": {
+                "description": "Status response for the create-variation API.\nReturned when polling the job status URL.\n\nSupports \"succeeded\", and \"failed\" statuses.\nper the Firefly Services API Style Guide async response conventions.",
+                "type": "object",
+                "properties": {
+                    "variationRequestId": {
+                        "description": "The client-provided identifier from the request, echoed back if one was supplied.\nFor single create-variation calls the jobId (inherited from JobStatusResponse)\nis the primary correlation key; this field is a convenience pass-through.",
+                        "type": "string"
+                    },
+                    "outputs": {
+                        "description": "The successfully generated outputs.\nPresent when status is \"succeeded\".",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ImageOutputResult"
+                        }
+                    },
+                    "errors": {
+                        "description": "Details of outputs that failed to generate.\nPresent when status is \"partially_succeeded\" or \"failed\".",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/OutputError"
+                        }
+                    },
+                    "jobId": {
+                        "description": "The identifier of the job.",
+                        "type": "string"
+                    },
+                    "status": {
+                        "$ref": "#/components/schemas/JobStatus",
+                        "description": "The status of the job."
+                    }
+                },
+                "required": [
+                    "jobId",
+                    "status"
+                ]
+            },
+            "ImageOutputResult": {
+                "description": "Result of a successful image rendition output.",
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "description": "Discriminator indicating this is an image output result.",
+                        "type": "string",
+                        "enum": [
+                            "image"
+                        ]
+                    },
+                    "mediaType": {
+                        "$ref": "#/components/schemas/ImageRenditionFormat",
+                        "description": "The media type of the generated image rendition."
+                    },
+                    "pageNumber": {
+                        "description": "The page number from which this rendition was generated.",
+                        "type": "number"
+                    },
+                    "destination": {
+                        "$ref": "#/components/schemas/UrlResource",
+                        "description": "The location where the image rendition can be downloaded from."
+                    }
+                },
+                "required": [
+                    "destination",
+                    "mediaType",
+                    "pageNumber",
+                    "type"
+                ]
+            },
+            "OutputError": {
+                "description": "Error details for a specific output that failed during a create-variation operation.",
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "description": "The output type that failed.",
+                        "enum": [
+                            "document",
+                            "image"
+                        ],
+                        "type": "string"
+                    },
+                    "pageNumber": {
+                        "description": "The page number associated with the failure, if applicable.",
+                        "type": "number"
+                    },
+                    "error_code": {
+                        "description": "The error code.",
+                        "type": "string"
+                    },
+                    "message": {
+                        "description": "The error message.",
+                        "type": "string"
+                    },
+                    "validation_errors": {
+                        "description": "Validation error messages.",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "required": [
+                    "error_code"
+                ]
             }
         },
         "examples": {
@@ -3009,6 +3118,24 @@
                             "mediaType": "video/mp4",
                             "size": 1080,
                             "pages": "1"
+                        }
+                    ]
+                }
+            },
+            "createVariationStatusResponseSample": {
+                "summary": "Create variation request succeeded",
+                "value": {
+                    "jobId": "af121560-218e-4dd9-918d-add12b3b6d98",
+                    "status": "succeeded",
+                    "variationRequestId": "my-variation-001",
+                    "outputs": [
+                        {
+                            "type": "image",
+                            "mediaType": "image/jpeg",
+                            "pageNumber": 1,
+                            "destination": {
+                                "url": "https://example.com/renditions/variation-page-1.jpeg"
+                            }
                         }
                     ]
                 }
