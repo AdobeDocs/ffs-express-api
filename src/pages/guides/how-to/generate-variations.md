@@ -11,7 +11,7 @@ contributors:
 hideBreadcrumbNav: true
 ---
 
-# Generate Document Variations
+# Generate a Document Variation
 
 Learn how to generate a single document variation based on a list of element variations and other details.
 

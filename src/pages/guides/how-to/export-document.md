@@ -14,12 +14,6 @@ hideBreadcrumbNav: true
 
 Export your documents in your preferred format.
 
-<InlineAlert variant="warning" slots="heading, text" />
-
-#### Deprecated API
-
-The Generate Variation API is deprecated and will be removed in a future release. Please use the [Create Variation API](./create-variation.md) instead.
-
 ## Overview
 
 The Export Rendition API converts your documents to supported formats, which currently includes JPG, PNG, MP4, and PDF. The API provides:

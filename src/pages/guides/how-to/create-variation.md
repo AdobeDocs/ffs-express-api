@@ -17,7 +17,7 @@ contributors:
 hideBreadcrumbNav: true
 ---
 
-# Create Document Variations
+# Create a Document Variation
 
 Learn how to create a single document variation by mapping tagged elements, optionally overriding specific pages, and returning one or more output formats in a single request.
 
