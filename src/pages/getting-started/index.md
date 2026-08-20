@@ -34,14 +34,15 @@ How you obtain `<access_token>` depends on your credential type (user-based vs s
 
 ## Prerequisites
 
-- Credentials from your admin or your own [Adobe Developer Console](https://developer.adobe.com/) project with **Adobe Express API** configured — see [Create credentials](create-credentials/index.md)
-- **Client ID** (API key); for OAuth Web App and Server-to-Server you also use the **client secret** where applicable
+- Credentials from your admin or your own [Adobe Developer Console](https://developer.adobe.com/console/) project with **Adobe Express API** configured — see [Create credentials](./create-credentials/index.md).
+- **Client ID** (API key); for OAuth Web App and Server-to-Server you also use the **client secret** where applicable.
+- The proper **Entitlements** for your credential type (see [this section](./create-credentials/index.md#entitlements)).
 
 ## Get an access token
 
 ### User authentication (OAuth Web App or SPA)
 
-The user signs in with their Adobe ID and consents to your app. Use the OAuth 2.0 **authorization code** flow (Web App) or **PKCE** (SPA). Implementation steps are in Adobe’s [User authentication](https://developer.adobe.com/developer-console/docs/guides/authentication/UserAuthentication/) documentation; Console setup for Express API is in [Create credentials – User Authentication](create-credentials/index.md#user-authentication).
+The user signs in with their Adobe ID and consents to your app. Use the OAuth 2.0 **authorization code** flow (Web App) or **PKCE** (SPA). Implementation steps are in Adobe’s [User authentication](https://developer.adobe.com/developer-console/docs/guides/authentication/UserAuthentication/) documentation; Console setup for Express API is in [Create credentials – User Authentication](./create-credentials/index.md#user-authentication).
 
 You can sanity-check Web App credentials with a sample such as [this OAuth 2.0 Web App client](https://github.com/theManikJindal/adobe-oauth-web-app-client).
 

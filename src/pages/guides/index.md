@@ -38,7 +38,8 @@ Before you begin:
 1. **Adobe Express Account**: Ensure you have access to [Adobe Express](https://new.express.adobe.com/)
 2. **Authentication**: Obtain an access token with `openid`, `AdobeID`, and `ee.express_api` scopes. See [authentication documentation](../getting-started/index.md)
 3. **API Key**: [Register your application](https://developer.adobe.com/console) to receive an API key
-4. **Required Headers**: Include these in every API request:
+4. Make sure your account has the proper **Entitlements** for your credential type (see [this section](../getting-started/create-credentials/index.md#entitlements)).
+5. **Required Headers**: Include these in every API request:
 
    ```bash
    X-API-KEY: "YOUR-API-KEY"
@@ -92,7 +93,7 @@ curl -i -X GET \
 {
   "documents": [
     {
-      "id":"urn:aaid:sc:VA6C2:1ee6d0fe-cd84-590f-b064-285b7d6cc051",
+      "id": "urn:aaid:sc:VA6C2:1ee6d0fe-cd84-590f-b064-285b7d6cc051",
       "name": "My Document.express",
       "thumbnailUrl": "https://aep-cs-blobstore-stage-va6c2-data.s3.amazonaws.com"
     }
@@ -160,7 +161,7 @@ curl -i -X GET \
             "width": 252.43186950683594,
             "height": 70.70060157775879
           }
-        }        
+        }
       ]
     }
   ]

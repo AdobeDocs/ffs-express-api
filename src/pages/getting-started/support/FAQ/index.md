@@ -8,12 +8,49 @@ keywords:
 contributors:
   - https://github.com/hollyschinsky
   - https://github.com/nimithajalal
+  - https://github.com/undavide
 hideBreadcrumbNav: true
 ---
 
-# Adobe Express API FAQ
+# Adobe Express API FAQ & Troubleshooting
 
 Answers to the most common questions about the Adobe Express API. If you don't see your question here, [contact support](../index.md).
+
+## Table of Contents
+
+&lt;!-- The comment below is needed, otherwise the Markdown-all-in-one extensions will automatically create a TOC and mess with the layout --&gt;
+&lt;!-- no toc --&gt;
+
+**[Access and onboarding](#access-and-onboarding)**
+
+- [How do I request access?](#how-do-i-request-access)
+- [Will Adobe need to approve my integration?](#will-adobe-need-to-approve-my-integration)
+- [I participated in the Express API Alpha— what do I need to do to access the Express API Beta?](#i-participated-in-the-express-api-alpha-what-do-i-need-to-do-to-access-the-express-api-beta)
+- [Can I request a higher rate limit?](#can-i-request-a-higher-rate-limit)
+- [How do I use the Adobe Express API?](#how-do-i-use-the-adobe-express-api)
+
+**[About the API](#about-the-api)**
+
+- [What is the Adobe Express API?](#what-is-the-adobe-express-api)
+- [What use cases does the Adobe Express API support?](#what-use-cases-does-the-adobe-express-api-support)
+- [What are the key features of the Adobe Express API?](#what-are-the-key-features-of-the-adobe-express-api)
+
+**[Renditions and exports](#renditions-and-exports)**
+
+- [What formats can I export?](#what-formats-can-i-export)
+- [What's the maximum supported size for renditions?](#whats-the-maximum-supported-size-for-renditions)
+- [How long are pre-signed rendition URLs valid?](#how-long-are-pre-signed-rendition-urls-valid)
+- [How long are thumbnail URLs valid for generating variations?](#how-long-are-thumbnail-urls-valid-for-generating-variations)
+
+**[Documents and storage](#documents-and-storage)**
+
+- [How long are generated documents stored?](#how-long-are-generated-documents-stored)
+- [What is a document URN?](#what-is-a-document-urn)
+- [What storage options are supported for tag mappings?](#what-storage-options-are-supported-for-tag-mappings)
+
+**[Troubleshooting](#troubleshooting)**
+
+- [Why does `/beta/tagged-documents` return an empty array?](#why-does-betatagged-documents-return-an-empty-array)
 
 ## Access and onboarding
 
@@ -40,6 +77,8 @@ Yes. Contact your account manager or fill out the [Express API Rate Limit Increa
 ### How do I use the Adobe Express API?
 
 First, get your API key and access token. Then send requests to the API endpoints using the appropriate HTTP methods and parameters. See the [Getting Started](../../../guides/index.md) guide for step-by-step instructions.
+
+<HorizontalLine />
 
 ## About the API
 
@@ -68,6 +107,8 @@ The key features of the Adobe Express (beta) API are:
 - [Export rendition](../../../api/index.md)
 - **Get Job Status:** Check the status of a job submitted to the Adobe Express API. The response includes the job's current status and any error messages from processing.
 
+<HorizontalLine />
+
 ## Renditions and exports
 
 ### What formats can I export?
@@ -94,6 +135,8 @@ Image rendition URLs (`renditionUrl`) are valid for 4 hours. Video rendition URL
 
 Thumbnail URLs returned in the Generate Variation response are valid for 24 hours. Download or consume them within that window.
 
+<HorizontalLine />
+
 ## Documents and storage
 
 ### How long are generated documents stored?
@@ -110,14 +153,15 @@ The `tagMappings` field supports pre-signed URLs from `AWS`, `Dropbox`, and `Azu
 
 ```json
 {
-  "tagMappings":
-    {
-      "imageTag": "PRE-SIGNED URL",
-      "textTag": "Hello World",
-      "videoTag": "PRE-SIGNED VIDEO URL"
-    }
+  "tagMappings": {
+    "imageTag": "PRE-SIGNED URL",
+    "textTag": "Hello World",
+    "videoTag": "PRE-SIGNED VIDEO URL"
+  }
 }
 ```
+
+<HorizontalLine />
 
 ## Troubleshooting
 

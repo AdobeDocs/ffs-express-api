@@ -71,20 +71,22 @@ To call the Adobe Express API, developers need a valid client ID (API key) and a
 
 Server-to-Server authentication lets your backend generate access tokens and call Adobe APIs on behalf of your organization using the OAuth 2.0 `client_credentials` grant. The steps below follow the same Developer Console pattern used across Firefly Services APIs. For the full walkthrough—including console access, scopes, and sample token requests—see [Getting started with Adobe Firefly Services](https://developer.adobe.com/firefly-services/docs/guides/get-started).
 
-**1. Add the Adobe Express API**
+#### 1. Add the Adobe Express API
 
 - In your project, click **Add API** and select **Adobe Express API**.
 - When prompted for a credential type, keep **OAuth Server-to-Server**, name the credential, and continue.
 
-**2. Assign product profiles**
+#### 2. Assign product profiles
 
 Select the product profiles your admin assigned for Express. These control what the credential can access in your organization.
 
 ![Server-to-Server Product Profiles](../images/create-credentials--product-profiles-1.png)
 
-<InlineAlert variant="info" slots="text" />
+<InlineAlert variant="info" slots="header, text" />
 
-Product profiles must include **Adobe Express**, **Adobe Firefly Services**, and **non-Premium Fonts** access. As shown below, a **Default Free Membership** and **Firefly Creative Production for Enterprise** configurations will suffice. Please note that access to Premium Fonts will cause a rejection.
+#### Entitlements
+
+Product profiles must include **Adobe Express**, **Adobe Firefly Services**, and **non-Premium Fonts** access. As shown below, a **Default Free Membership** and **Firefly Creative Production for Enterprise** configurations will suffice. Please note that **access to Premium Fonts will cause a rejection**.
 
 ![Server-to-Server Product Profiles selection](../images/create-credentials--product-profiles-2.png)
 
