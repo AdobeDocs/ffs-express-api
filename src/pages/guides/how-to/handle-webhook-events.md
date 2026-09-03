@@ -1,6 +1,6 @@
 ---
 title: Handle Webhook Events
-description: Learn how to register a webhook to receive real-time job status notifications from the Adobe Express Bulk Workflow APIs, replacing the need to poll the status endpoint.
+description: Learn how to register a webhook to receive real-time job status notifications from Adobe Express async APIs, replacing the need to poll the status endpoint.
 keywords:
   - Adobe Express
   - Adobe Express API
@@ -11,6 +11,8 @@ keywords:
   - CloudEvents
   - Bulk Workflow APIs
   - bulk-create-variation
+  - create-variation
+  - export-rendition
   - Job status notifications
   - Server-to-Server
   - OAuth S2S
@@ -28,18 +30,18 @@ Learn how to register a webhook in the Adobe Developer Console and receive real-
 
 ## Overview
 
-When you submit a job, such as `bulk-create-variation`, the Express API runs the job asynchronously and returns a `jobId`. Without webhooks, you must call the `/status` endpoint repeatedly until the job finishes.
+When you submit a job, such as `bulk-create-variation`, `create-variation`, or `export-rendition`, the Express API runs the job asynchronously and returns a `jobId`. Without webhooks, you must call the `/status` endpoint repeatedly until the job finishes.
 
 With **webhook support**, you register an HTTPS endpoint once in the Developer Console. When the job reaches a terminal state (succeeded, failed, partially succeeded, or cancelled), the Express API publishes an event to [Adobe I/O Events](https://developer.adobe.com/events/docs/), which then delivers a notification to your endpoint. Your application is notified immediately—no polling required.
 
 <InlineAlert variant="warning" slots="text" />
 
-Webhook support is currently available only for **Bulk Workflow APIs**.
+Webhook support is available for the **Bulk Workflow APIs**, **Create Variation** (`POST /beta/create-variation`), and **Export Rendition** (`POST /beta/export-rendition`).
 
 ## How it works
 
 1. Register a webhook endpoint in your Developer Console project under the **Adobe Express API** events card.
-2. Submit an async bulk request (for example, `POST /bulk-create-variation`). The API returns a `jobId`.
+2. Submit an async request (for example, `POST /bulk-create-variation`, `POST /beta/create-variation`, or `POST /beta/export-rendition`). The API returns a `jobId`.
 3. The Express API processes the job asynchronously.
 4. When the job reaches a terminal state, the Express API publishes a CloudEvents-formatted event to Adobe I/O Events.
 5. Adobe I/O Events delivers the notification to your registered webhook URL. The notification contains at minimum the `jobId` and `status`; additional fields are optional depending on the event type.
@@ -69,9 +71,9 @@ To subscribe to events and receive notifications, **Adobe Express API** (which r
 
 ![Developer Console Express API Events](./images/handle-webhooks--console-express-api-events.png)
 
-### 2. Subscribe to bulk events
+### 2. Subscribe to events
 
-Select the event types you want to receive. For bulk jobs, choose from the four available events:
+Select the event types you want to receive. Choose from the four available events:
 
 - API Request is Cancelled
 - API Request is Failed
@@ -127,14 +129,14 @@ After saving, check that the **Status** shown in the _Registration Details_ tab 
 
 ## Event types
 
-Adobe Express API exposes four events for bulk operations. All events follow the [CloudEvents 1.0 specification](https://cloudevents.io/).
+Adobe Express API exposes four events for its asynchronous APIs. All events follow the [CloudEvents 1.0 specification](https://cloudevents.io/).
 
-| Event type                                     | Description                                                                                |
-| ---------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| `com.adobe.express-api.v1.succeeded`           | Emitted when the job completed successfully. All records were processed without errors.    |
-| `com.adobe.express-api.v1.partially_succeeded` | Emitted when the job completed with mixed results. Some records succeeded and some failed. |
-| `com.adobe.express-api.v1.failed`              | Emitted when the job failed to complete successfully.                                      |
-| `com.adobe.express-api.v1.cancelled`           | Emitted when the job was cancelled before completion.                                      |
+| Event type                                     | Description                                                            |
+| ---------------------------------------------- | ------------------------------------------------------------------------ |
+| `com.adobe.express-api.v1.succeeded`           | Emitted when the job completed successfully.                            |
+| `com.adobe.express-api.v1.partially_succeeded` | Emitted when the job completed with mixed results.                      |
+| `com.adobe.express-api.v1.failed`              | Emitted when the job failed to complete successfully.                   |
+| `com.adobe.express-api.v1.cancelled`           | Emitted when the job was cancelled before completion.                   |
 
 ## Event payload structure
 
@@ -155,6 +157,8 @@ Events are delivered as HTTP POST requests to your webhook URL. The body is a JS
   "adobeinternal": {
     "imsOrg": "<YOUR_IMS_ORG_ID>@AdobeOrg"
   },
+  "requestorclientid": "<YOUR_CLIENT_ID>",
+  "apiendpoint": "beta/create-variation",
   "data": {
     "jobId": "57b96a1e-4896-4cad-bb82-b5674454b4b5",
     "status": "succeeded",
@@ -165,12 +169,7 @@ Events are delivered as HTTP POST requests to your webhook URL. The body is a JS
         },
         "mediaType": "application/json"
       }
-    ],
-    "summary": {
-      "failedRecords": 0,
-      "successfulRecords": 1000,
-      "totalRecords": 1000
-    }
+    ]
   }
 }
 ```
@@ -188,6 +187,8 @@ Events are delivered as HTTP POST requests to your webhook URL. The body is a JS
   "adobeinternal": {
     "imsOrg": "<YOUR_IMS_ORG_ID>@AdobeOrg"
   },
+  "requestorclientid": "<YOUR_CLIENT_ID>",
+  "apiendpoint": "bulk-create-variation",
   "data": {
     "jobId": "57b96a1e-4896-4cad-bb82-b5674454b4b5",
     "status": "cancelled",
@@ -218,13 +219,15 @@ Events are delivered as HTTP POST requests to your webhook URL. The body is a JS
 | `time`            | ISO 8601 timestamp of the job's terminal state.                                     |
 | `datacontenttype` | Content type of the `data` payload. Always `"application/json"`.                    |
 | `adobeinternal`   | Adobe-specific extension containing IMS organization information.                   |
+| `requestorclientid` | Client ID of the application that submitted the API request.                     |
+| `apiendpoint`     | Version and name of the API that was called (for example, `beta/create-variation`). |
 | `data`            | Event data object containing job information (see below).                           |
 
 ### `data` object fields
 
 | Field           | Required | Description                                                                                                                                              |
 | --------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `data.jobId`    | Yes      | ID of the completed bulk job.                                                                                                                            |
+| `data.jobId`    | Yes      | ID of the completed job.                                                                                                                                 |
 | `data.status`   | Yes      | Terminal status of the job: `"succeeded"`, `"failed"`, `"partially_succeeded"`, or `"cancelled"`.                                                        |
 | `data.outputs`  | No       | Presigned URL(s) to download the job's output manifest. Present on `succeeded` and `partially_succeeded` events.                                         |
 | `data.summary`  | No       | Final tally of records: `failedRecords`, `successfulRecords`, and `totalRecords`. Present on `succeeded`, `partially_succeeded`, and `cancelled` events. |
@@ -233,6 +236,16 @@ Events are delivered as HTTP POST requests to your webhook URL. The body is a JS
 <InlineAlert variant="info" slots="text" />
 
 `data.jobId` and `data.status` are the only guaranteed fields in every notification. Your application should treat all other `data` fields as optional and handle their absence gracefully.
+
+For bulk operations, `data.summary` has the following shape:
+
+```json
+{
+  "failedRecords": 0,
+  "successfulRecords": 1000,
+  "totalRecords": 1000
+}
+```
 
 ## Event filtering
 
@@ -295,7 +308,7 @@ For information about retry behavior, the journaling API, and automatic disable 
 ### Events are not being delivered
 
 - In the Developer Console, open the **Debug Tracing** tab for your event registration to inspect recent delivery attempts and response codes.
-- Verify that your **Client ID filter** matches the client ID used when submitting the bulk job (see [Event filtering](#event-filtering)).
+- Verify that your **Client ID filter** matches the client ID used when submitting the job (see [Event filtering](#event-filtering)).
 - Check that the event registration **Status** is **Active**, not **Disabled** or **Unstable**.
 
 ### Payload fields are missing
@@ -304,6 +317,8 @@ For information about retry behavior, the journaling API, and automatic disable 
 
 ## Next steps
 
+- [Create Document Variations](create-variation.md) — submit a `create-variation` job using the Adobe Express API.
+- [Export Document Renditions](export-document.md) — submit an `export-rendition` job using the Adobe Express API.
 - [Generate Variations](generate-variations.md) — submit a single-document variation job using the Adobe Express API.
 - [Create Credentials](../../getting-started/create-credentials/index.md) — set up a Developer Console project with OAuth Server-to-Server credentials.
 - [Add Events to a project](https://developer.adobe.com/developer-console/docs/guides/services/services-add-event) — detailed Developer Console documentation for event registration.

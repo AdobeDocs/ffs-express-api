@@ -30,6 +30,12 @@ hideBreadcrumbNav: true
 
 A list of updates to Adobe Express API.
 
+## 2026-09-11
+
+### Added
+
+- **Webhook support**: Register a webhook to receive real-time job status notifications for the **Bulk Workflow APIs**, **Create Variation** (`POST /beta/create-variation`), and **Export Rendition** (`POST /beta/export-rendition`). See the new [Handle Webhook Events guide](../../guides/how-to/handle-webhook-events.md).
+
 ## 2026-08-13
 
 ### Added
