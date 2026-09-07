@@ -9,8 +9,6 @@ keywords:
   - Adobe I/O Events
   - Event-driven
   - CloudEvents
-  - Bulk Workflow APIs
-  - bulk-create-variation
   - create-variation
   - export-rendition
   - Job status notifications
@@ -30,18 +28,18 @@ Learn how to register a webhook in the Adobe Developer Console and receive real-
 
 ## Overview
 
-When you submit a job, such as `bulk-create-variation`, `create-variation`, or `export-rendition`, the Express API runs the job asynchronously and returns a `jobId`. Without webhooks, you must call the `/status` endpoint repeatedly until the job finishes.
+When you submit a job, such as `create-variation` or `export-rendition`, the Express API runs the job asynchronously and returns a `jobId`. Without webhooks, you must call the `/status` endpoint repeatedly until the job finishes.
 
 With **webhook support**, you register an HTTPS endpoint once in the Developer Console. When the job reaches a terminal state (succeeded, failed, partially succeeded, or cancelled), the Express API publishes an event to [Adobe I/O Events](https://developer.adobe.com/events/docs/), which then delivers a notification to your endpoint. Your application is notified immediately—no polling required.
 
 <InlineAlert variant="warning" slots="text" />
 
-Webhook support is available for the **Bulk Workflow APIs**, **Create Variation** (`POST /beta/create-variation`), and **Export Rendition** (`POST /beta/export-rendition`).
+Webhook support is available for **Create Variation** (`POST /beta/create-variation`) and **Export Rendition** (`POST /beta/export-rendition`).
 
 ## How it works
 
 1. Register a webhook endpoint in your Developer Console project under the **Adobe Express API** events card.
-2. Submit an async request (for example, `POST /bulk-create-variation`, `POST /beta/create-variation`, or `POST /beta/export-rendition`). The API returns a `jobId`.
+2. Submit an async request (for example, `POST /beta/create-variation` or `POST /beta/export-rendition`). The API returns a `jobId`.
 3. The Express API processes the job asynchronously.
 4. When the job reaches a terminal state, the Express API publishes a CloudEvents-formatted event to Adobe I/O Events.
 5. Adobe I/O Events delivers the notification to your registered webhook URL. The notification contains at minimum the `jobId` and `status`; additional fields are optional depending on the event type.
@@ -182,20 +180,10 @@ Events are delivered as HTTP POST requests to your webhook URL. The body is a JS
   "time": "2026-06-23T13:57:12.303Z",
   "datacontenttype": "application/json",
   "requestorclientid": "<YOUR_CLIENT_ID>",
-  "apiendpoint": "bulk-create-variation",
+  "apiendpoint": "beta/export-rendition",
   "data": {
     "jobId": "57b96a1e-4896-4cad-bb82-b5674454b4b5",
-    "status": "cancelled",
-    "progress": {
-      "injectedRecords": 1000,
-      "processedRecords": 0,
-      "totalRecords": 1000
-    },
-    "summary": {
-      "failedRecords": 0,
-      "successfulRecords": 0,
-      "totalRecords": 1000
-    }
+    "status": "cancelled"
   }
 }
 ```
@@ -229,16 +217,6 @@ Events are delivered as HTTP POST requests to your webhook URL. The body is a JS
 <InlineAlert variant="info" slots="text" />
 
 `data.jobId` and `data.status` are the only guaranteed fields in every notification. Your application should treat all other `data` fields as optional and handle their absence gracefully.
-
-For bulk operations, `data.summary` has the following shape:
-
-```json
-{
-  "failedRecords": 0,
-  "successfulRecords": 1000,
-  "totalRecords": 1000
-}
-```
 
 ## Event filtering
 
