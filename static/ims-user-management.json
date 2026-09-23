@@ -1,0 +1,282 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Renga REST API",
+    "description": "Renga REST endpoints (tenant-scoped user operations).",
+    "version": "v1"
+  },
+  "servers": [
+    {
+      "url": "/api",
+      "description": "Renga REST base path"
+    }
+  ],
+  "security": [
+    {
+      "imsAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Users",
+      "description": "Tenant-scoped user operations."
+    }
+  ],
+  "paths": {
+    "/tenants/{tenantId}/organizations/{orgId}/users": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Find users",
+        "description": "Finds a user in the organization matching the external-id filter. Returns an empty list when no user matches.",
+        "operationId": "findUsers",
+        "parameters": [
+          {
+            "name": "tenantId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orgId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "description": "SCIM filter selecting the user by external identity. Must be exactly provider eq \"...\" and externalId eq \"...\" - both clauses required, order-independent.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "provider eq \"google\" and externalId eq \"115738936\""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Matching users (empty list if none)",
+            "content": {
+              "application/vnd.adobe.identity.listresponse+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RengaRestListResponseUserResource"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid tenantId, orgId or filter",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Caller is not authorized for the organization",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "imsAuth": [
+              "users.read"
+            ]
+          }
+        ]
+      }
+    },
+    "/tenants/{tenantId}/organizations/{orgId}/users/{userId}": {
+      "delete": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Delete a user",
+        "description": "Permanently removes the identified user's entire account, not just their membership in the given organization.",
+        "operationId": "deleteUser",
+        "parameters": [
+          {
+            "name": "tenantId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orgId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "User removed"
+          },
+          "400": {
+            "description": "Invalid tenantId, orgId or userId",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Caller is not authorized for the organization",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User or organization not found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "imsAuth": [
+              "users.delete"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ProblemDetail": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "format": "uri"
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "instance": {
+            "type": "string",
+            "format": "uri"
+          },
+          "properties": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "RengaRestListResponseUserResource": {
+        "type": "object",
+        "properties": {
+          "resources": {
+            "type": "array",
+            "description": "The matched resources.",
+            "items": {
+              "$ref": "#/components/schemas/UserResource"
+            }
+          }
+        },
+        "description": "List envelope wrapping the matched resources."
+      },
+      "UserResource": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "User id, formatted as {ident}@{authSrc}."
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "description": "User status.",
+            "enum": [
+              "ACTIVE",
+              "DISABLED",
+              "LOCKED",
+              "REMOVED",
+              "AGE_RESTRICTED"
+            ]
+          },
+          "countryCode": {
+            "type": "string"
+          },
+          "logString": {
+            "type": "string"
+          }
+        },
+        "description": "A user within an organization."
+      }
+    },
+    "securitySchemes": {
+      "imsAuth": {
+        "type": "oauth2",
+        "description": "IMS access token, sent as: Authorization: Bearer <token>.",
+        "flows": {
+          "clientCredentials": {
+            "tokenUrl": "https://ims-na1.adobelogin.com/ims/token/v4",
+            "scopes": {
+              "users.read": "Find users in an organization.",
+              "users.delete": "Delete a user."
+            }
+          }
+        }
+      }
+    }
+  }
+}
