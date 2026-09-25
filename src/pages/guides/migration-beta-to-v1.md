@@ -49,13 +49,15 @@ The field renames you will make:
 | `tagName` (per mapping entry)                                             | `name`                                      |
 | `options.format` (export-rendition)                                       | `options.mediaType`                         |
 | `ImageRenditionOptions` • `PdfRenditionOptions` • `VideoRenditionOptions` | `ImageOutput` • `PdfOutput` • `VideoOutput` |
+| `taggedElements` (tagged-documents detail response)                       | `dataFields`                                |
+| `value` (per tagged data field)                                           | `text`                                      |
 
 ## Endpoint mapping
 
 | Beta endpoint                             | V1 endpoint                                                                 | What to do                                                                   |
 | ----------------------------------------- | --------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
 | `GET /beta/tagged-documents`              | `GET /v1/tagged-documents`                                                  | Update path; read `templateOrDocument` in each entry                         |
-| `GET /beta/tagged-documents/{documentId}` | `GET /v1/tagged-documents/{documentId}`                                     | Update path; read `templateOrDocument` in the response                       |
+| `GET /beta/tagged-documents/{documentId}` | `GET /v1/tagged-documents/{documentId}`                                     | Update path; read `templateOrDocument`; the element list is now `dataFields` (was `taggedElements`), each field's value is `text` (was `value`)                       |
 | `POST /beta/create-variation`             | `POST /v1/create-variation`                                                 | Update path; switch `mappings` to `dataFieldMappings`                        |
 | `POST /beta/export-rendition`             | `POST /v1/export-rendition`                                                 | Update path; switch `id` to `templateOrDocument` and `format` to `mediaType` |
 | `POST /beta/generate-variation`           | None (deprecated)                                                           | Move to `create-variation`, its successor                                    |
@@ -109,6 +111,8 @@ In the `export-rendition` request body, replace the top-level `id` with a `templ
 ```
 
 The same field appears in the `tagged-documents` responses: read `templateOrDocument.creativeCloudFileId` where you previously read `id`.
+
+In the tagged-document detail response (`GET /v1/tagged-documents/{documentId}`), the per-page `taggedElements` array is also renamed to `dataFields`, and each field's `value` becomes `text`.
 
 ## Update tag mappings
 
@@ -194,7 +198,7 @@ Set `type` to `image`, `pdf`, or `video` to match the media you are exporting.
 
 ## Handle the wider status response
 
-Polling does not change. Submit a job, get a `jobId` (HTTP 202), and poll `GET /status/{jobId}` exactly as before; the endpoint is unversioned and its contract is unchanged. The only difference is that a V1 `create-variation` job can now return `document`, `pdf`, and `video` results in the `outputs` array, not just `image`. If your code only ever requested image outputs, its responses are unaffected. See the [API Reference](../api/index.md) {/_ TODO: repoint to V1 reference when published _/} for the full result union.
+Polling does not change. Submit a job, get a `jobId` (HTTP 202), and poll `GET /status/{jobId}` exactly as before; the endpoint is unversioned and its contract is unchanged. The only difference is that a V1 `create-variation` job can now return `document`, `pdf`, and `video` results in the `outputs` array, not just `image`. If your code only ever requested image outputs, its responses are unaffected. See the [API Reference](../api/index.md) {/* TODO: repoint to V1 reference when published */} for the full result union.
 
 ## New in V1
 
@@ -203,7 +207,7 @@ V1 adds two endpoints for generating many variations from a single template in o
 - `POST /v1/bulk-create-variation`—generates variations at scale from an external data source: a manifest (a pre-signed URL) pointing to NDJSON files whose rows each carry a `dataFieldMappings` set. Best for large, unbounded jobs.
 - `POST /v1/batch-create-variation`—generates several variations from an inline request payload, with no manifest or file upload. Bounded: up to 30 variations per request (by default) and a 1 MB request body.
 
-Both submit asynchronously and are polled through `GET /status/{jobId}` like every other job. Bulk and Batch Create Variation are being added to the [Create a Document Variation](./how-to/create-variation.md) guide; until that lands, see the [API Reference](../api/index.md) {/_ TODO: repoint to V1 reference when published _/} for their request shapes.
+Both submit asynchronously and are polled through `GET /status/{jobId}` like every other job. Bulk and Batch Create Variation are being added to the [Create a Document Variation](./how-to/create-variation.md) guide; until that lands, see the [API Reference](../api/index.md) {/* TODO: repoint to V1 reference when published */} for their request shapes.
 
 ## Verify your migration
 
@@ -216,7 +220,7 @@ Work through each call your integration makes:
 
 ## References
 
-- [Adobe Express API Reference](../api/index.md) {/_ TODO: repoint to V1 reference when published _/}—the full request and response surface.
+- [Adobe Express API Reference](../api/index.md) {/* TODO: repoint to V1 reference when published */}—the full request and response surface.
 - [Create a Document Variation](./how-to/create-variation.md)—the `create-variation` recipe, and the successor to `generate-variation`.
 - [Get Tagged Documents](./how-to/get-tagged-documents.md)—list your tagged documents and read `templateOrDocument`.
 - [Rate limits](../getting-started/rate-limits/index.md)—current request limits.
