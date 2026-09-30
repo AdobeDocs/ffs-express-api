@@ -48,11 +48,11 @@ The Express API is rate-limited. Exceeding the limit returns HTTP `429 Too Many 
 
 ## Create Variation vs Bulk vs Batch
 
-Create Variation generates one variation per request—ideal for interactive, user-facing flows. For backend, non-interactive, higher-volume generation, reach for **Bulk** or **Batch** Create Variation, covered in [Generate variations at scale](#generate-variations-at-scale-bulk-and-batch) below. Use this table to choose:
+Create Variation generates one variation per request—ideal for interactive, user-facing flows. For backend, non-interactive, higher-volume generation, reach for **Bulk** or **Batch** Create Variation, covered in [Generate variations at scale](#generate-variations-at-scale-bulk-and-batch) below. Use Bulk or Batch for backend workloads so Create Variation remains responsive for interactive requests. Use this table to choose:
 
 |                       | Create Variation                                                | Bulk Create Variation                                                                   | Batch Create Variation                                              |
 | --------------------- | --------------------------------------------------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| **Best for**          | Interactive, low-volume, user-facing generation (forms, UI flows) | High-scale backend workloads (thousands of documents, scheduled/enterprise jobs)        | Bounded backend jobs that don't need a file upload (a "mini bulk") |
+| **Best for**          | Interactive, low-volume, near-real-time, user-facing generation (forms, UI flows) | High-scale backend workloads (thousands of documents, scheduled/enterprise jobs)        | Bounded backend jobs that don't need a file upload (a "mini bulk") |
 | **Endpoint**          | `POST /v1/create-variation`                                     | `POST /v1/bulk-create-variation`                                                        | `POST /v1/batch-create-variation`                                  |
 | **Input source**      | One set of mappings inline in the request                       | An external manifest JSON → NDJSON chunk file(s), one variation per row                  | An inline array of variations in the request body—no upload        |
 | **Cap**               | 1 variation per request                                         | • 20,000 rows per NDJSON file\<br/>• 32 pending jobs per API key                         | • 30 variations per request (default)\<br/>• 1 MB request body     |
@@ -71,7 +71,7 @@ Generate Variation is deprecated in favor of Create Variation and has no V1 endp
 
 ## Get your document ID
 
-Create Variation references its template by `creativeCloudFileId`. Follow the [Get Tagged Documents guide](./get-tagged-documents.md) to list the tagged documents you own; each entry's `id` (a document URN) is the value you pass as `creativeCloudFileId`.
+Create Variation references its template by `creativeCloudFileId`. Follow the [Get Tagged Documents guide](./get-tagged-documents.md) to list the tagged documents you own; each V1 entry's `templateOrDocument.creativeCloudFileId` (a document URN) is the value you pass as `creativeCloudFileId`.
 
 To discover the data-field names and types a template exposes, call `GET /v1/tagged-documents/{id}`—the response lists each page's `dataFields`, each with a `name` and a `type` (`text`, `image`, or `video`). Those `name` values are what you map in `dataFieldMappings` in the next step.
 
@@ -409,7 +409,7 @@ For backend, non-interactive workloads that generate many variations from one te
 
 ### Bulk Create Variation
 
-`POST /v1/bulk-create-variation` reads its variations from an external data source: a manifest JSON that points at one or more NDJSON chunk files, where each line is one variation carrying its own `dataFieldMappings` (plus optional `pageOverrides` and `variationRequestId`). Use it for high-scale, unbounded workloads—up to 20,000 rows per NDJSON file, with up to 32 pending jobs per API key. The manifest and chunk files must be served from AWS S3, CloudFront, or Google Cloud Storage; the per-row image and video URLs follow the same allowlist as single Create Variation. Outputs can be image, document, pdf, or video.
+`POST /v1/bulk-create-variation` reads its variations from an external data source: a manifest JSON that points at one or more NDJSON chunk files, where each line is one variation carrying its own `dataFieldMappings` (plus optional `pageOverrides` and `variationRequestId`). Use it for high-scale, unbounded workloads—up to 20,000 rows per NDJSON file, with up to 32 pending jobs per API key. Use pre-signed URLs for the manifest and each NDJSON chunk file; they must be served from AWS S3, CloudFront, or Google Cloud Storage. The per-row image and video URLs follow the same allowlist as single Create Variation. Outputs can be image, document, pdf, or video.
 
 <CodeBlock slots="heading, code" repeat="2" languages="CURL, JSON" />
 
