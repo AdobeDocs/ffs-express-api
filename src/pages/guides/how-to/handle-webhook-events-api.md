@@ -42,7 +42,7 @@ Webhook support is available for **Create Variation** (`POST /beta/create-variat
 2. Submit an async request (for example, `POST /beta/create-variation` or `POST /beta/export-rendition`). The API returns a `jobId`.
 3. The Express API processes the job asynchronously.
 4. When the job reaches a terminal state, the Express API publishes a CloudEvents-formatted event to Adobe I/O Events.
-5. Adobe I/O Events delivers the notification to your registered webhook URL. The notification contains at minimum the `jobId` and `status`; additional fields are optional depending on the event type.
+5. Adobe I/O Events delivers the notification to your registered webhook URL. The event type identifies the operation that finished. The `data` object always contains `jobId` and `status`; `outputs` and `errors` are optional.
 6. Your application handles the notification and—if needed—calls the `/status` endpoint once to retrieve full job details.
 
 ## Prerequisites
@@ -71,14 +71,12 @@ To subscribe to events and receive notifications, **Adobe Express API** (which r
 
 ### 2. Subscribe to events
 
-Select the event types you want to receive. Choose from the four available events:
+Select the completion events for the operations you want to receive notifications for:
 
-- API Request is Cancelled
-- API Request is Failed
-- API Request is Partially Succeeded
-- API Request is Succeeded
+- Create Variation: `com.adobe.express-api.v1.create-variation.completed`
+- Export Rendition: `com.adobe.express-api.v1.export-rendition.completed`
 
-You can subscribe to any combination. Click **Next**.
+Each event covers all terminal outcomes. Read `data.status` to determine the outcome. You can subscribe to either or both event types. Click **Next**.
 
 ![Developer Console Event Subscription](./images/handle-webhooks--console-event-subscription.png)
 
@@ -92,11 +90,11 @@ In the following screen (not illustrated here), you'll be able to provide a name
 
 ### 4. Configure the event registration
 
-In the following screen, configure your webhook URL and delivery options:
+In the following screen, configure your webhook URL:
 
 1. Enable **Webhook**.
 2. Enter your publicly accessible HTTPS webhook URL.
-3. Choose **Batch** delivery if you prefer to receive multiple events in a single HTTP request (recommended for high-volume workloads); otherwise leave it as **Single**.
+3. Choose **Single** delivery.
 
 ![Developer Console Configure Event Registration](./images/handle-webhooks--console-configure-event-registration.png)
 
@@ -127,33 +125,32 @@ After saving, check that the **Status** shown in the _Registration Details_ tab 
 
 ## Event types
 
-Adobe Express API exposes four events for its asynchronous APIs. All events follow the [CloudEvents 1.0 specification](https://cloudevents.io/).
+Adobe Express API exposes one completion event per operation. All events follow the [CloudEvents 1.0 specification](https://cloudevents.io/).
 
-| Event type                                     | Description                                                            |
-| ---------------------------------------------- | ------------------------------------------------------------------------ |
-| `com.adobe.express-api.v1.succeeded`           | Emitted when the job completed successfully.                            |
-| `com.adobe.express-api.v1.partially_succeeded` | Emitted when the job completed with mixed results.                      |
-| `com.adobe.express-api.v1.failed`              | Emitted when the job failed to complete successfully.                   |
-| `com.adobe.express-api.v1.cancelled`           | Emitted when the job was cancelled before completion.                   |
+| Event type                                            | Description                                                    |
+| ----------------------------------------------------- | -------------------------------------------------------------- |
+| `com.adobe.express-api.v1.create-variation.completed` | Emitted when a Create Variation job reaches a terminal state.  |
+| `com.adobe.express-api.v1.export-rendition.completed` | Emitted when an Export Rendition job reaches a terminal state. |
+
+The `.completed` suffix means the operation finished, not necessarily that it succeeded. The outcome is carried only in `data.status`: `succeeded`, `partially_succeeded`, `failed`, or `cancelled`. There are no separate event types for these outcomes.
 
 ## Event payload structure
 
-Events are delivered as HTTP POST requests to your webhook URL. The body is a JSON object following the [CloudEvents spec](https://cloudevents.io/). See below for example payloads for a Succeeded and a Cancelled events.
+Events are delivered as HTTP POST requests to your webhook URL. The body is a JSON object following the [CloudEvents spec](https://cloudevents.io/). The following examples show a successful Create Variation job and a cancelled Export Rendition job. The second example includes only the guaranteed `data` fields.
 
 <CodeBlock slots="heading, code" repeat="2" languages="json, json"/>
 
-#### Succeeded
+#### Create Variation: succeeded
 
 ```json
 {
   "specversion": "1.0",
-  "type": "com.adobe.express-api.v1.succeeded",
+  "type": "com.adobe.express-api.v1.create-variation.completed",
   "source": "urn:aio_provider_metadata:cc_ffs_exapi_job_status",
   "id": "5b5341fb-b4c1-422d-bc1a-b4ca248ec6da",
   "time": "2026-06-23T13:57:12.303Z",
   "datacontenttype": "application/json",
   "requestorclientid": "<YOUR_CLIENT_ID>",
-  "apiendpoint": "beta/create-variation",
   "data": {
     "jobId": "57b96a1e-4896-4cad-bb82-b5674454b4b5",
     "status": "succeeded",
@@ -169,18 +166,17 @@ Events are delivered as HTTP POST requests to your webhook URL. The body is a JS
 }
 ```
 
-#### Cancelled
+#### Export Rendition: cancelled
 
 ```json
 {
   "specversion": "1.0",
-  "type": "com.adobe.express-api.v1.cancelled",
+  "type": "com.adobe.express-api.v1.export-rendition.completed",
   "source": "urn:aio_provider_metadata:cc_ffs_exapi_job_status",
   "id": "8023f672-0de6-41cd-bbb9-e99b0a142560",
   "time": "2026-06-23T13:57:12.303Z",
   "datacontenttype": "application/json",
   "requestorclientid": "<YOUR_CLIENT_ID>",
-  "apiendpoint": "beta/export-rendition",
   "data": {
     "jobId": "57b96a1e-4896-4cad-bb82-b5674454b4b5",
     "status": "cancelled"
@@ -192,31 +188,29 @@ Events are delivered as HTTP POST requests to your webhook URL. The body is a JS
 
 ### Top-level fields
 
-| Field             | Description                                                                         |
-| ----------------- | ----------------------------------------------------------------------------------- |
-| `specversion`     | CloudEvents specification version. Always `"1.0"`.                                  |
-| `type`            | Event type string used for routing and filtering (see [Event types](#event-types)). |
-| `source`          | Context in which the event occurred.                                                |
-| `id`              | Unique UUID generated for each event delivery.                                      |
-| `time`            | ISO 8601 timestamp of the job's terminal state.                                     |
-| `datacontenttype` | Content type of the `data` payload. Always `"application/json"`.                    |
-| `requestorclientid` | Client ID of the application that submitted the API request.                     |
-| `apiendpoint`     | Version and name of the API that was called (for example, `beta/create-variation`). |
-| `data`            | Event data object containing job information (see below).                           |
+| Field               | Description                                                                        |
+| ------------------- | ---------------------------------------------------------------------------------- |
+| `specversion`       | CloudEvents specification version. Always `"1.0"`.                                 |
+| `type`              | Completion event type identifying the operation (see [Event types](#event-types)). |
+| `source`            | Context in which the event occurred.                                               |
+| `id`                | Unique UUID generated for each event delivery.                                     |
+| `time`              | ISO 8601 timestamp of the job's terminal state.                                    |
+| `datacontenttype`   | Content type of the `data` payload. Always `"application/json"`.                   |
+| `requestorclientid` | Client ID of the application that submitted the API request.                       |
+| `data`              | Event data object containing job information (see below).                          |
 
 ### `data` object fields
 
-| Field           | Required | Description                                                                                                                                              |
-| --------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `data.jobId`    | Yes      | ID of the completed job.                                                                                                                                 |
-| `data.status`   | Yes      | Terminal status of the job: `"succeeded"`, `"failed"`, `"partially_succeeded"`, or `"cancelled"`.                                                        |
-| `data.outputs`  | No       | Presigned URL(s) to download the job's output manifest. Present on `succeeded` and `partially_succeeded` events.                                         |
-| `data.summary`  | No       | Final tally of records: `failedRecords`, `successfulRecords`, and `totalRecords`. Present on `succeeded`, `partially_succeeded`, and `cancelled` events. |
-| `data.progress` | No       | Record counts at the time of cancellation: `injectedRecords`, `processedRecords`, and `totalRecords`. Present on `cancelled` events.                     |
+| Field          | Required | Description                                                                                       |
+| -------------- | -------- | ------------------------------------------------------------------------------------------------- |
+| `data.jobId`   | Yes      | ID of the completed job.                                                                          |
+| `data.status`  | Yes      | Terminal status of the job: `"succeeded"`, `"partially_succeeded"`, `"failed"`, or `"cancelled"`. |
+| `data.outputs` | No       | Output information, such as presigned URLs to download the job's output manifest. May be absent.  |
+| `data.errors`  | No       | Error information associated with the job. May be absent.                                         |
 
 <InlineAlert variant="info" slots="text" />
 
-`data.jobId` and `data.status` are the only guaranteed fields in every notification. Your application should treat all other `data` fields as optional and handle their absence gracefully.
+`data.jobId` and `data.status` are the only guaranteed fields in every notification. Your application should treat `data.outputs` and `data.errors` as optional and handle their absence gracefully.
 
 ## Event filtering
 
@@ -244,9 +238,9 @@ This ensures that only events triggered by jobs submitted with your client ID ar
 
 You can also filter by:
 
-- **Event type** — subscribe only to the event types you need (for example, only `succeeded`).
+- **Event type** — subscribe only to the operations you need (for example, `com.adobe.express-api.v1.create-variation.completed`).
 - **Job ID** — filter for a specific job identifier.
-- **Status** — filter by job status.
+- **Status** — filter by `data.status` (for example, `succeeded`).
 
 Click the **Filter Definition > Select a Pattern** dropdown for a series of demo patterns that you can copy/paste in the filter definition below. For details on advanced filtering options, see [Subscriber Defined Filtering](https://developer.adobe.com/events/docs/guides/subscriber_defined_filtering/).
 
@@ -284,7 +278,7 @@ For information about retry behavior, the journaling API, and automatic disable 
 
 ### Payload fields are missing
 
-`data.outputs`, `data.summary`, and `data.progress` are optional and not present in every event. Design your handler to check for their presence before accessing them (see [Field descriptions](#field-descriptions)).
+`data.outputs` and `data.errors` are optional and may not be present in every event. Design your handler to check for their presence before accessing them (see [Field descriptions](#field-descriptions)).
 
 ## Next steps
 
