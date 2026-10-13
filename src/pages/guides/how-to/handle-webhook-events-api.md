@@ -42,8 +42,8 @@ Webhook support is available for **Create Variation** (`POST /beta/create-variat
 2. Submit an async request (for example, `POST /beta/create-variation` or `POST /beta/export-rendition`). The API returns a `jobId`.
 3. The Express API processes the job asynchronously.
 4. When the job reaches a terminal state, the Express API publishes a CloudEvents-formatted event to Adobe I/O Events.
-5. Adobe I/O Events delivers the notification to your registered webhook URL. The event type identifies the operation that finished. The `data` object always contains `jobId` and `status`; `outputs` and `error` are optional.
-6. Your application handles the notification and, if needed, calls the `/status` endpoint using the `jobId` to retrieve job outputs or full job details.
+5. Adobe I/O Events delivers the notification to your registered webhook URL. The event type identifies the operation that finished. The `data` object always contains `jobId` and `status`; `outputs` and `errors` are optional.
+6. Your application handles the notification and—if needed—calls the `/status` endpoint once to retrieve full job details.
 
 ## Prerequisites
 
@@ -77,6 +77,12 @@ Select the completion events for the operations you want to receive notification
 - Export Rendition: `com.adobe.express-api.v1.export-rendition.completed`
 
 Each event covers all terminal outcomes. Read `data.status` to determine the outcome. You can subscribe to either or both event types. Click **Next**.
+Select the completion events for the operations you want to receive notifications for:
+
+- Create Variation: `com.adobe.express-api.v1.create-variation.completed`
+- Export Rendition: `com.adobe.express-api.v1.export-rendition.completed`
+
+Each event covers all terminal outcomes. Read `data.status` to determine the outcome. You can subscribe to either or both event types. Click **Next**.
 
 ![Developer Console Event Subscription](./images/handle-webhooks--console-event-subscription.png)
 
@@ -91,10 +97,12 @@ In the following screen (not illustrated here), you'll be able to provide a name
 ### 4. Configure the event registration
 
 In the following screen, configure your webhook URL:
+In the following screen, configure your webhook URL:
 
 1. Enable **Webhook**.
 2. Enter your publicly accessible HTTPS webhook URL.
 3. Choose **Single** delivery.
+4. Choose **Single** delivery.
 
 ![Developer Console Configure Event Registration](./images/handle-webhooks--console-configure-event-registration.png)
 
@@ -126,6 +134,7 @@ After saving, check that the **Status** shown in the _Registration Details_ tab 
 ## Event types
 
 Adobe Express API exposes one completion event per operation. All events follow the [CloudEvents 1.0 specification](https://cloudevents.io/).
+Adobe Express API exposes one completion event per operation. All events follow the [CloudEvents 1.0 specification](https://cloudevents.io/).
 
 | Event type                                            | Description                                                    |
 | ----------------------------------------------------- | -------------------------------------------------------------- |
@@ -133,18 +142,27 @@ Adobe Express API exposes one completion event per operation. All events follow 
 | `com.adobe.express-api.v1.export-rendition.completed` | Emitted when an Export Rendition job reaches a terminal state. |
 
 The `.completed` suffix means the operation finished, not necessarily that it succeeded. The outcome is carried only in `data.status`: `succeeded`, `partially_succeeded`, `failed`, or `cancelled`. There are no separate event types for these outcomes.
+| Event type | Description |
+| ----------------------------------------------------- | -------------------------------------------------------------- |
+| `com.adobe.express-api.v1.create-variation.completed` | Emitted when a Create Variation job reaches a terminal state. |
+| `com.adobe.express-api.v1.export-rendition.completed` | Emitted when an Export Rendition job reaches a terminal state. |
+
+The `.completed` suffix means the operation finished, not necessarily that it succeeded. The outcome is carried only in `data.status`: `succeeded`, `partially_succeeded`, `failed`, or `cancelled`. There are no separate event types for these outcomes.
 
 ## Event payload structure
 
-Events are delivered as HTTP POST requests to your webhook URL. The body is a JSON object following the [CloudEvents spec](https://cloudevents.io/). The following examples show a successful Create Variation job and a cancelled Export Rendition job. Both examples include only the guaranteed `data` fields.
+Events are delivered as HTTP POST requests to your webhook URL. The body is a JSON object following the [CloudEvents spec](https://cloudevents.io/). The following examples show a successful Create Variation job and a cancelled Export Rendition job. The second example includes only the guaranteed `data` fields.
 
 <CodeBlock slots="heading, code" repeat="2" languages="json, json"/>
+
+#### Create Variation: succeeded
 
 #### Create Variation: succeeded
 
 ```json
 {
   "specversion": "1.0",
+  "type": "com.adobe.express-api.v1.create-variation.completed",
   "type": "com.adobe.express-api.v1.create-variation.completed",
   "source": "urn:aio_provider_metadata:cc_ffs_exapi_job_status",
   "id": "5b5341fb-b4c1-422d-bc1a-b4ca248ec6da",
@@ -160,9 +178,12 @@ Events are delivered as HTTP POST requests to your webhook URL. The body is a JS
 
 #### Export Rendition: cancelled
 
+#### Export Rendition: cancelled
+
 ```json
 {
   "specversion": "1.0",
+  "type": "com.adobe.express-api.v1.export-rendition.completed",
   "type": "com.adobe.express-api.v1.export-rendition.completed",
   "source": "urn:aio_provider_metadata:cc_ffs_exapi_job_status",
   "id": "8023f672-0de6-41cd-bbb9-e99b0a142560",
@@ -189,8 +210,6 @@ Events are delivered as HTTP POST requests to your webhook URL. The body is a JS
 | `time`              | ISO 8601 timestamp of the job's terminal state.                                    |
 | `datacontenttype`   | Content type of the `data` payload. Always `"application/json"`.                   |
 | `requestorclientid` | Client ID of the application that submitted the API request.                       |
-| `eventid`           | Event identifier added by Adobe I/O Events.                                        |
-| `recipientclientid` | Recipient client ID added by Adobe I/O Events.                                     |
 | `data`              | Event data object containing job information (see below).                          |
 
 ### `data` object fields
@@ -199,12 +218,12 @@ Events are delivered as HTTP POST requests to your webhook URL. The body is a JS
 | -------------- | -------- | ------------------------------------------------------------------------------------------------- |
 | `data.jobId`   | Yes      | ID of the completed job.                                                                          |
 | `data.status`  | Yes      | Terminal status of the job: `"succeeded"`, `"partially_succeeded"`, `"failed"`, or `"cancelled"`. |
-| `data.outputs` | No       | Output information associated with the job. May be absent.                                        |
-| `data.error`   | No       | Error information associated with the job. May be absent.                                         |
+| `data.outputs` | No       | Output information, such as presigned URLs to download the job's output manifest. May be absent.  |
+| `data.errors`  | No       | Error information associated with the job. May be absent.                                         |
 
 <InlineAlert variant="info" slots="text" />
 
-`data.jobId` and `data.status` are the only guaranteed fields in every notification. Your application should treat `data.outputs` and `data.error` as optional and handle their absence gracefully. If `data.outputs` is absent, call the `/status` endpoint using `data.jobId` to retrieve job outputs.
+`data.jobId` and `data.status` are the only guaranteed fields in every notification. Your application should treat `data.outputs` and `data.errors` as optional and handle their absence gracefully.
 
 ## Event filtering
 
@@ -233,7 +252,9 @@ This ensures that only events triggered by jobs submitted with your client ID ar
 You can also filter by:
 
 - **Event type** — subscribe only to the operations you need (for example, `com.adobe.express-api.v1.create-variation.completed`).
+- **Event type** — subscribe only to the operations you need (for example, `com.adobe.express-api.v1.create-variation.completed`).
 - **Job ID** — filter for a specific job identifier.
+- **Status** — filter by `data.status` (for example, `succeeded`).
 - **Status** — filter by `data.status` (for example, `succeeded`).
 
 Click the **Filter Definition > Select a Pattern** dropdown for a series of demo patterns that you can copy/paste in the filter definition below. For details on advanced filtering options, see [Subscriber Defined Filtering](https://developer.adobe.com/events/docs/guides/subscriber_defined_filtering/).
@@ -272,7 +293,7 @@ For information about retry behavior, the journaling API, and automatic disable 
 
 ### Payload fields are missing
 
-`data.outputs` and `data.error` are optional and may not be present in every event. Design your handler to check for their presence before accessing them (see [Field descriptions](#field-descriptions)).
+`data.outputs` and `data.errors` are optional and may not be present in every event. Design your handler to check for their presence before accessing them (see [Field descriptions](#field-descriptions)).
 
 ## Next steps
 
