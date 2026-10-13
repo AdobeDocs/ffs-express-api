@@ -44,8 +44,8 @@ Webhook support is available for the **Bulk Workflow APIs**, **Create Variation*
 2. Submit an async request (for example, `POST /bulk-create-variation`, `POST /beta/create-variation`, or `POST /beta/export-rendition`). The API returns a `jobId`.
 3. The Express API processes the job asynchronously.
 4. When the job reaches a terminal state, the Express API publishes a CloudEvents-formatted event to Adobe I/O Events.
-5. Adobe I/O Events delivers the notification to your registered webhook URL. The event type identifies the operation that finished. The `data` object always contains `jobId` and `status`; `errors` is optional.
-6. Your application handles the notification and calls the `/status` endpoint using the `jobId` when it needs job outputs or full job details.
+5. Adobe I/O Events delivers the notification to your registered webhook URL. The event type identifies the operation that finished. The `data` object always contains `jobId` and `status`; `outputs` and `error` are optional.
+6. Your application handles the notification and, if needed, calls the `/status` endpoint using the `jobId` to retrieve job outputs or full job details.
 
 ## Prerequisites
 
@@ -215,19 +215,22 @@ Events are delivered as HTTP POST requests to your webhook URL. The body is a JS
 | `time`              | ISO 8601 timestamp of the job's terminal state.                                    |
 | `datacontenttype`   | Content type of the `data` payload. Always `"application/json"`.                   |
 | `requestorclientid` | Client ID of the application that submitted the API request.                       |
+| `eventid`           | Event identifier added by Adobe I/O Events.                                        |
+| `recipientclientid` | Recipient client ID added by Adobe I/O Events.                                     |
 | `data`              | Event data object containing job information (see below).                          |
 
 ### `data` object fields
 
-| Field         | Required | Description                                                                                       |
-| ------------- | -------- | ------------------------------------------------------------------------------------------------- |
-| `data.jobId`  | Yes      | ID of the completed job.                                                                          |
-| `data.status` | Yes      | Terminal status of the job: `"succeeded"`, `"partially_succeeded"`, `"failed"`, or `"cancelled"`. |
-| `data.errors` | No       | Error information associated with the job. May be absent.                                         |
+| Field          | Required | Description                                                                                       |
+| -------------- | -------- | ------------------------------------------------------------------------------------------------- |
+| `data.jobId`   | Yes      | ID of the completed job.                                                                          |
+| `data.status`  | Yes      | Terminal status of the job: `"succeeded"`, `"partially_succeeded"`, `"failed"`, or `"cancelled"`. |
+| `data.outputs` | No       | Output information associated with the job. May be absent.                                        |
+| `data.error`   | No       | Error information associated with the job. May be absent.                                         |
 
 <InlineAlert variant="info" slots="text" />
 
-`data.jobId` and `data.status` are the only guaranteed fields in every notification. Your application should treat `data.errors` as optional and handle its absence gracefully. Webhook events do not include `outputs`; call the `/status` endpoint using `data.jobId` to retrieve job outputs.
+`data.jobId` and `data.status` are the only guaranteed fields in every notification. Your application should treat `data.outputs` and `data.error` as optional and handle their absence gracefully.
 
 ## Event filtering
 
@@ -297,7 +300,7 @@ For information about retry behavior, the journaling API, and automatic disable 
 
 ### Payload fields are missing
 
-`data.errors` is optional and may not be present in every event. Design your handler to check for its presence before accessing it (see [Field descriptions](#field-descriptions)). To retrieve job outputs, call the `/status` endpoint using `data.jobId`; outputs are not included in webhook events.
+`data.outputs` and `data.error` are optional and may not be present in every event. Design your handler to check for their presence before accessing them (see [Field descriptions](#field-descriptions)). If `data.outputs` is absent, call the `/status` endpoint using `data.jobId` to retrieve job outputs.
 
 ## Next steps
 
