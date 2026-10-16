@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>Adobe Express API Changelog</title>
-    <link>https://developer.adobe.com/firefly-services/docs/express-api/getting-started/changelog/</link>
-    <atom:link href="https://developer.adobe.com/firefly-services/docs/express-api/feed.xml"
-      rel="self" type="application/rss+xml" />
-    <description>Release notes for the Adobe Express API.</description>
-    <language>en-us</language>
-    <lastBuildDate>Fri, 16 Oct 2026 12:35:09 GMT</lastBuildDate>
-    <item>
-      <title>2026-11-16</title>
-      <link>
-        https://developer.adobe.com/firefly-services/docs/express-api/getting-started/changelog/#2026-11-16</link>
-      <guid isPermaLink="false">2026-11-16</guid>
-      <pubDate>Mon, 16 Nov 2026 00:00:00 GMT</pubDate>
-      <description><![CDATA[<h3>Changed</h3>
+      <channel>
+            <title>Adobe Express API Changelog</title>
+            <link>
+                  https://developer.adobe.com/firefly-services/docs/express-api/getting-started/changelog/</link>
+            <atom:link href="https://developer.adobe.com/firefly-services/docs/express-api/feed.xml"
+                  rel="self" type="application/rss+xml" />
+            <description>Release notes for the Adobe Express API.</description>
+            <language>en-us</language>
+            <lastBuildDate>Fri, 16 Oct 2026 12:35:09 GMT</lastBuildDate>
+            <item>
+                  <title>2026-11-16</title>
+                  <link>
+                        https://developer.adobe.com/firefly-services/docs/express-api/getting-started/changelog/#2026-11-16</link>
+                  <guid isPermaLink="false">2026-11-16</guid>
+                  <pubDate>Mon, 16 Nov 2026 00:00:00 GMT</pubDate>
+                  <description><![CDATA[<h3>Changed</h3>
 
 <ul>
 <li><strong>Webhook support</strong> has evolved, moving from status-based to operation-based events. Please see the <a href="https://developer.adobe.com/firefly-services/docs/express-api/guides/how-to/handle-webhook-events-api/">updated guide</a> for details.</li>
@@ -23,26 +24,26 @@
 <p><InlineAlert variant="warning" slots="text" /></p>
 
 <p>You will need to update your Events registration if you were using the previous status-based webhooks.</p>]]></description>
-    </item>
-    <item>
-      <title>2026-09-11</title>
-      <link>
-        https://developer.adobe.com/firefly-services/docs/express-api/getting-started/changelog/#2026-09-11</link>
-      <guid isPermaLink="false">2026-09-11</guid>
-      <pubDate>Fri, 11 Sep 2026 00:00:00 GMT</pubDate>
-      <description><![CDATA[<h3>Added</h3>
+            </item>
+            <item>
+                  <title>2026-09-11</title>
+                  <link>
+                        https://developer.adobe.com/firefly-services/docs/express-api/getting-started/changelog/#2026-09-11</link>
+                  <guid isPermaLink="false">2026-09-11</guid>
+                  <pubDate>Fri, 11 Sep 2026 00:00:00 GMT</pubDate>
+                  <description><![CDATA[<h3>Added</h3>
 
 <ul>
 <li><strong>Webhook support</strong>: Register a webhook to receive real-time job status notifications for <strong>Create Variation</strong> (<code>POST /beta/create-variation</code>) and <strong>Export Rendition</strong> (<code>POST /beta/export-rendition</code>). See the new <a href="https://developer.adobe.com/firefly-services/docs/express-api/guides/how-to/handle-webhook-events-api/">Handle Webhook Events guide</a>.</li></ul>
 ]]></description>
-    </item>
-    <item>
-      <title>2026-08-13</title>
-      <link>
-        https://developer.adobe.com/firefly-services/docs/express-api/getting-started/changelog/#2026-08-13</link>
-      <guid isPermaLink="false">2026-08-13</guid>
-      <pubDate>Thu, 13 Aug 2026 00:00:00 GMT</pubDate>
-      <description><![CDATA[<h3>Added</h3>
+            </item>
+            <item>
+                  <title>2026-08-13</title>
+                  <link>
+                        https://developer.adobe.com/firefly-services/docs/express-api/getting-started/changelog/#2026-08-13</link>
+                  <guid isPermaLink="false">2026-08-13</guid>
+                  <pubDate>Thu, 13 Aug 2026 00:00:00 GMT</pubDate>
+                  <description><![CDATA[<h3>Added</h3>
 
 <ul>
 <li><strong>Create Variation API (beta)</strong>: New <code>POST /beta/create-variation</code> endpoint that creates a document variation and returns one or more outputs in a single asynchronous call.</li>
@@ -62,14 +63,14 @@
 <ul>
 <li><strong>Generate Variation</strong>: The <a href="https://developer.adobe.com/firefly-services/docs/express-api/guides/how-to/generate-variations/">Generate Variation</a> (<code>POST /beta/generate-variation</code>) endpoint is deprecated in favor of Create Variation, which folds document creation and rendition export into a single call. It remains available during beta; plan to migrate to <code>create-variation</code> ahead of general availability.</li></ul>
 ]]></description>
-    </item>
-    <item>
-      <title>2026-04-24</title>
-      <link>
-        https://developer.adobe.com/firefly-services/docs/express-api/getting-started/changelog/#2026-04-24</link>
-      <guid isPermaLink="false">2026-04-24</guid>
-      <pubDate>Fri, 24 Apr 2026 00:00:00 GMT</pubDate>
-      <description><![CDATA[<h3>Added</h3>
+            </item>
+            <item>
+                  <title>2026-04-24</title>
+                  <link>
+                        https://developer.adobe.com/firefly-services/docs/express-api/getting-started/changelog/#2026-04-24</link>
+                  <guid isPermaLink="false">2026-04-24</guid>
+                  <pubDate>Fri, 24 Apr 2026 00:00:00 GMT</pubDate>
+                  <description><![CDATA[<h3>Added</h3>
 
 <ul>
 <li><strong>Beta release of the Express API</strong>: API reference, guides, tutorials, FAQ, and error logging now reflect the beta endpoints at <code>/beta/</code> (tagged-documents, generate-variation, export-rendition, status).</li>
@@ -79,14 +80,14 @@
 <li>Technical Usage Notes page covering limits, quotas, and operational guidance.</li>
 <li><strong>Guides section</strong> now includes an Express API Quickstart, with clearer separation between How-Tos and Tutorials in the side navigation.</li></ul>
 ]]></description>
-    </item>
-    <item>
-      <title>2026-02-19</title>
-      <link>
-        https://developer.adobe.com/firefly-services/docs/express-api/getting-started/changelog/#2026-02-19</link>
-      <guid isPermaLink="false">2026-02-19</guid>
-      <pubDate>Thu, 19 Feb 2026 00:00:00 GMT</pubDate>
-      <description><![CDATA[<h3>Added</h3>
+            </item>
+            <item>
+                  <title>2026-02-19</title>
+                  <link>
+                        https://developer.adobe.com/firefly-services/docs/express-api/getting-started/changelog/#2026-02-19</link>
+                  <guid isPermaLink="false">2026-02-19</guid>
+                  <pubDate>Thu, 19 Feb 2026 00:00:00 GMT</pubDate>
+                  <description><![CDATA[<h3>Added</h3>
 
 <ul>
 <li><strong>PDF Export Support</strong>: Export renditions now include <code>application/pdf</code> format with standard and print options.</li>
@@ -94,14 +95,14 @@
 <li>Updated Export Rendition documentation and guides to reflect PDF format support and page range usage.</li>
 <li>Updated landing pages to list PDF among supported rendition formats.</li></ul>
 ]]></description>
-    </item>
-    <item>
-      <title>2025-07-29</title>
-      <link>
-        https://developer.adobe.com/firefly-services/docs/express-api/getting-started/changelog/#2025-07-29</link>
-      <guid isPermaLink="false">2025-07-29</guid>
-      <pubDate>Tue, 29 Jul 2025 00:00:00 GMT</pubDate>
-      <description><![CDATA[<h3>Added</h3>
+            </item>
+            <item>
+                  <title>2025-07-29</title>
+                  <link>
+                        https://developer.adobe.com/firefly-services/docs/express-api/getting-started/changelog/#2025-07-29</link>
+                  <guid isPermaLink="false">2025-07-29</guid>
+                  <pubDate>Tue, 29 Jul 2025 00:00:00 GMT</pubDate>
+                  <description><![CDATA[<h3>Added</h3>
 
 <ul>
 <li><strong>Comprehensive Video Capabilities</strong>: Full video support across all Adobe Express API endpoints</li>
@@ -141,27 +142,27 @@
 <li>Video tag mappings work seamlessly with existing text and image tag workflows</li>
 <li>All code examples and tutorials updated to demonstrate multi-media tag mapping capabilities</li></ul>
 ]]></description>
-    </item>
-    <item>
-      <title>2025-04-30</title>
-      <link>
-        https://developer.adobe.com/firefly-services/docs/express-api/getting-started/changelog/#2025-04-30</link>
-      <guid isPermaLink="false">2025-04-30</guid>
-      <pubDate>Wed, 30 Apr 2025 00:00:00 GMT</pubDate>
-      <description><![CDATA[<h3>Added</h3>
+            </item>
+            <item>
+                  <title>2025-04-30</title>
+                  <link>
+                        https://developer.adobe.com/firefly-services/docs/express-api/getting-started/changelog/#2025-04-30</link>
+                  <guid isPermaLink="false">2025-04-30</guid>
+                  <pubDate>Wed, 30 Apr 2025 00:00:00 GMT</pubDate>
+                  <description><![CDATA[<h3>Added</h3>
 
 <ul>
 <li>MP4 format support for the Export Rendition API. You can now export video renditions for pages containing timelines.</li>
 <li>See the <a href="https://developer.adobe.com/firefly-services/docs/express-api/api/index/">Export Rendition API documentation</a> for more details on supported formats and usage.</li></ul>
 ]]></description>
-    </item>
-    <item>
-      <title>2025-03-21</title>
-      <link>
-        https://developer.adobe.com/firefly-services/docs/express-api/getting-started/changelog/#2025-03-21</link>
-      <guid isPermaLink="false">2025-03-21</guid>
-      <pubDate>Fri, 21 Mar 2025 00:00:00 GMT</pubDate>
-      <description><![CDATA[<h3>Added</h3>
+            </item>
+            <item>
+                  <title>2025-03-21</title>
+                  <link>
+                        https://developer.adobe.com/firefly-services/docs/express-api/getting-started/changelog/#2025-03-21</link>
+                  <guid isPermaLink="false">2025-03-21</guid>
+                  <pubDate>Fri, 21 Mar 2025 00:00:00 GMT</pubDate>
+                  <description><![CDATA[<h3>Added</h3>
 
 <p>We're excited to announce the release of our Express API</p>
 
@@ -174,6 +175,6 @@
 <li><a href="https://developer.adobe.com/firefly-services/docs/express-api/api/index/"><strong>Export rendition API</strong></a>: Export a PNG image rendition of a tagged document.</li>
 <li><a href="https://developer.adobe.com/firefly-services/docs/express-api/api/index/"><strong>Status API</strong></a>: Retrieve the status of a job (e.g., the job returned in the response from the generate variation or export rendition API).</li></ul>
 ]]></description>
-    </item>
-  </channel>
+            </item>
+      </channel>
 </rss>
