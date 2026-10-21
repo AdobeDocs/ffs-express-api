@@ -1,110 +1,74 @@
 ---
 title: Tag Elements in Your Documents
-description: This guide shows you how to tag elements in your documents using the Tag Elements Add-on in Adobe Express.
+description: This guide shows you how to tag elements in your documents using Data Fields in Adobe Express.
 keywords:
   - Adobe Express
   - Adobe Express API
   - Tag elements
   - Tag document
   - Tag template
+  - Assign Data Fields
 contributors:
+  - https://github.com/undavide
   - https://github.com/nimithajalal
   - https://github.com/hollyschinsky
 hideBreadcrumbNav: true
 ---
 
-# Tag Elements in Your Documents
+# Tag Elements in your Documents
 
-Tag elements in your Express documents to enable programmatic updates through the Express API.
+Tag elements in your Adobe Express documents to update them programmatically via the Express API.
 
 ## Overview
 
-The Tag Elements Add-on lets you mark specific elements in your Adobe Express documents for API-driven updates. This guide shows you how to tag elements and use them in your automation workflows.
+Adobe Express uses **Data Fields** to let you identify specific document elements for API-driven automation. This guide walks you through setting them up and integrating them into your workflows.
 
-## Step 1: Install the Tag Elements Add-on
+<InlineAlert variant="info" slots="header, text" />
 
-1. **Open Adobe Express**:
+#### The Tag Elements Add-on
 
-   - Navigate to [Adobe Express](https://new.express.adobe.com/) in your web browser.
-  
-2. **Install the Tag Elements Add-on**:
+Previously, tagging elements required a dedicated add-on. This functionality is now built directly into Adobe Express. We encourage developers to adopt the native implementation, as the add-on will no longer be maintained.
 
-   - Open the [Tag Elements Add-on](https://adobesparkpost.app.link/TR9Mb7TXFLb?mode=private&claimCode=wjmj67nj9:PLYN7XLJ) URL.
-   - Click the `ADD` button to install the add-on.
-   - Once installed, the add-on will appear under the `Your add-ons` tab in the **Add-ons section**.
+## Assign Data Fields to Elements
 
-## Step 2: Create tags for a document
+Start by creating a document in Adobe Express, or open an existing Template that you want to customize. When the design is ready, you can begin assigning **Data fields** (i.e., tags) to the elements that you plan to update programmatically via Express API. At the moment, you can only tag **text**, **images**, and **videos**.
 
-1. **Design your document**:
+1. Select the element that you want to tag.
+2. Either:
+   - Right-click on the element and select **Assign data field** from the context menu.
+   - Click the **•••** menu in the HUD and select **Assign data field**.
 
-   Start by creating your document in [Adobe Express](https://new.express.adobe.com/). You can design it as needed, adding text, images, and other elements.
-  
-2. **Open the Tag Elements Add-on**:
+![Assign Data Field](./images/tag-document--assign-data-field.png)
 
-   Access the [Tag Elements Add-on](https://adobesparkpost.app.link/TR9Mb7TXFLb?mode=private&claimCode=wjmj67nj9:PLYN7XLJ) by clicking on it from the `Your add-ons` tab.
-  
-3. **Select an element to tag**:
+The **Data fields** left-hand panel will allow you to type the tag's label for the selected element. Please note that the tag will appear on the element itself immediately after being added, and a **Edit data field** HUD will be shown above the design for further modifications.
 
-   Click on an element in your document that you want to tag (e.g., a text box, an image or a video). You can see the type of element selected in the left-hand panel header in Express.
-  
-4. **Tag the element**:
+![Enter Data Field](./images/tag-document--enter-data-field.png)
 
-   - In the [Tag Elements Add-on](https://adobesparkpost.app.link/TR9Mb7TXFLb?mode=private&claimCode=wjmj67nj9:PLYN7XLJ), enter a tag name for the selected element in the input field.
-   - Input your label into the text field.
-   - Click the **Tag** button. The tag will now be listed below in the add-on.
-   - Click the **Save changes** button.
+With the Data fields panel open, you can keep tagging other elements: just select them, and click **Assign data field** in the HUD.
 
-5. **Repeat for other elements**:
+![Tagging Multiple Elements](./images/tag-document--add-more-data-field.png)
 
-   Repeat the tagging process for all other elements you want to enable for updating using the Express API.
-
-   You can find the list of tags and their types in the right pane of the add-on.
-
-   ![addonsample](./images/tag-addon.png)
-  
-6. **Save your document**:
-
-   Once you have tagged all necessary elements, click the **Save changes** button to save your document.
-
-<InlineAlert variant="warning" slots="text" />
-
-
-Clicking **Save changes** is important for the document/element visibility while using [`/beta/tagged-documents`](../../api/index.md).
-
-## Use Case: Locking a template for consistent branding
-
-Imagine you are creating a marketing template for your company. You want to ensure that certain elements, like the company logo and tagline, remain consistent across all documents. Here's how you can achieve that:
-
-1. **Design your template**:
-
-   - Create a template with your company's branding elements, such as the logo, tagline, and color scheme.
-  
-2. **Tag branding elements**:
-
-   - Use the [Tag Elements Add-on](https://adobesparkpost.app.link/TR9Mb7TXFLb?mode=private&claimCode=wjmj67nj9:PLYN7XLJ) to tag the logo and tagline. For example, tag the logo as "company_logo" and the tagline as "company_tagline".
-  
-3. **Lock the template**:
-
-   - Once you have tagged the necessary elements, save the template. This template can now be used as a locked design, ensuring that the tagged elements remain consistent.
-  
-4. **Use the template in API workflows**:
-
-   - In your Express API-enabled workflow, reference the tags "company_logo" and "company_tagline" to programmatically swap out these elements if needed, while keeping the overall design consistent.
+Click the **Done** button when you're finished tagging all the elements in the page. You can now switch to the next page to add additional tags, or proceed to use the Express API to programmatically replace the tagged elements.
 
 ## Additional Information
 
-- **Tagging elements**:
-
-  - The Tag Elements add-on allows you to tag elements across pages in your Express document. These tags can be used for quick and easy replacement via an Express API-enabled workflow.
+- **Tags**:
   - You can tag as many elements as required in your replacement workflow.
   - Tag names must be unique within a single page, but the same tag name can be used for distinct elements on different pages. All tags with the same name will be swapped out with the same element in any replacement flow.
-  
+
 - **Viewing tagged elements**:
+  - Select and right-click on any text, image, or video element: if a tag was previously assigned, you'll see an **Edit data field** option in the context menu, otherwise you'll find **Assign data field**. Select either option to open the Data field panel and inspect the list of tagged elements.
 
-  - As you tag elements on a page, they will appear in the right pane list of the add-on. This list refreshes as you navigate through the pages of your document.
-  
 - **Using tags in API workflows**:
-  
   - Once you have completed tagging, these tags can be referenced in your Express API-enabled workflow to programmatically swap out elements in seconds.
+  - Unless you have started with an existing template,
+  - The identifier (URN) of the tagged document can always be found in the Browser's URL bar:
 
-You've now learned how to use the [Tag Elements Add-on](https://adobesparkpost.app.link/TR9Mb7TXFLb?mode=private&claimCode=wjmj67nj9:PLYN7XLJ) in [Adobe Express](https://new.express.adobe.com/) to tag elements and a use case example for creating a locked template to enable consistent branding. With this knowledge and the Express API, you can streamline your design workflow and maintain a professional and cohesive look across all your documents. Happy designing!
+  ```
+  https://express.adobe.com/id/urn:aaid:sc:...
+                             👆👆👆👆👆👆👆👆👆
+  ```
+
+  - If you have started with a brand new document (not based on an existing template), you will need to click the **Share** button and select **Convert to template** in the share menu on the right. This allows you to give the template a name, lock permanently elements, link brands or libraries, and more. Click again **Convert to template** in the left-hand panel to finalize the conversion.
+
+  ![Convert to Template](./images/tag-document--convert-to-template.png)
