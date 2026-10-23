@@ -82,17 +82,28 @@ Select the product profiles your admin assigned for Express. These control what 
 
 ![Server-to-Server Product Profiles](../images/create-credentials--product-profiles-1.png)
 
-<InlineAlert variant="info" slots="text" />
+<InlineAlert variant="info" slots="header, text, text2" />
 
-Product profiles must include **Adobe Express**, **Adobe Firefly Services**, and **non-Premium Fonts** access. As shown below, a **Default Free Membership** and **Firefly Creative Production for Enterprise** configurations will suffice. Please note that access to Premium Fonts will cause a rejection.
+#### Product Profiles and Entitlements
+
+Product profiles must include **Adobe Express**, **Adobe Firefly Services**, and **non-Premium Fonts** access—Premium Fonts such as Typekit will [result in an error](#access-to-premium-fonts-will-cause-a-rejection). As shown below, a **Default Free Membership** and **Firefly Creative Production for Enterprise** configurations will suffice.
 
 ![Server-to-Server Product Profiles selection](../images/create-credentials--product-profiles-2.png)
 
-<InlineAlert variant="warning" slots="heading, text1, text2" />
+<InlineAlert variant="error" slots="header, text, text1" />
 
-#### Admin Console Product Provisioning
+#### Access to Premium Fonts will cause a rejection
 
-If you have problems finding the correct Product Profiles in the Developer Console, ask your administrator to verify that the correct Products have been assigned to your User in the Admin Console.
+The technical account you're using **must not have any Premium entitlements**, for example, Typekit Fonts. Access to Premium Fonts will cause a rejection with the following error:
+
+```json
+{
+  "error_code": "access_error",
+  "message": "The account associated with the provided access token has 'typekit' entitlements beyond the free tier, which is not permitted for API access"
+}
+```
+
+If you have problems finding the correct Product Profiles in the Developer Console, **ask your administrator to verify that the correct Products have been assigned to your User in the Admin Console**.
 
 ![Admin Console User Products](../images/create-credentials--admin-console.png)
 
