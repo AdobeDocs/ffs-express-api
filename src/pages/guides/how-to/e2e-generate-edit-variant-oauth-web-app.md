@@ -37,7 +37,7 @@ In this workflow, we present a Web App-based scenario where a user:
 - A redirect URI registered on the credential.
   - Use, e.g., `https://localhost:4000/callback` for local development (Adobe IMS requires HTTPS for redirect URIs even on localhost). Set this as both the **Default Redirect URI** and as the **Redirect URI pattern** (`https://localhost:4000/callback$`) on the credential.
 - Your `client_id` (API key) and `client_secret` from the credential overview page.
-- At least one tagged Express document the signed-in user owns. Tag it with the [Tag Elements add-on](https://adobesparkpost.app.link/TR9Mb7TXFLb?mode=private&claimCode=wjmj67nj9:PLYN7XLJ).
+- At least one tagged Express document the signed-in user owns. Tag elements using **Data Fields**, as described [in this guide](./tag-documents.md).
 - Node.js 18+ (or any backend that can do an HTTPS POST and run a small redirect handler).
 
 The cURL and Python tabs in the steps below assume you already have an `ACCESS_TOKEN` from the OAuth flow in the [first step](#1-authenticate-the-user). During development, log it from your `/callback` handler the first time it succeeds and reuse it for the day. Tokens are valid roughly 24 hours; once a token expires the user must sign in again. If your credential has the `offline_access` scope available (check the **Available Scopes** section of your OAuth Web App credential in the Developer Console), you can also receive a refresh token.
@@ -90,15 +90,15 @@ curl -s -X POST 'https://ims-na1.adobelogin.com/ims/token/v3' \
 
 ```js
 const body = new URLSearchParams({
-  grant_type: 'authorization_code',
+  grant_type: "authorization_code",
   code,
   client_id: process.env.CLIENT_ID,
   client_secret: process.env.CLIENT_SECRET,
 });
 
-const resp = await fetch('https://ims-na1.adobelogin.com/ims/token/v3', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+const resp = await fetch("https://ims-na1.adobelogin.com/ims/token/v3", {
+  method: "POST",
+  headers: { "Content-Type": "application/x-www-form-urlencoded" },
   body,
 });
 const tokens = await resp.json();
@@ -146,13 +146,13 @@ curl -s 'https://express-api.adobe.io/beta/tagged-documents?start=0&limit=25&sor
 
 ```js
 const resp = await fetch(
-  'https://express-api.adobe.io/beta/tagged-documents?start=0&limit=25&sortBy=-modifiedDate',
+  "https://express-api.adobe.io/beta/tagged-documents?start=0&limit=25&sortBy=-modifiedDate",
   {
     headers: {
       Authorization: `Bearer ${accessToken}`,
-      'X-API-KEY': clientId,
+      "X-API-KEY": clientId,
     },
-  }
+  },
 );
 const { documents, paging } = await resp.json();
 ```
@@ -183,9 +183,9 @@ Response shape:
     }
   ],
   "paging": {
-		"totalRecords": 1,
-		"nextUrl": ""
-	}
+    "totalRecords": 1,
+    "nextUrl": ""
+  }
 }
 ```
 
@@ -215,9 +215,9 @@ const resp = await fetch(
   {
     headers: {
       Authorization: `Bearer ${accessToken}`,
-      'X-API-KEY': clientId,
+      "X-API-KEY": clientId,
     },
-  }
+  },
 );
 const detail = await resp.json();
 ```
@@ -248,13 +248,15 @@ This endpoint is paginated by page: append `?start=<n>` to fetch tagged elements
       "size": { "width": 662, "height": 289 },
       "taggedElements": [
         {
-          "name": "title", "type": "text",
+          "name": "title",
+          "type": "text",
           "position": { "x": 209, "y": 185 },
           "size": { "width": 662, "height": 289 }
         },
         {
-          "name": "product-image", "type": "image",
-          "position": { "x":  346, "y":  -131 },
+          "name": "product-image",
+          "type": "image",
+          "position": { "x": 346, "y": -131 },
           "size": { "width": 493, "height": 963 }
         }
       ],
@@ -294,24 +296,27 @@ curl -s -X POST 'https://express-api.adobe.io/beta/generate-variation' \
 #### JavaScript (fetch)
 
 ```js
-const resp = await fetch('https://express-api.adobe.io/beta/generate-variation', {
-  method: 'POST',
-  headers: {
-    Authorization: `Bearer ${accessToken}`,
-    'X-API-KEY': clientId,
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({
-    id: documentId,
-    variationDetails: {
-      preferredDocumentName: 'Apple green',
-      tagMappings: {
-        title: 'APPLE GREEN',
-        'product-image': 'https://uc4fcd1dc97e1127dcb839ff192c.dl...',
-      },
+const resp = await fetch(
+  "https://express-api.adobe.io/beta/generate-variation",
+  {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "X-API-KEY": clientId,
+      "Content-Type": "application/json",
     },
-  }),
-});
+    body: JSON.stringify({
+      id: documentId,
+      variationDetails: {
+        preferredDocumentName: "Apple green",
+        tagMappings: {
+          title: "APPLE GREEN",
+          "product-image": "https://uc4fcd1dc97e1127dcb839ff192c.dl...",
+        },
+      },
+    }),
+  },
+);
 const { jobId, statusUrl } = await resp.json();
 ```
 
@@ -371,13 +376,17 @@ curl -s "https://express-api.adobe.io/status/$JOB_ID" \
 ```js
 async function pollJob(jobId, accessToken, clientId) {
   while (true) {
-    const r = await fetch(`https://express-api.adobe.io/status/${encodeURIComponent(jobId)}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        'X-API-KEY': clientId,
+    const r = await fetch(
+      `https://express-api.adobe.io/status/${encodeURIComponent(jobId)}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "X-API-KEY": clientId,
+        },
       },
-    }).then((r) => r.json());
-    if (['succeeded', 'failed', 'partially_succeeded'].includes(r.status)) return r;
+    ).then((r) => r.json());
+    if (["succeeded", "failed", "partially_succeeded"].includes(r.status))
+      return r;
     await new Promise((res) => setTimeout(res, 3000));
   }
 }
@@ -439,17 +448,17 @@ Load the SDK script, then call `CCEverywhere.initialize` once with the Embed SDK
 The Embed SDK and Express API rely on **different Client IDs**. Both are generated when you create credentials in the Developer Console, but the Projects that contain them are independent.
 
 ```js
-  await import('https://cc-embed.adobe.com/sdk/v4/CCEverywhere.js');
+await import("https://cc-embed.adobe.com/sdk/v4/CCEverywhere.js");
 
-  const hostInfo = {
-    clientId: '<CLIENT_ID>',
-    appName: 'Embed SDK & Express API integration',
-  };
+const hostInfo = {
+  clientId: "<CLIENT_ID>",
+  appName: "Embed SDK & Express API integration",
+};
 
-  // lets the user start interacting with the embedded editor; sign-in is only prompted when they save or export.
-  const configParams = { loginMode: 'delayed' };
+// lets the user start interacting with the embedded editor; sign-in is only prompted when they save or export.
+const configParams = { loginMode: "delayed" };
 
-  const { editor } = await window.CCEverywhere.initialize(hostInfo, configParams);
+const { editor } = await window.CCEverywhere.initialize(hostInfo, configParams);
 ```
 
 ### 6.2 Open the variation for editing
@@ -457,9 +466,9 @@ The Embed SDK and Express API rely on **different Client IDs**. Both are generat
 Pass the variation URN from step 5 as `documentId` and call `editor.edit()`:
 
 ```js
-const docConfig = { documentId: '<DOCUMENT_URN>' };
-const appConfig = {};       // optional editor configuration
-const exportConfig = [];    // optional export targets
+const docConfig = { documentId: "<DOCUMENT_URN>" };
+const appConfig = {}; // optional editor configuration
+const exportConfig = []; // optional export targets
 const containerConfig = {}; // optional container configuration
 editor.edit(docConfig, appConfig, exportConfig);
 ```

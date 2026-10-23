@@ -27,7 +27,7 @@ Adobe Express uses **Data Fields** to let you identify specific document element
 
 #### The Tag Elements Add-on
 
-Previously, tagging elements required a dedicated add-on. This functionality is now built directly into Adobe Express. We encourage developers to adopt the native implementation, as the add-on will no longer be maintained.
+Previously, tagging elements required a dedicated add-on. This **functionality is now built directly into Adobe Express**. We encourage developers to adopt the native implementation, as the add-on will no longer be maintained.
 
 ## Assign Data Fields to Elements
 
@@ -66,7 +66,7 @@ Click the **Done** button when you're finished tagging all the elements in the p
 
   ```
   https://express.adobe.com/id/urn:aaid:sc:...
-                             👆👆👆👆👆👆👆👆👆
+                               👆👆👆👆👆👆👆👆👆
   ```
 
   - If you have started with a brand new document (not based on an existing template), you will need to click the **Share** button and select **Convert to template** in the share menu on the right. This allows you to give the template a name, lock permanently elements, link brands or libraries, and more. Click again **Convert to template** in the left-hand panel to finalize the conversion.

@@ -41,16 +41,16 @@ This tutorial combines several key concepts from the How-to section, including:
 This tutorial assumes you have:
 
 - Access to the [Adobe Express API](../../getting-started/index.md), and know how to generate an API key and authorization token.
-- Familiarity with [Template tagging](../how-to/tag-documents.md), and the [Tag Elements Add-on](../index.md#overview).
+- Familiarity with [Template tagging](../how-to/tag-documents.md), and [Data Fields](../how-to/tag-documents.md).
 - Node.js installed on your machine (version 18 or later would be better).
 
 ## Step 1: Creating a tagged template
 
-First thing, our school's Art teacher will have created a beautiful business card template in Adobe Express. Using the [Tag Elements Add-on](../index.md#overview), we must tag elements that our automation script will later update. In our case, we'll tag Text nodes for the teacher's Name, Role, Email, Phone, and one Image node as their profile picture.
+First thing, our school's Art teacher will have created a beautiful business card template in Adobe Express. Using **Data Fields**, as explained in [this guide](../how-to/tag-documents.md), we must tag elements that our automation script will later update. In our case, we'll tag Text nodes for the teacher's Name, Role, Email, Phone, and one Image node as their profile picture.
 
 ![Tagging a template](./images/dropbox_tagging.png)
 
-Select each node, type the tag name, and don't forget to click the **Save** button on the add-on's footer to persist the changes!
+Select each node, type the tag name, and don't forget to click the **Done** button on the Data Fields panel to persist the changes!
 
 Copy the **DocumentId** (the string starting with `urn:`), which will be used later in the script to identify the template.
 
@@ -517,7 +517,7 @@ export async function generateVariations(requestBody) {
  */
 export async function retrieveTagDetails(
   documentId,
-  queryParams = { start: "1" }
+  queryParams = { start: "1" },
 ) {
   /* ... */
 }
@@ -633,7 +633,7 @@ async function main() {
       // Collect the Job ID
       variationJobIds.push(variationResponse.jobId);
       console.log(
-        `Submitted variation job for ${Name}, job ID: ${variationResponse.jobId}`
+        `Submitted variation job for ${Name}, job ID: ${variationResponse.jobId}`,
       );
     }
   } catch (error) {
@@ -668,10 +668,10 @@ async function main() {
     console.log("Checking variation job statuses...");
     let generationStatuses = await checkExpressJobs(
       variationJobIds,
-      getExpressStatus
+      getExpressStatus,
     );
     let runningCount = generationStatuses.filter(
-      ({ status }) => status === "running"
+      ({ status }) => status === "running",
     ).length;
 
     while (runningCount > 0) {
@@ -679,10 +679,10 @@ async function main() {
       await sleep(STATUS_CHECK_INTERVAL);
       generationStatuses = await checkExpressJobs(
         variationJobIds,
-        getExpressStatus
+        getExpressStatus,
       );
       runningCount = generationStatuses.filter(
-        ({ status }) => status === "running"
+        ({ status }) => status === "running",
       ).length;
     }
 
@@ -690,12 +690,12 @@ async function main() {
 
     // Check for any failed jobs
     const failedJobs = generationStatuses.filter(
-      ({ status }) => status !== "succeeded"
+      ({ status }) => status !== "succeeded",
     );
     if (failedJobs.length > 0) {
       console.warn(
         `Warning: ${failedJobs.length} variation jobs failed:`,
-        failedJobs.map((status) => status.jobId)
+        failedJobs.map((status) => status.jobId),
       );
     }
   } catch (error) {
@@ -813,10 +813,10 @@ The `exportRendition()` function is another asynchronous operation that returns 
 console.log("Checking export job statuses...");
 let exportationStatuses = await checkExpressJobs(
   exportationJobIds,
-  getExpressStatus
+  getExpressStatus,
 );
 runningCount = exportationStatuses.filter(
-  ({ status }) => status === "running"
+  ({ status }) => status === "running",
 ).length;
 
 while (runningCount > 0) {
@@ -824,21 +824,21 @@ while (runningCount > 0) {
   await sleep(STATUS_CHECK_INTERVAL);
   exportationStatuses = await checkExpressJobs(
     exportationJobIds,
-    getExpressStatus
+    getExpressStatus,
   );
   runningCount = exportationStatuses.filter(
-    ({ status }) => status === "running"
+    ({ status }) => status === "running",
   ).length;
 }
 
 console.log("All export jobs completed!");
 const failedExports = exportationStatuses.filter(
-  ({ status }) => status !== "succeeded"
+  ({ status }) => status !== "succeeded",
 );
 if (failedExports.length > 0) {
   console.warn(
     `Warning: ${failedExports.length} export jobs failed:`,
-    failedExports.map((status) => status.jobId)
+    failedExports.map((status) => status.jobId),
   );
 }
 ```
@@ -896,7 +896,7 @@ Before we start uploading files to Dropbox, we need to take a few preparatory st
 console.log(
   `Waiting ${
     INITIAL_WAIT_TIME / 1000
-  } seconds before starting uploads to ensure URLs are fully ready...`
+  } seconds before starting uploads to ensure URLs are fully ready...`,
 );
 await sleep(INITIAL_WAIT_TIME);
 console.log("Wait complete, starting upload process...");
@@ -906,7 +906,7 @@ try {
   console.log(`Ensuring output folder exists: ${OUTPUT_FOLDER}`);
   const folderResult = await createFolder(OUTPUT_FOLDER);
   console.log(
-    `Folder created or already exists at: ${folderResult.path_lower}`
+    `Folder created or already exists at: ${folderResult.path_lower}`,
   );
 } catch (error) {
   console.warn(`Warning: Could not create output folder: ${error.message}`);
@@ -936,7 +936,7 @@ const uploadPromises = renditionUrls.map(async (rendition) => {
     console.log(
       `Upload initiated for ${teacherName}, result type: ${
         saveResult[".tag"] || "unknown"
-      }`
+      }`,
     );
     return {
       teacherName,
@@ -948,7 +948,7 @@ const uploadPromises = renditionUrls.map(async (rendition) => {
   } catch (error) {
     console.error(
       `Failed to upload ${teacherName}'s business card:`,
-      error.message || error
+      error.message || error,
     );
     return {
       teacherName,
@@ -1015,7 +1015,7 @@ if (asyncJobs.length > 0) {
       console.log(
         `Job for ${job.teacherName}: ${
           job.isComplete ? "Complete" : job.isFailed ? "Failed" : "In Progress"
-        }`
+        }`,
       );
     });
 
@@ -1024,7 +1024,7 @@ if (asyncJobs.length > 0) {
 
     if (inProgressJobs.length > 0) {
       console.log(
-        `Still waiting for ${inProgressJobs.length} uploads to complete...`
+        `Still waiting for ${inProgressJobs.length} uploads to complete...`,
       );
       // Wait before checking again
       await sleep(STATUS_CHECK_INTERVAL);
@@ -1037,7 +1037,7 @@ if (asyncJobs.length > 0) {
       const failedUploads = jobStatuses.filter((job) => job.isFailed);
 
       console.log(
-        `Upload results: ${successfulUploads.length} successful, ${failedUploads.length} failed`
+        `Upload results: ${successfulUploads.length} successful, ${failedUploads.length} failed`,
       );
 
       if (failedUploads.length > 0 && retryCount < MAX_RETRIES - 1) {
@@ -1054,7 +1054,7 @@ if (asyncJobs.length > 0) {
       } else if (failedUploads.length > 0) {
         console.warn(
           "Failed uploads after maximum retries:",
-          failedUploads.map((job) => job.teacherName)
+          failedUploads.map((job) => job.teacherName),
         );
       }
     }
@@ -1086,7 +1086,7 @@ Dropbox's `dbx.filesSaveUrl()`, which is the API call used internally by `saveUr
 ```javascript
 // STEP 11.5: Try alternative direct upload method for failed jobs
 console.log(
-  `Attempting direct upload method for ${failedUploads.length} failed jobs...`
+  `Attempting direct upload method for ${failedUploads.length} failed jobs...`,
 );
 
 const directUploadPromises = failedUploads.map(async (job) => {
@@ -1094,7 +1094,7 @@ const directUploadPromises = failedUploads.map(async (job) => {
     console.log(`Starting direct upload for ${job.teacherName}...`);
     const result = await downloadAndUploadFile(
       job.url,
-      job.path || `${OUTPUT_FOLDER}/${job.teacherName}.png`
+      job.path || `${OUTPUT_FOLDER}/${job.teacherName}.png`,
     );
     console.log(`Direct upload successful for ${job.teacherName}`);
     return {
@@ -1105,7 +1105,7 @@ const directUploadPromises = failedUploads.map(async (job) => {
   } catch (error) {
     console.error(
       `Direct upload failed for ${job.teacherName}:`,
-      error.message || error
+      error.message || error,
     );
     return {
       ...job,
@@ -1119,17 +1119,17 @@ const directUploadResults = await Promise.all(directUploadPromises);
 
 // Log the results of direct uploads
 const successfulDirectUploads = directUploadResults.filter(
-  (job) => job.directUploadSuccess
+  (job) => job.directUploadSuccess,
 );
 console.log(
   `Direct upload results: ${successfulDirectUploads.length} successful, ${
     directUploadResults.length - successfulDirectUploads.length
-  } failed`
+  } failed`,
 );
 
 if (successfulDirectUploads.length > 0) {
   console.log(
-    `Successfully uploaded ${successfulDirectUploads.length} files using direct upload method`
+    `Successfully uploaded ${successfulDirectUploads.length} files using direct upload method`,
   );
 }
 
@@ -1137,7 +1137,7 @@ if (successfulDirectUploads.length < directUploadResults.length) {
   console.error(
     `Failed to upload ${
       directUploadResults.length - successfulDirectUploads.length
-    } files even with direct upload method`
+    } files even with direct upload method`,
   );
 }
 ```
@@ -1248,7 +1248,7 @@ async function main() {
       // Collect the Job ID
       variationJobIds.push(variationResponse.jobId);
       console.log(
-        `Submitted variation job for ${Name}, job ID: ${variationResponse.jobId}`
+        `Submitted variation job for ${Name}, job ID: ${variationResponse.jobId}`,
       );
     }
 
@@ -1256,10 +1256,10 @@ async function main() {
     console.log("Checking variation job statuses...");
     let generationStatuses = await checkExpressJobs(
       variationJobIds,
-      getExpressStatus
+      getExpressStatus,
     );
     let runningCount = generationStatuses.filter(
-      ({ status }) => status === "running"
+      ({ status }) => status === "running",
     ).length;
 
     while (runningCount > 0) {
@@ -1267,10 +1267,10 @@ async function main() {
       await sleep(STATUS_CHECK_INTERVAL);
       generationStatuses = await checkExpressJobs(
         variationJobIds,
-        getExpressStatus
+        getExpressStatus,
       );
       runningCount = generationStatuses.filter(
-        ({ status }) => status === "running"
+        ({ status }) => status === "running",
       ).length;
     }
 
@@ -1278,19 +1278,19 @@ async function main() {
 
     // Check for any failed jobs
     const failedJobs = generationStatuses.filter(
-      ({ status }) => status !== "succeeded"
+      ({ status }) => status !== "succeeded",
     );
     if (failedJobs.length > 0) {
       console.warn(
         `Warning: ${failedJobs.length} variation jobs failed:`,
-        failedJobs.map((status) => status.jobId)
+        failedJobs.map((status) => status.jobId),
       );
     }
     // waiting before starting exports
     console.log(
       `Waiting ${
         INITIAL_WAIT_TIME / 1000
-      } seconds before starting Exportation to ensure URLs are fully ready...`
+      } seconds before starting Exportation to ensure URLs are fully ready...`,
     );
     await sleep(INITIAL_WAIT_TIME);
 
@@ -1323,7 +1323,7 @@ async function main() {
       });
 
       console.log(
-        `Submitted export job for ${teacherNames[i]}, job ID: ${exportResponse.jobId}`
+        `Submitted export job for ${teacherNames[i]}, job ID: ${exportResponse.jobId}`,
       );
     }
 
@@ -1331,10 +1331,10 @@ async function main() {
     console.log("Checking export job statuses...");
     let exportationStatuses = await checkExpressJobs(
       exportationJobIds,
-      getExpressStatus
+      getExpressStatus,
     );
     runningCount = exportationStatuses.filter(
-      ({ status }) => status === "running"
+      ({ status }) => status === "running",
     ).length;
 
     while (runningCount > 0) {
@@ -1342,10 +1342,10 @@ async function main() {
       await sleep(STATUS_CHECK_INTERVAL);
       exportationStatuses = await checkExpressJobs(
         exportationJobIds,
-        getExpressStatus
+        getExpressStatus,
       );
       runningCount = exportationStatuses.filter(
-        ({ status }) => status === "running"
+        ({ status }) => status === "running",
       ).length;
     }
 
@@ -1353,12 +1353,12 @@ async function main() {
 
     // Check for any failed export jobs
     const failedExports = exportationStatuses.filter(
-      ({ status }) => status !== "succeeded"
+      ({ status }) => status !== "succeeded",
     );
     if (failedExports.length > 0) {
       console.warn(
         `Warning: ${failedExports.length} export jobs failed:`,
-        failedExports.map((status) => status.jobId)
+        failedExports.map((status) => status.jobId),
       );
     }
 
@@ -1372,7 +1372,7 @@ async function main() {
         status.pageRenditionsResult.length > 0
       ) {
         const teacherInfo = documentIds.find(
-          (doc) => doc.jobId === status.jobId
+          (doc) => doc.jobId === status.jobId,
         );
         renditionUrls.push({
           url: status.pageRenditionsResult[0].renditionUrl,
@@ -1383,14 +1383,14 @@ async function main() {
     }
 
     console.log(
-      `Got ${renditionUrls.length} rendition URLs to upload to Dropbox`
+      `Got ${renditionUrls.length} rendition URLs to upload to Dropbox`,
     );
 
     // STEP 8: Wait before starting uploads to ensure URLs are ready
     console.log(
       `Waiting ${
         INITIAL_WAIT_TIME / 1000
-      } seconds before starting uploads to ensure URLs are fully ready...`
+      } seconds before starting uploads to ensure URLs are fully ready...`,
     );
     await sleep(INITIAL_WAIT_TIME);
     console.log("Wait complete, starting upload process...");
@@ -1400,7 +1400,7 @@ async function main() {
       console.log(`Ensuring output folder exists: ${OUTPUT_FOLDER}`);
       const folderResult = await createFolder(OUTPUT_FOLDER);
       console.log(
-        `Folder created or already exists at: ${folderResult.path_lower}`
+        `Folder created or already exists at: ${folderResult.path_lower}`,
       );
     } catch (error) {
       console.warn(`Warning: Could not create output folder: ${error.message}`);
@@ -1421,7 +1421,7 @@ async function main() {
         console.log(
           `Upload initiated for ${teacherName}, result type: ${
             saveResult[".tag"] || "unknown"
-          }`
+          }`,
         );
         return {
           teacherName,
@@ -1433,7 +1433,7 @@ async function main() {
       } catch (error) {
         console.error(
           `Failed to upload ${teacherName}'s business card:`,
-          error.message || error
+          error.message || error,
         );
         return {
           teacherName,
@@ -1470,7 +1470,7 @@ async function main() {
 
     if (asyncJobs.length > 0) {
       console.log(
-        `Monitoring ${asyncJobs.length} async Dropbox upload jobs...`
+        `Monitoring ${asyncJobs.length} async Dropbox upload jobs...`,
       );
 
       // Using the simplified checkDropboxJobs function for job monitoring
@@ -1481,7 +1481,7 @@ async function main() {
         // Check all job statuses at once
         const jobStatuses = await checkDropboxJobs(
           asyncJobs,
-          checkDropboxStatus
+          checkDropboxStatus,
         );
 
         // Log the current status of each job
@@ -1491,9 +1491,9 @@ async function main() {
               job.isComplete
                 ? "Complete"
                 : job.isFailed
-                ? "Failed"
-                : "In Progress"
-            }`
+                  ? "Failed"
+                  : "In Progress"
+            }`,
           );
         });
 
@@ -1502,7 +1502,7 @@ async function main() {
 
         if (inProgressJobs.length > 0) {
           console.log(
-            `Still waiting for ${inProgressJobs.length} uploads to complete...`
+            `Still waiting for ${inProgressJobs.length} uploads to complete...`,
           );
           // Wait before checking again
           await sleep(STATUS_CHECK_INTERVAL);
@@ -1515,7 +1515,7 @@ async function main() {
           const failedUploads = jobStatuses.filter((job) => job.isFailed);
 
           console.log(
-            `Upload results: ${successfulUploads.length} successful, ${failedUploads.length} failed`
+            `Upload results: ${successfulUploads.length} successful, ${failedUploads.length} failed`,
           );
 
           if (failedUploads.length > 0 && retryCount < MAX_RETRIES - 1) {
@@ -1532,12 +1532,12 @@ async function main() {
           } else if (failedUploads.length > 0) {
             console.warn(
               "Failed uploads after maximum retries:",
-              failedUploads.map((job) => job.teacherName)
+              failedUploads.map((job) => job.teacherName),
             );
 
             // STEP 11.5: Try alternative direct upload method for failed jobs
             console.log(
-              `Attempting direct upload method for ${failedUploads.length} failed jobs...`
+              `Attempting direct upload method for ${failedUploads.length} failed jobs...`,
             );
 
             const directUploadPromises = failedUploads.map(async (job) => {
@@ -1545,7 +1545,7 @@ async function main() {
                 console.log(`Starting direct upload for ${job.teacherName}...`);
                 const result = await downloadAndUploadFile(
                   job.url,
-                  job.path || `${OUTPUT_FOLDER}/${job.teacherName}.png`
+                  job.path || `${OUTPUT_FOLDER}/${job.teacherName}.png`,
                 );
                 console.log(`Direct upload successful for ${job.teacherName}`);
                 return {
@@ -1556,7 +1556,7 @@ async function main() {
               } catch (error) {
                 console.error(
                   `Direct upload failed for ${job.teacherName}:`,
-                  error.message || error
+                  error.message || error,
                 );
                 return {
                   ...job,
@@ -1570,19 +1570,19 @@ async function main() {
 
             // Log the results of direct uploads
             const successfulDirectUploads = directUploadResults.filter(
-              (job) => job.directUploadSuccess
+              (job) => job.directUploadSuccess,
             );
             console.log(
               `Direct upload results: ${
                 successfulDirectUploads.length
               } successful, ${
                 directUploadResults.length - successfulDirectUploads.length
-              } failed`
+              } failed`,
             );
 
             if (successfulDirectUploads.length > 0) {
               console.log(
-                `Successfully uploaded ${successfulDirectUploads.length} files using direct upload method`
+                `Successfully uploaded ${successfulDirectUploads.length} files using direct upload method`,
               );
             }
 
@@ -1590,7 +1590,7 @@ async function main() {
               console.error(
                 `Failed to upload ${
                   directUploadResults.length - successfulDirectUploads.length
-                } files even with direct upload method`
+                } files even with direct upload method`,
               );
             }
           }
@@ -1603,7 +1603,7 @@ async function main() {
     // STEP 12: Process completed
     console.log("Process completed!");
     console.log(
-      `Generated and uploaded business cards to Dropbox folder: ${OUTPUT_FOLDER}`
+      `Generated and uploaded business cards to Dropbox folder: ${OUTPUT_FOLDER}`,
     );
   } catch (error) {
     console.error("Error in main():", error);
@@ -1708,7 +1708,7 @@ export async function generateVariations(requestBody) {
  */
 export async function retrieveTagDetails(
   documentId,
-  queryParams = { start: "1" }
+  queryParams = { start: "1" },
 ) {
   const queryString = new URLSearchParams(queryParams).toString();
   const resp = await fetch(
@@ -1716,7 +1716,7 @@ export async function retrieveTagDetails(
     {
       method: "GET",
       headers,
-    }
+    },
   );
   const data = await resp.json();
   return data;
@@ -1886,7 +1886,7 @@ export async function downloadAndUploadFile(url, dropboxPath) {
     const response = await fetch(url);
     if (!response.ok) {
       throw new Error(
-        `Failed to download file: ${response.status} ${response.statusText}`
+        `Failed to download file: ${response.status} ${response.statusText}`,
       );
     }
 
@@ -1894,7 +1894,7 @@ export async function downloadAndUploadFile(url, dropboxPath) {
     const fileBuffer = await response.arrayBuffer();
 
     console.log(
-      `Downloaded ${fileBuffer.byteLength} bytes, uploading to ${dropboxPath}`
+      `Downloaded ${fileBuffer.byteLength} bytes, uploading to ${dropboxPath}`,
     );
 
     // Upload the file to Dropbox
@@ -1905,7 +1905,7 @@ export async function downloadAndUploadFile(url, dropboxPath) {
     });
 
     console.log(
-      `Direct upload complete: ${JSON.stringify(uploadResponse.result)}`
+      `Direct upload complete: ${JSON.stringify(uploadResponse.result)}`,
     );
     return uploadResponse.result;
   } catch (error) {
@@ -1946,7 +1946,7 @@ export const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 export const verifyTemplateTags = (tagDetails, requiredTags) => {
   // Extracting only the names of the tagged elements
   const taggedElements = tagDetails?.documentPages[0].taggedElements.map(
-    (element) => element.name
+    (element) => element.name,
   );
 
   // Check if the tagged elements array is empty

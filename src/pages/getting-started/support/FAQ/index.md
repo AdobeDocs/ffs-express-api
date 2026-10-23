@@ -58,11 +58,11 @@ The Adobe Express API supports a wide range of use cases, including:
 
 The key features of the Adobe Express (beta) API are:
 
-- [Get all tagged documents](../../../api/index.md)
-- [Get details of a tagged document](../../../api/index.md)
-- [Create variation](../../../api/index.md)
-- [Export rendition](../../../api/index.md)
-- [Get Job Status](../../../api/index.md): Check the status of a job submitted to the Adobe Express API. The response includes the job's current status and any error messages from processing.
+- **Tagged documents API**: Lists the tagged documents you own or that have been shared with you, with pagination and sorting.
+- **Tagged document details API**: Retrieves a document's pages and the details of its tagged elements (such as size and position).
+- **Create variation API**: Creates a variation of a tagged template or document by filling in its tagged elements, and renders it as an image, PDF, video, or saved Express document.
+- **Export rendition API**: Exports pages of an existing document as JPG, PNG, MP4, or PDF.
+- **Status API**: Checks the status of asynchronous jobs, such as variation creation and exports, and retrieves their results.
 
 ## 🖼️ Renditions and exports
 

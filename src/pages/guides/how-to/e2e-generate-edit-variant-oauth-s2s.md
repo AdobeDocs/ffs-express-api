@@ -44,7 +44,7 @@ You can complete all of this yourself, no Admin Console rights required:
 - An Adobe Developer Console project with the **Adobe Express API** added and an [OAuth Server-to-Server credential](../../getting-started/create-credentials/index.md#server-to-server).
 - Your `client_id` (API key), `client_secret`, and the **technical account email**—all visible on the credential overview page.
 - Scopes such as `openid`, `AdobeID`, `read_organizations`, and `ee.express_api`.
-- At least one tagged Express template **shared with the Technical Account**. In Adobe Express, open the doc → **Share** → paste the technical account email → **Can edit**. Tag elements with the [Tag Elements add-on](https://adobesparkpost.app.link/TR9Mb7TXFLb?mode=private&claimCode=wjmj67nj9:PLYN7XLJ).
+- At least one tagged Express template **shared with the Technical Account**. In Adobe Express, open the doc → **Share** → paste the technical account email → **Can edit**. Tag elements using **Data Fields**, as described [in this guide](./tag-documents.md).
 - Node.js 18+ (or any backend that can do an HTTPS POST).
 
 ### Admin Console setup
@@ -86,15 +86,15 @@ curl -s -X POST 'https://ims-na1.adobelogin.com/ims/token/v3' \
 
 ```js
 const body = new URLSearchParams({
-  grant_type: 'client_credentials',
+  grant_type: "client_credentials",
   client_id: process.env.CLIENT_ID,
   client_secret: process.env.CLIENT_SECRET,
-  scope: 'openid,AdobeID,ee.express_api',
+  scope: "openid,AdobeID,ee.express_api",
 });
 
-const resp = await fetch('https://ims-na1.adobelogin.com/ims/token/v3', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+const resp = await fetch("https://ims-na1.adobelogin.com/ims/token/v3", {
+  method: "POST",
+  headers: { "Content-Type": "application/x-www-form-urlencoded" },
   body,
 });
 const tokens = await resp.json();
@@ -142,13 +142,13 @@ curl -s 'https://express-api.adobe.io/beta/tagged-documents?start=0&limit=25&sor
 
 ```js
 const resp = await fetch(
-  'https://express-api.adobe.io/beta/tagged-documents?start=0&limit=25&sortBy=-modifiedDate',
+  "https://express-api.adobe.io/beta/tagged-documents?start=0&limit=25&sortBy=-modifiedDate",
   {
     headers: {
       Authorization: `Bearer ${accessToken}`,
-      'X-API-KEY': clientId,
+      "X-API-KEY": clientId,
     },
-  }
+  },
 );
 const { documents, paging } = await resp.json();
 ```
@@ -213,9 +213,9 @@ const resp = await fetch(
   {
     headers: {
       Authorization: `Bearer ${accessToken}`,
-      'X-API-KEY': clientId,
+      "X-API-KEY": clientId,
     },
-  }
+  },
 );
 const detail = await resp.json();
 ```
@@ -303,26 +303,29 @@ curl -s -X POST 'https://express-api.adobe.io/beta/generate-variation' \
 #### JavaScript (fetch)
 
 ```js
-const resp = await fetch('https://express-api.adobe.io/beta/generate-variation', {
-  method: 'POST',
-  headers: {
-    Authorization: `Bearer ${accessToken}`,
-    'X-API-KEY': clientId,
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({
-    id: documentId,
-    variationDetails: {
-      preferredDocumentName: 'Macbook Neo',
-      projectId: sharedProjectId,
-      tagMappings: {
-        'use-case': "EVERYDAY",
-        'price': "$520",
-        'product-image': 'https://uc4fcd1dc97e1127dcb839ff192c.dl...',
-      },
+const resp = await fetch(
+  "https://express-api.adobe.io/beta/generate-variation",
+  {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "X-API-KEY": clientId,
+      "Content-Type": "application/json",
     },
-  }),
-});
+    body: JSON.stringify({
+      id: documentId,
+      variationDetails: {
+        preferredDocumentName: "Macbook Neo",
+        projectId: sharedProjectId,
+        tagMappings: {
+          "use-case": "EVERYDAY",
+          price: "$520",
+          "product-image": "https://uc4fcd1dc97e1127dcb839ff192c.dl...",
+        },
+      },
+    }),
+  },
+);
 const { jobId, statusUrl } = await resp.json();
 ```
 
@@ -386,13 +389,17 @@ curl -s "https://express-api.adobe.io/status/$JOB_ID" \
 ```js
 async function pollJob(jobId, accessToken, clientId) {
   while (true) {
-    const r = await fetch(`https://express-api.adobe.io/status/${encodeURIComponent(jobId)}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        'X-API-KEY': clientId,
+    const r = await fetch(
+      `https://express-api.adobe.io/status/${encodeURIComponent(jobId)}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "X-API-KEY": clientId,
+        },
       },
-    }).then((r) => r.json());
-    if (['succeeded', 'failed', 'partially_succeeded'].includes(r.status)) return r;
+    ).then((r) => r.json());
+    if (["succeeded", "failed", "partially_succeeded"].includes(r.status))
+      return r;
     await new Promise((res) => setTimeout(res, 3000));
   }
 }
@@ -454,17 +461,17 @@ Load the SDK script, then call `CCEverywhere.initialize` once with the Embed SDK
 The Embed SDK and Express API rely on **different Client IDs**. Both are generated when you create credentials in the Developer Console, but the Projects that contain them are independent.
 
 ```js
-  await import('https://cc-embed.adobe.com/sdk/v4/CCEverywhere.js');
+await import("https://cc-embed.adobe.com/sdk/v4/CCEverywhere.js");
 
-  const hostInfo = {
-    clientId: '<CLIENT_ID>',
-    appName: 'Embed SDK & Express API integration',
-  };
+const hostInfo = {
+  clientId: "<CLIENT_ID>",
+  appName: "Embed SDK & Express API integration",
+};
 
-  // lets the user start interacting with the embedded editor; sign-in is only prompted when they save or export.
-  const configParams = { loginMode: 'delayed' };
+// lets the user start interacting with the embedded editor; sign-in is only prompted when they save or export.
+const configParams = { loginMode: "delayed" };
 
-  const { editor } = await window.CCEverywhere.initialize(hostInfo, configParams);
+const { editor } = await window.CCEverywhere.initialize(hostInfo, configParams);
 ```
 
 ### 6.2 Open the variation for editing
@@ -472,9 +479,9 @@ The Embed SDK and Express API rely on **different Client IDs**. Both are generat
 Pass the variation URN from step 5 as `documentId` and call `editor.edit()`:
 
 ```js
-const docConfig = { documentId: '<DOCUMENT_URN>' };
-const appConfig = {};       // optional editor configuration
-const exportConfig = [];    // optional export targets
+const docConfig = { documentId: "<DOCUMENT_URN>" };
+const appConfig = {}; // optional editor configuration
+const exportConfig = []; // optional export targets
 const containerConfig = {}; // optional container configuration
 editor.edit(docConfig, appConfig, exportConfig);
 ```

@@ -50,23 +50,23 @@ The Express API is rate-limited. Exceeding the limit returns HTTP `429 Too Many 
 
 Create Variation generates one variation per request—ideal for interactive, user-facing flows. For backend, non-interactive, higher-volume generation, reach for **Bulk** or **Batch** Create Variation, covered in [Generate variations at scale](#generate-variations-at-scale-bulk-and-batch) below. Use Bulk or Batch for backend workloads so Create Variation remains responsive for interactive requests. Use this table to choose:
 
-|                       | Create Variation                                                | Bulk Create Variation                                                                   | Batch Create Variation                                              |
-| --------------------- | --------------------------------------------------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| **Best for**          | Interactive, low-volume, near-real-time, user-facing generation (forms, UI flows) | High-scale backend workloads (thousands of documents, scheduled/enterprise jobs)        | Bounded backend jobs that don't need a file upload (a "mini bulk") |
-| **Endpoint**          | `POST /v1/create-variation`                                     | `POST /v1/bulk-create-variation`                                                        | `POST /v1/batch-create-variation`                                  |
-| **Input source**      | One set of mappings inline in the request                       | An external manifest JSON → NDJSON chunk file(s), one variation per row                  | An inline array of variations in the request body—no upload        |
-| **Cap**               | 1 variation per request                                         | • 20,000 rows per NDJSON file\<br/>• 32 pending jobs per API key                         | • 30 variations per request (default)\<br/>• 1 MB request body     |
-| **Output retrieval**  | Inline in the status response (`outputs[]`)                     | A downloadable output manifest → per-chunk NDJSON → per-row results                      | Inline in the status response (`results[]`), ordered per submission |
-| **Output types**      | image, document, pdf, video                                     | image, document, pdf, video                                                             | image, document only                                               |
-| **Cancellable**       | No                                                              | Yes (`POST /cancel/{jobId}`)                                                             | Yes (`POST /cancel/{jobId}`)                                        |
-| **Interaction model** | Single job, typically short                                     | Asynchronous, non-interactive                                                            | Asynchronous, non-interactive, lighter-weight than Bulk            |
+|                       | Create Variation                                                                  | Bulk Create Variation                                                            | Batch Create Variation                                              |
+| --------------------- | --------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| **Best for**          | Interactive, low-volume, near-real-time, user-facing generation (forms, UI flows) | High-scale backend workloads (thousands of documents, scheduled/enterprise jobs) | Bounded backend jobs that don't need a file upload (a "mini bulk")  |
+| **Endpoint**          | `POST /v1/create-variation`                                                       | `POST /v1/bulk-create-variation`                                                 | `POST /v1/batch-create-variation`                                   |
+| **Input source**      | One set of mappings inline in the request                                         | An external manifest JSON → NDJSON chunk file(s), one variation per row          | An inline array of variations in the request body—no upload         |
+| **Cap**               | 1 variation per request                                                           | • 20,000 rows per NDJSON file\<br/>• 32 pending jobs per API key                 | • 30 variations per request (default)\<br/>• 1 MB request body      |
+| **Output retrieval**  | Inline in the status response (`outputs[]`)                                       | A downloadable output manifest → per-chunk NDJSON → per-row results              | Inline in the status response (`results[]`), ordered per submission |
+| **Output types**      | image, document, pdf, video                                                       | image, document, pdf, video                                                      | image, document only                                                |
+| **Cancellable**       | No                                                                                | Yes (`POST /cancel/{jobId}`)                                                     | Yes (`POST /cancel/{jobId}`)                                        |
+| **Interaction model** | Single job, typically short                                                       | Asynchronous, non-interactive                                                    | Asynchronous, non-interactive, lighter-weight than Bulk             |
 
 Generate Variation is deprecated in favor of Create Variation and has no V1 endpoint; see [Migrate from Beta to V1](../migration-beta-to-v1.md) to move an existing integration.
 
 ## Prerequisites
 
 - An Adobe Developer Console project with the **Adobe Express API** added, and a valid access token plus API key. See [Create credentials](../../getting-started/create-credentials/index.md).
-- At least one tagged Express document you own. Tag elements with the [Tag Elements add-on](https://adobesparkpost.app.link/TR9Mb7TXFLb?mode=private&claimCode=wjmj67nj9:PLYN7XLJ).
+- At least one tagged Express document you own. Tag elements using **Data Fields**, as described [in this guide](./tag-documents.md).
 - For image and video mappings, pre-signed URLs on an allowed domain (AWS S3, Azure Blob Storage, or Dropbox).
 
 ## Get your document ID
@@ -451,7 +451,11 @@ The manifest lists each chunk file and its row count. `totalRecords` must equal 
 {
   "totalRecords": 500,
   "chunks": [
-    { "source": { "url": "https://my-bucket.s3.amazonaws.com/chunk-1.ndjson" }, "mediaType": "application/x-ndjson", "chunkRecords": 500 }
+    {
+      "source": { "url": "https://my-bucket.s3.amazonaws.com/chunk-1.ndjson" },
+      "mediaType": "application/x-ndjson",
+      "chunkRecords": 500
+    }
   ]
 }
 ```
@@ -459,7 +463,17 @@ The manifest lists each chunk file and its row count. `totalRecords` must equal 
 Each line of a chunk file is one variation—the same input shape as a single Create Variation:
 
 ```json
-{ "variationRequestId": "row-001", "dataFieldMappings": [ { "name": "headline", "type": "text", "text": "Fall Sale" }, { "name": "heroImage", "type": "image", "source": { "url": "https://my-bucket.s3.amazonaws.com/hero1.jpg" } } ] }
+{
+  "variationRequestId": "row-001",
+  "dataFieldMappings": [
+    { "name": "headline", "type": "text", "text": "Fall Sale" },
+    {
+      "name": "heroImage",
+      "type": "image",
+      "source": { "url": "https://my-bucket.s3.amazonaws.com/hero1.jpg" }
+    }
+  ]
+}
 ```
 
 When the job succeeds, the status response's `outputs` array holds a downloadable **output manifest**. Download it to get the per-chunk NDJSON result files, whose lines carry each row's outputs and errors:
@@ -468,9 +482,16 @@ When the job succeeds, the status response's `outputs` array holds a downloadabl
 {
   "jobId": "af121560-218e-4dd9-918d-add12b3b6d98",
   "status": "succeeded",
-  "summary": { "totalRecords": 500, "successfulRecords": 498, "failedRecords": 2 },
+  "summary": {
+    "totalRecords": 500,
+    "successfulRecords": 498,
+    "failedRecords": 2
+  },
   "outputs": [
-    { "mediaType": "application/json", "destination": { "url": "https://.../output-manifest.json" } }
+    {
+      "mediaType": "application/json",
+      "destination": { "url": "https://.../output-manifest.json" }
+    }
   ]
 }
 ```
@@ -534,12 +555,26 @@ Poll `GET /status/{jobId}`; when it succeeds, each variation's outputs are inlin
     {
       "variationRequestId": "row-001",
       "status": "succeeded",
-      "outputs": [ { "type": "image", "mediaType": "image/jpeg", "pageNumber": 1, "destination": { "url": "https://.../row-001.jpg" } } ]
+      "outputs": [
+        {
+          "type": "image",
+          "mediaType": "image/jpeg",
+          "pageNumber": 1,
+          "destination": { "url": "https://.../row-001.jpg" }
+        }
+      ]
     },
     {
       "variationRequestId": "row-002",
       "status": "succeeded",
-      "outputs": [ { "type": "image", "mediaType": "image/jpeg", "pageNumber": 1, "destination": { "url": "https://.../row-002.jpg" } } ]
+      "outputs": [
+        {
+          "type": "image",
+          "mediaType": "image/jpeg",
+          "pageNumber": 1,
+          "destination": { "url": "https://.../row-002.jpg" }
+        }
+      ]
     }
   ]
 }
