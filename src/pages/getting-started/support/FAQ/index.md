@@ -35,7 +35,11 @@ Yes. Contact your account manager or fill out the [Express API Rate Limit Increa
 
 ### How do I plan for production usage?
 
-Access is self-service, and initial limits are intentionally conservative for evaluation and testing. For higher capacity, discuss your expected usage and workload requirements with Adobe as part of production launch planning.
+Access is self-service, and initial limits are intentionally conservative for evaluation and testing. Test your integration and validate its workflow and outputs, then discuss your expected usage and capacity requirements with Adobe before large-scale deployment. See [Preparing for production](../../preparing-for-production/index.md).
+
+### How do API rate limits differ from processing capacity?
+
+API rate limits control how many requests you can make and how frequently. Processing capacity limits control generation work separately; PDF generation is constrained by downstream processing capacity. See [Preparing for production](../../preparing-for-production/index.md#rate-limits-processing-capacity-and-queues) for the capacity model and [Rate Limits](../../rate-limits/index.md) for current request-rate limits.
 
 ## 🧩 About the API
 
@@ -68,28 +72,32 @@ The key features of the Adobe Express API are:
 
 ### What formats can I export?
 
-The Export Rendition API supports `JPG`, `PNG`, `PDF`, and `MP4` formats. Pass a document ID, and you'll get a pre-signed URL for each page rendition along with a status URL to track progress.
+The Export Rendition API supports `JPG`, `PNG`, `PDF`, and `MP4` formats. Submit the document's `templateOrDocument.creativeCloudFileId`, then poll the returned status URL for the pre-signed rendition URLs.
 
 - Image URLs are valid for 4 hours, with sizes up to 8192px.
-- PDF URLs are valid for 4 hours.
+- PDF URLs are valid for 24 hours.
 - Video URLs are valid for 24 hours, with sizes up to 4096px.
 
 ### What's the maximum supported size for renditions?
 
 Image renditions max out at 8192px, and video renditions at 4096px. Requests above these limits return an error.
 
-<InlineAlert variant="warning" slots="text1" />
+<InlineAlert variant="warning" slots="text" />
 
 - Rendition size is capped at the original document dimensions. Image renditions can be specified up to 8192px on the longest side, with aspect ratio maintained.
 - Renditions can be downscaled but not upscaled. For example, with a 1024 x 1024 document, renditions from 1 x 1 up to 1024 x 1024 are supported—any size value over 1024 produces a 1024 x 1024 output.
 
 ### How long are pre-signed rendition URLs valid?
 
-Image and PDF rendition URLs (`renditionUrl`) are valid for 4 hours. Video rendition URLs are valid for 24 hours. Download or consume the rendition within that window.
+Image rendition URLs are valid for 4 hours. PDF and video rendition URLs are valid for 24 hours. Export Rendition returns these URLs in `renditionUrl`; Create Variation returns them in `destination.url`. Download or consume the rendition within that window.
 
-### How long are thumbnail URLs valid for generating variations?
+### Where can I find thumbnail URLs?
 
-Thumbnail URLs returned in the Generate Variation response are valid for 24 hours. Download or consume them within that window.
+The Tagged Documents list returns `thumbnailUrl` for each document. Tagged document details return page thumbnails in `documentPages[].thumbnailUrl`, valid for 4 hours. Create Variation document outputs can include an optional `thumbnail.url` in the status response.
+
+### Why can a job take longer under high demand?
+
+Excess generation demand may queue rather than fail immediately, so jobs can take longer to finish. This does not remove API rate limits; overuse can still return HTTP 429. See [Preparing for production](../../preparing-for-production/index.md#rate-limits-processing-capacity-and-queues).
 
 ## 📄 Documents and storage
 
@@ -101,19 +109,35 @@ Generated documents are stored in an **Express API Documents** folder for 30 day
 
 A document URN (Uniform Resource Name) is a unique, persistent identifier for a digital document. It stays valid even if the document's location or access method changes.
 
+### What are the template substitution limits?
+
+- **Images**: 10 image substitutions per template.
+- **Text**: Unlimited text replacements.
+- **Video**: 2 video replacements per template; 250 MB size limit.
+
+These are substitution limits, not request-rate limits. See [Template substitution limits](../../preparing-for-production/index.md#template-substitution-limits).
+
 ### What storage options are supported for tag mappings?
 
-The `tagMappings` field supports pre-signed URLs from `AWS`, `Dropbox`, and `Azure (windows.net)`. An example tag mapping looks like this:
+For image and video replacements, `input.dataFieldMappings` supports pre-signed URLs from `AWS`, `Dropbox`, and `Azure (windows.net)`. An image mapping in the request's `input` object looks like this:
 
 ```json
 {
-  "tagMappings": {
-    "imageTag": "PRE-SIGNED URL",
-    "textTag": "Hello World",
-    "videoTag": "PRE-SIGNED VIDEO URL"
+  "input": {
+    "dataFieldMappings": [
+      {
+        "name": "imageTag",
+        "type": "image",
+        "source": {
+          "url": "PRE_SIGNED_URL"
+        }
+      }
+    ]
   }
 }
 ```
+
+Replace `PRE_SIGNED_URL` with your image's pre-signed URL. The `name` must match an image data field in your template. See [Replace text, images, and videos](../../../guides/how-to/create-variation.md#replace-text-images-and-videos).
 
 ## 🐞 Troubleshooting Errors
 
@@ -132,4 +156,4 @@ Please assign a **Default Free Membership** to the technical account to avoid th
 
 ### Why does `/v1/tagged-documents` return an empty array?
 
-If you're getting an empty array from the [tagged documents API](../../../api/index.md), check that you've saved your changes after [tagging the elements in your document](../../../guides/how-to/tag-documents.md#step-2-create-tags-for-a-document).
+If you're getting an empty array from the [tagged documents API](../../../api/index.md), check that you've saved your changes after [tagging the elements in your document](../../../guides/how-to/tag-documents.md#assign-data-fields-to-elements).
