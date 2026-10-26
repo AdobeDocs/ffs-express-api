@@ -43,7 +43,7 @@ The example script provided performs the following tasks:
 
 ## Prerequisites
 
-- Node.js installed on your machine.
+- Node.js 18+ installed on your machine (the script uses built-in `fetch`).
 - Environment variables `AUTH_TOKEN` and `API_KEY` set with appropriate values.
 
 ## Steps
@@ -67,7 +67,7 @@ npm install open
 
 ### Step 2: Create the End-to-End Script
 
-Create a file named `e2e-workflow.mjs` and add the following script code below, replacing the `documentId`, `pages`, `options` and `variationDetails` with your own.
+Create a file named `e2e-workflow.mjs` and add the following script, replacing `documentId`, `pages`, `options`, and `variationInput` with your own values. Replace the image and video URLs with full pre-signed URLs for your assets. The script uses [Create Variation](./create-variation.md) with a `document` output so the result is persisted before it is exported.
 
 ```js
 import open from "open";
@@ -81,23 +81,24 @@ const headers = {
 const documentId = "urn:aaid:sc:VA6C2:d8638bc5-33d0-3aaf-9e08-9932a8fccf0f"; // replace with your document ID
 const pages = "1";
 const options = {
-  format: "image/jpeg", // or "image/png", "video/mp4", or "application/pdf"
+  type: "image",
+  mediaType: "image/jpeg", // or "image/png"
   size: 1024,
-  // For PDFs, include options like:
-  // pdfType: "standard" | "print",
-  // downloadIndividualPdfFiles: true | false,
-  // config: { accessibilityTags: true, bleed: true, cropMargins: true, ... }
 };
 
-// Replace the variationDetails with your own values based on the tags in your document
-const variationDetails = {
-  pages: "1",
-  preferredDocumentName: "New document variation",
-  tagMappings: {
-    brandTag: "My Brand",
-    brandLogo: "https://my-bucket.s3.us-east-2.amazonaws.com/logo.jpg",
-    actionVideo: "https://my-bucket.s3.us-east-2.amazonaws.com/action.mp4",
-  },
+// Use data-field names and types from your tagged document
+const variationInput = {
+  dataFieldMappings: [
+    { name: "brandTag", type: "text", text: "My Brand" },
+    {
+      name: "brandLogo", type: "image",
+      source: { url: "https://my-bucket.s3.us-east-2.amazonaws.com/logo.jpg" },
+    },
+    {
+      name: "actionVideo", type: "video",
+      source: { url: "https://my-bucket.s3.us-east-2.amazonaws.com/action.mp4" },
+    },
+  ],
 };
 
 // Fetch tagged documents
@@ -114,7 +115,7 @@ async function getTaggedDocuments() {
     const documents = data.documents || [];
     documents.forEach((doc) => {
       console.log(
-        `\tTagged Doc ID: ${doc.id}, Name: ${doc.name}, Thumbnail URL: ${doc.thumbnailUrl}`,
+        `\tTagged Doc ID: ${doc.templateOrDocument.creativeCloudFileId}, Name: ${doc.name}, Thumbnail URL: ${doc.thumbnailUrl}`,
       );
     });
   } catch (error) {
@@ -125,7 +126,7 @@ async function getTaggedDocuments() {
 // Export rendition
 async function exportRendition(id, pages, options) {
   let body = {
-    id,
+    templateOrDocument: { creativeCloudFileId: id },
     pages,
     options,
   };
@@ -140,17 +141,19 @@ async function exportRendition(id, pages, options) {
     body: JSON.stringify(body),
   });
 
+  if (!resp.ok) throw new Error(`HTTP error! status: ${resp.status}`);
   return await resp.json();
 }
 
-// Generate variation
-async function generateVariation(id, variationDetails) {
+// Create a persisted document variation
+async function createVariation(id, input) {
   let body = {
-    id,
-    variationDetails,
+    templateOrDocument: { creativeCloudFileId: id },
+    input,
+    outputs: [{ type: "document", preferredDocumentName: "New document variation" }],
   };
 
-  let resp = await fetch(`${BASE}/v1/generate-variation`, {
+  let resp = await fetch(`${BASE}/v1/create-variation`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${process.env.AUTH_TOKEN}`,
@@ -160,58 +163,54 @@ async function generateVariation(id, variationDetails) {
     body: JSON.stringify(body),
   });
 
+  if (!resp.ok) throw new Error(`HTTP error! status: ${resp.status}`);
   return await resp.json();
 }
 
-// Call each API and poll for result when necessary
+// Call each API and wait for each job before continuing
 console.log("\n\n\n**** GET TAGGED DOCUMENTS ****\n");
 await getTaggedDocuments();
 
 console.log("\n\n\n**** EXPORTING RENDITION OF ORIGINAL DOCUMENT ****\n");
-result = await exportRendition(documentId, pages, options);
+let result = await exportRendition(documentId, pages, options);
 console.log(result);
-getJobResult(result, "export-rendition");
+await getJobResult(result, "export-rendition");
 
-console.log("\n\n\n**** GENERATING VARIATION ****\n");
-let result = await generateVariation(documentId, variationDetails);
+console.log("\n\n\n**** CREATING VARIATION ****\n");
+result = await createVariation(documentId, variationInput);
 console.log(result);
-getJobResult(result, "generate-variation");
+await getJobResult(result, "create-variation");
 
 async function getJobResult(result, endpoint) {
-  // If the status URL is present, poll the job until it is complete
-  if (result.statusUrl) {
-    let jobResult = await pollJob(
-      result.statusUrl,
-      process.env.API_KEY,
-      process.env.AUTH_TOKEN,
-    );
-    console.log(jobResult);
-    if (jobResult.status === "succeeded") {
-      if (endpoint === "generate-variation") {
-        console.log(
-          `\t-> Generated Variation Successful - new document ID: ` +
-            jobResult.document.id +
-            ` URL ${jobResult.document.thumbnailUrl}`,
-        );
-        // Now export the rendition of the generated variation
-        console.log(
-          "\n\n\n**** Now exporting rendition of generated variation ****\n",
-        );
-        await delay(3000); // wait for 3 seconds to ensure the variation is ready
-        result = await exportRendition(jobResult.document.id, pages, options);
-        console.log(result);
-        getJobResult(result, "export-rendition");
-      }
-      if (endpoint === "export-rendition") {
-        console.log(
-          `\t-> Opening Exported Rendition ${jobResult.pageRenditionsResult[0].renditionUrl}`,
-        );
-        open(jobResult.pageRenditionsResult[0].renditionUrl);
-      }
-    } else {
-      console.log(endpoint + ` job failed with status: ${jobResult.status}`);
-    }
+  if (!result.statusUrl) throw new Error("No status URL was returned");
+  const jobResult = await pollJob(result.statusUrl);
+  console.log(jobResult);
+  if (jobResult.status === "failed") {
+    console.error(jobResult.errors ?? jobResult.pageRenditionsResult);
+    throw new Error(`${endpoint} job failed`);
   }
+  if (jobResult.status === "partially_succeeded") {
+    console.warn("Some outputs failed:", jobResult.errors ?? jobResult.pageRenditionsResult);
+  }
+  if (endpoint === "create-variation") {
+    const documentOutput = jobResult.outputs?.find(
+      (output) => output.type === "document",
+    );
+    if (!documentOutput) throw new Error("No document output was returned");
+    const variationDocumentId = documentOutput.documentId.creativeCloudFileId;
+    console.log(`\t-> Created variation - new document ID: ${variationDocumentId}`);
+    console.log("\n\n\n**** EXPORTING RENDITION OF VARIATION ****\n");
+    const exportJob = await exportRendition(variationDocumentId, pages, options);
+    console.log(exportJob);
+    await getJobResult(exportJob, "export-rendition");
+  }
+  if (endpoint === "export-rendition") {
+    const rendition = jobResult.pageRenditionsResult?.find((item) => item.renditionUrl);
+    if (!rendition) throw new Error("No successful rendition was returned");
+    console.log(`\t-> Opening Exported Rendition ${rendition.renditionUrl}`);
+    await open(rendition.renditionUrl);
+  }
+  return jobResult;
 }
 
 async function delay(x) {
@@ -222,10 +221,8 @@ async function delay(x) {
   });
 }
 
-async function pollJob(jobUrl, id, token) {
-  let status = "";
-
-  while (status !== "succeeded" && status !== "failed") {
+async function pollJob(jobUrl) {
+  while (true) {
     let resp = await fetch(jobUrl, {
       headers: {
         Authorization: `Bearer ${process.env.AUTH_TOKEN}`,
@@ -233,15 +230,11 @@ async function pollJob(jobUrl, id, token) {
       },
     });
 
-    let data = await resp.json();
-    status = data.status;
-
-    // delay is a utility to 'pause' for X ms
-    if (status !== "succeeded" && status !== "failed") await delay(5000);
-    if (status === "succeeded") return data;
+    if (!resp.ok) throw new Error(`HTTP error! status: ${resp.status}`);
+    const data = await resp.json();
+    if (["succeeded", "partially_succeeded", "failed"].includes(data.status)) return data;
+    await delay(3000);
   }
-
-  return status;
 }
 ```
 
@@ -289,7 +282,7 @@ node e2e-workflow.mjs
       const documents = data.documents || [];
       documents.forEach((doc) => {
         console.log(
-          `\tTagged Doc ID: ${doc.id}, Name: ${doc.name}, Thumbnail URL: ${doc.thumbnailUrl}`,
+          `\tTagged Doc ID: ${doc.templateOrDocument.creativeCloudFileId}, Name: ${doc.name}, Thumbnail URL: ${doc.thumbnailUrl}`,
         );
       });
     } catch (error) {
@@ -300,16 +293,17 @@ node e2e-workflow.mjs
 
 - **Generate a Variation**
 
-  Generate a variation of the document with the supplied document ID and variation details:
+  Call `POST /v1/create-variation` with the source document ID, `input.dataFieldMappings`, and a `document` output:
 
   ```js
-  async function generateVariation(id, variationDetails) {
+  async function createVariation(id, input) {
     let body = {
-      id,
-      variationDetails,
+      templateOrDocument: { creativeCloudFileId: id },
+      input,
+      outputs: [{ type: "document", preferredDocumentName: "New document variation" }],
     };
 
-    let resp = await fetch(`${BASE}/v1/generate-variation`, {
+    let resp = await fetch(`${BASE}/v1/create-variation`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${process.env.AUTH_TOKEN}`,
@@ -319,18 +313,19 @@ node e2e-workflow.mjs
       body: JSON.stringify(body),
     });
 
+    if (!resp.ok) throw new Error(`HTTP error! status: ${resp.status}`);
     return await resp.json();
   }
   ```
 
 - **Export a Rendition**
 
-  Export a rendition of the document with the supplied document ID, pages, and options:
+  Export a rendition with `templateOrDocument`, `pages`, and `options`. V1 options use `type` and `mediaType`, not `format`; see [Migrate from Beta to V1](../migration-beta-to-v1.md#update-rendition-options).
 
   ```js
   async function exportRendition(id, pages, options) {
     let body = {
-      id,
+      templateOrDocument: { creativeCloudFileId: id },
       pages,
       options,
     };
@@ -345,56 +340,52 @@ node e2e-workflow.mjs
       body: JSON.stringify(body),
     });
 
+    if (!resp.ok) throw new Error(`HTTP error! status: ${resp.status}`);
     return await resp.json();
   }
   ```
 
 - **Polling Job Results**
 
-Poll for the job status until it is complete. If the job status is "succeeded", open the exported rendition or generated variation returned in the browser:
+Poll until the job returns `succeeded`, `partially_succeeded`, or `failed`. Create Variation returns successful results in `outputs` and output failures in `errors`; each error has an `error_code` and optional `message`, `type`, and `pageNumber`. Read a document output's `documentId.creativeCloudFileId` to export the generated variation. Export Rendition returns `pageRenditionsResult` entries with either `renditionUrl` or `error`:
 
 ```js
 async function getJobResult(result, endpoint) {
-  // If the status URL is present, poll the job until it is complete
-  if (result.statusUrl) {
-    let jobResult = await pollJob(
-      result.statusUrl,
-      process.env.API_KEY,
-      process.env.AUTH_TOKEN,
-    );
-    console.log(jobResult);
-    if (jobResult.status === "succeeded") {
-      if (endpoint === "export-rendition") {
-        console.log(
-          `\t-> Opening Exported Rendition ${jobResult.pageRenditionsResult[0].renditionUrl}`,
-        );
-        open(jobResult.pageRenditionsResult[0].renditionUrl);
-      }
-      if (endpoint === "generate-variation") {
-        console.log(
-          `\t-> Generated Variation Successful - new document ID: ` +
-            jobResult.document.id +
-            ` URL ${jobResult.document.thumbnailUrl}`,
-        );
-        // Now export the rendition of the generated variation
-        console.log(
-          "\n\n\n**** Now exporting rendition of generated variation ****\n",
-        );
-        await delay(3000); // wait for 3 seconds to ensure the variation is ready
-        result = await exportRendition(jobResult.document.id, pages, options);
-        console.log(result);
-        getJobResult(result, "export-rendition");
-      }
-    } else {
-      console.log(endpoint + ` job failed with status: ${jobResult.status}`);
-    }
+  if (!result.statusUrl) throw new Error("No status URL was returned");
+  const jobResult = await pollJob(result.statusUrl);
+  console.log(jobResult);
+  if (jobResult.status === "failed") {
+    console.error(jobResult.errors ?? jobResult.pageRenditionsResult);
+    throw new Error(`${endpoint} job failed`);
   }
+  if (jobResult.status === "partially_succeeded") {
+    console.warn("Some outputs failed:", jobResult.errors ?? jobResult.pageRenditionsResult);
+  }
+  if (endpoint === "create-variation") {
+    const documentOutput = jobResult.outputs?.find(
+      (output) => output.type === "document",
+    );
+    if (!documentOutput) throw new Error("No document output was returned");
+    const variationDocumentId = documentOutput.documentId.creativeCloudFileId;
+    console.log(`\t-> Created variation - new document ID: ${variationDocumentId}`);
+    console.log("\n\n\n**** EXPORTING RENDITION OF VARIATION ****\n");
+    const exportJob = await exportRendition(variationDocumentId, pages, options);
+    console.log(exportJob);
+    await getJobResult(exportJob, "export-rendition");
+  }
+  if (endpoint === "export-rendition") {
+    const rendition = jobResult.pageRenditionsResult?.find((item) => item.renditionUrl);
+    if (!rendition) throw new Error("No successful rendition was returned");
+    console.log(`\t-> Opening Exported Rendition ${rendition.renditionUrl}`);
+    await open(rendition.renditionUrl);
+  }
+  return jobResult;
 }
 ```
 
 - **Utility Functions**
 
-  Since the `generate-variation` and `export-rendition` endpoints are asynchronous, we need two utility functions to use for setting a timeout interval to use for polling the job status:
+  The `create-variation` and `export-rendition` endpoints are asynchronous. Poll the returned `statusUrl` every three seconds until a terminal status is returned; unfinished jobs can report `pending` or `running`:
 
   ```js
   async function delay(x) {
@@ -405,10 +396,8 @@ async function getJobResult(result, endpoint) {
     });
   }
 
-  async function pollJob(jobUrl, id, token) {
-    let status = "";
-
-    while (status !== "succeeded" && status !== "failed") {
+  async function pollJob(jobUrl) {
+    while (true) {
       let resp = await fetch(jobUrl, {
         headers: {
           Authorization: `Bearer ${process.env.AUTH_TOKEN}`,
@@ -416,49 +405,39 @@ async function getJobResult(result, endpoint) {
         },
       });
 
-      let data = await resp.json();
-      status = data.status;
-
-      // delay is a utility to 'pause' for X ms
-      if (status !== "succeeded" && status !== "failed") await delay(3000); // wait for 3 seconds
-      if (status === "succeeded") return data;
+      if (!resp.ok) throw new Error(`HTTP error! status: ${resp.status}`);
+      const data = await resp.json();
+      if (["succeeded", "partially_succeeded", "failed"].includes(data.status)) return data;
+      await delay(3000);
     }
-
-    return status;
   }
   ```
 
 - **API Calls**
 
-  Call each API and print the result to the terminal. For the async API endpoints, poll for the job status at a specified interval (in this example, 1 second, but you can adjust as necessary):
+  Call each API and await each job before continuing. This exports the original document, creates a persisted variation, and then exports that variation:
 
   ```js
   console.log("\n\n\n**** GET TAGGED DOCUMENTS ****\n");
   await getTaggedDocuments();
 
-  console.log("\n\n\n**** GENERATING VARIATION ****\n");
-  let result = await generateVariation(documentId, variationDetails);
+  console.log("\n\n\n**** EXPORTING RENDITION OF ORIGINAL DOCUMENT ****\n");
+  let result = await exportRendition(documentId, pages, options);
   console.log(result);
-  getJobResult(result, "generate-variation");
+  await getJobResult(result, "export-rendition");
 
-  console.log("\n\n\n**** EXPORTING RENDITION ****\n");
-  result = await exportRendition(documentId, pages, options);
+  console.log("\n\n\n**** CREATING VARIATION ****\n");
+  result = await createVariation(documentId, variationInput);
   console.log(result);
-  getJobResult(result, "export-rendition");
+  await getJobResult(result, "create-variation");
   ```
 
 ## Example Output
 
-When you run the script, you should see output similar to what's shown below, indicating the script is successfully interacting with the endpoints, and processing the documents and tags as expected.
+The script logs each submitted job and its status response. The following excerpt shows a successful document variation followed by its rendition export; identifiers and URLs vary:
 
 ```sh
-**** GET TAGGED DOCUMENTS ****
-
-Tagged Doc ID: urn:aaid:sc:VA6C2:15cd5e5a-db4b-5bc8-9b39-9a1d18aafbdf, Name: TemplateExample1.express, Thumbnail URL: https://https://my-bucket.s3.us-east-2.amazonaws.com/thumbnail.jpg
-
-Tagged Doc ID: urn:aaid:sc:VA6C2:8f92cec4-4241-3bef-b2ce-e5c5884d5c18, Name: TemplateExample2.express.express, Thumbnail URL: https://https://my-bucket.s3.us-east-2.amazonaws.com/thumbnail.jpg
-
-**** GENERATING VARIATION ****
+**** CREATING VARIATION ****
 {
   jobId: '76b87e58-e3c0-4929-8fd1-4f6f390544bc',
   statusUrl: 'https://express-api.adobe.io/status/76b87e58-e3c0-4929-8fd1-4f6f390544bc'
@@ -467,20 +446,31 @@ Tagged Doc ID: urn:aaid:sc:VA6C2:8f92cec4-4241-3bef-b2ce-e5c5884d5c18, Name: Tem
 {
   jobId: '76b87e58-e3c0-4929-8fd1-4f6f390544bc',
   status: 'succeeded',
-  document: {
-    name: 'New wine variation (15).express',
-    id: 'urn:aaid:sc:VA6C2:5b563ed1-1396-31b4-8df2-6f61bda55e7e',
-    thumbnailUrl: 'https://cpf-temp-repo-ue1-stg.s3.amazonaws.com/76719c63-e3ee-4589-ad5d-0781951edbd5?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20250220T210124Z&X-Amz-SignedHeaders=host&X-Amz-Expires=86400&X-Amz-Credential=AKIAU3E5TYZ25GESBC6D%2F20250220%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=d2a765dec2ec576c168030851c7e2e57a909c873b72fa9865023c473f0affc7f'
-  }
+  outputs: [
+    {
+      type: 'document',
+      documentId: {
+        creativeCloudFileId: 'urn:aaid:sc:VA6C2:5b563ed1-1396-31b4-8df2-6f61bda55e7e'
+      },
+      name: 'New document variation'
+    }
+  ]
 }
 
--> Opening Generated Variation Thumbnail http://my-bucket.s3.us-east-2.amazonaws.com/thumbnail.jpg
+-> Created variation - new document ID: urn:aaid:sc:VA6C2:5b563ed1-1396-31b4-8df2-6f61bda55e7e
 
-**** EXPORTING RENDITION ****
+**** EXPORTING RENDITION OF VARIATION ****
+{
+  jobId: '9736e049-e48b-4b08-8434-0e61f110de47',
+  statusUrl: 'https://express-api.adobe.io/status/9736e049-e48b-4b08-8434-0e61f110de47'
+}
+
 {
   jobId: '9736e049-e48b-4b08-8434-0e61f110de47',
   status: 'succeeded',
-  id: 'urn:aaid:sc:VA6C2:d8638bc5-33d0-3aaf-9e08-9932a8fccf0f',
+  templateOrDocument: {
+    creativeCloudFileId: 'urn:aaid:sc:VA6C2:5b563ed1-1396-31b4-8df2-6f61bda55e7e'
+  },
   pageRenditionsResult: [
     {
       renditionUrl: 'https://example.com/renditions/rendition.jpg',
@@ -488,10 +478,5 @@ Tagged Doc ID: urn:aaid:sc:VA6C2:8f92cec4-4241-3bef-b2ce-e5c5884d5c18, Name: Tem
     }
   ]
 }
-{
-  jobId: '9736e049-e48b-4b08-8434-0e61f110de47',
-  statusUrl: 'https://express-api.adobe.io/status/9736e049-e48b-4b08-8434-0e61f110de47'
-}
-
- -> Opening Exported Rendition http://my-bucket.s3.us-east-2.amazonaws.com/rendition.jpg
+-> Opening Exported Rendition https://example.com/renditions/rendition.jpg
 ```

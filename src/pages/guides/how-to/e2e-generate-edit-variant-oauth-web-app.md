@@ -177,7 +177,9 @@ Response shape:
 {
   "documents": [
     {
-      "id": "urn:aaid:sc:EU:e6723...",
+      "templateOrDocument": {
+        "creativeCloudFileId": "urn:aaid:sc:EU:e6723..."
+      },
       "name": "Express API Sample Template.express",
       "thumbnailUrl": "https://aep-cs-blobstore-prod-irl1-data..."
     }
@@ -189,7 +191,7 @@ Response shape:
 }
 ```
 
-Render each document's `thumbnailUrl` and `name` as a card in your UI and let the user click one to select it. Keep the `id` — you need it for steps 3 and 4.
+Render each document's `thumbnailUrl` and `name` as a card in your UI and let the user click one to select it. Keep `templateOrDocument.creativeCloudFileId` as `DOCUMENT_ID` (cURL), `documentId` (JavaScript), or `document_id` (Python) for steps 3 and 4.
 
 ![List the user's tagged templates](./images/e2e-generate-edit-variant--list-template.png)
 
@@ -233,20 +235,22 @@ detail = requests.get(url, headers={
 }).json()
 ```
 
-The response lists each page and its `taggedElements`. The `type` of each tag tells you what input to render: `text` accepts a plain string; `image` and `video` accept a pre-signed URL on an allowed domain (AWS, Dropbox, Azure).
+The response lists each page and its `dataFields`. Each field's `name` and `type` identify the mapping to submit in step 4: `text` takes replacement text; `image` and `video` take a pre-signed `source.url` on an allowed domain (AWS S3, Dropbox, or Azure Blob Storage).
 
 This endpoint is paginated by page: append `?start=<n>` to fetch tagged elements starting at page `n` if the template has more pages than the default page size returns.
 
 ```json
 {
-  "id": "urn:aaid:sc:EU:e6723...",
+  "templateOrDocument": {
+    "creativeCloudFileId": "urn:aaid:sc:EU:e6723..."
+  },
   "name": "Express API Sample Template.express",
   "documentPages": [
     {
       "pageNumber": 1,
       "pageTitle": "",
       "size": { "width": 662, "height": 289 },
-      "taggedElements": [
+      "dataFields": [
         {
           "name": "title",
           "type": "text",
@@ -270,33 +274,35 @@ This endpoint is paginated by page: append `?start=<n>` to fetch tagged elements
 
 ## 4. Generate the variation
 
-Submit the user's values as `tagMappings`. The keys are the tag names from step 3; the values are strings (text) or pre-signed URLs (images, videos).
+Call `POST /v1/create-variation` with the selected template, `input.dataFieldMappings`, and a `document` output to persist an editable Express document. Each mapping uses the `name` and `type` from step 3, plus `text` or `source.url`. See [Create Document Variations](./create-variation.md) for the V1 request options.
+
+Export `PRODUCT_IMAGE_URL` with the full pre-signed URL of your replacement image as an environment variable before running the examples. Without a `destinationFolder` on the document output, the document is saved to the signed-in user's default storage.
 
 <CodeBlock slots="heading, code" repeat="3" languages="bash, javascript, python" />
 
 #### cURL
 
 ```bash
-curl -s -X POST 'https://express-api.adobe.io/v1/generate-variation' \
+curl -s -X POST 'https://express-api.adobe.io/v1/create-variation' \
   -H "Authorization: Bearer $ACCESS_TOKEN" \
   -H "X-API-KEY: $CLIENT_ID" \
   -H 'Content-Type: application/json' \
   -d '{
-    "id": "'"$DOCUMENT_ID"'",
-    "variationDetails": {
-      "preferredDocumentName": "Apple green",
-      "tagMappings": {
-        "title": "APPLE GREEN",
-        "product-image": "https://uc4fcd1dc97e1127dcb839ff192c.dl..."
-      }
-    }
+    "templateOrDocument": { "creativeCloudFileId": "'"$DOCUMENT_ID"'" },
+    "input": {
+      "dataFieldMappings": [
+        { "name": "title", "type": "text", "text": "APPLE GREEN" },
+        { "name": "product-image", "type": "image", "source": { "url": "'"$PRODUCT_IMAGE_URL"'" } }
+      ]
+    },
+    "outputs": [{ "type": "document", "preferredDocumentName": "Apple green" }]
   }'
 ```
 
 #### JavaScript (fetch)
 
 ```js
-const resp = await fetch("https://express-api.adobe.io/v1/generate-variation", {
+const resp = await fetch("https://express-api.adobe.io/v1/create-variation", {
   method: "POST",
   headers: {
     Authorization: `Bearer ${accessToken}`,
@@ -304,14 +310,17 @@ const resp = await fetch("https://express-api.adobe.io/v1/generate-variation", {
     "Content-Type": "application/json",
   },
   body: JSON.stringify({
-    id: documentId,
-    variationDetails: {
-      preferredDocumentName: "Apple green",
-      tagMappings: {
-        title: "APPLE GREEN",
-        "product-image": "https://uc4fcd1dc97e1127dcb839ff192c.dl...",
-      },
+    templateOrDocument: { creativeCloudFileId: documentId },
+    input: {
+      dataFieldMappings: [
+        { name: "title", type: "text", text: "APPLE GREEN" },
+        {
+          name: "product-image", type: "image",
+          source: { url: process.env.PRODUCT_IMAGE_URL },
+        },
+      ],
     },
+    outputs: [{ type: "document", preferredDocumentName: "Apple green" }],
   }),
 });
 const { jobId, statusUrl } = await resp.json();
@@ -321,21 +330,24 @@ const { jobId, statusUrl } = await resp.json();
 
 ```python
 resp = requests.post(
-    "https://express-api.adobe.io/v1/generate-variation",
+    "https://express-api.adobe.io/v1/create-variation",
     headers={
         "Authorization": f"Bearer {access_token}",
         "X-API-KEY": client_id,
         "Content-Type": "application/json",
     },
     json={
-        "id": document_id,
-        "variationDetails": {
-            "preferredDocumentName": "Apple green",
-            "tagMappings": {
-                "title": "APPLE GREEN",
-                "product-image": "https://uc4fcd1dc97e1127dcb839ff192c.dl...",
-            },
+        "templateOrDocument": {"creativeCloudFileId": document_id},
+        "input": {
+            "dataFieldMappings": [
+                {"name": "title", "type": "text", "text": "APPLE GREEN"},
+                {
+                    "name": "product-image", "type": "image",
+                    "source": {"url": os.environ["PRODUCT_IMAGE_URL"]},
+                },
+            ],
         },
+        "outputs": [{"type": "document", "preferredDocumentName": "Apple green"}],
     },
 )
 job = resp.json()
@@ -350,13 +362,13 @@ Response (HTTP 202):
 }
 ```
 
-Hold on to `jobId` — that's the handle you'll poll in the next step.
+Use the returned `jobId` as `JOB_ID` in the cURL polling request; the JavaScript and Python examples use `jobId` and `job["jobId"]`, respectively.
 
 ![Filled out tag mappings](./images/e2e-generate-edit-variant--filled-tag-details.png)
 
 ## 5. Poll the job
 
-`GET /status/{jobId}` returns `running` until the variation is ready, then `succeeded` (or `failed`/`partially_succeeded`). Poll every few seconds.
+Poll `GET /status/{jobId}` every few seconds until it returns `succeeded`, `partially_succeeded`, or `failed`; an unfinished job can report `pending` or `running`. Successful results are in `outputs`; `errors` describes failed outputs with an `error_code` and optional `message`, `type`, and `pageNumber`.
 
 <CodeBlock slots="heading, code" repeat="3" languages="bash, javascript, python" />
 
@@ -387,6 +399,13 @@ async function pollJob(jobId, accessToken, clientId) {
     await new Promise((res) => setTimeout(res, 3000));
   }
 }
+
+const result = await pollJob(jobId, accessToken, clientId);
+if (result.status === "failed") throw new Error(JSON.stringify(result.errors));
+if (result.status === "partially_succeeded") console.warn(result.errors);
+const documentOutput = result.outputs?.find((output) => output.type === "document");
+if (!documentOutput) throw new Error("No document output was returned");
+const variationDocumentId = documentOutput.documentId.creativeCloudFileId;
 ```
 
 #### Python
@@ -406,25 +425,41 @@ def poll_job(job_id, access_token, client_id):
         if r["status"] in ("succeeded", "failed", "partially_succeeded"):
             return r
         time.sleep(3)
+
+result = poll_job(job["jobId"], access_token, client_id)
+if result["status"] == "failed":
+    raise RuntimeError(result.get("errors"))
+if result["status"] == "partially_succeeded":
+    print(result.get("errors"))
+document_output = next(
+    (output for output in result.get("outputs", []) if output["type"] == "document"),
+    None,
+)
+if document_output is None:
+    raise RuntimeError("No document output was returned")
+variation_document_id = document_output["documentId"]["creativeCloudFileId"]
 ```
 
-When the job succeeds, you get the new document back:
+When the job succeeds, read the new document's URN from the `document` output's `documentId.creativeCloudFileId` (not a top-level `document.id`):
 
 ```json
 {
   "jobId": "af121560-218e-4dd9-918d-add12b3b6d98",
   "status": "succeeded",
-  "document": {
-    "id": "urn:aaid:sc:EU:3da...",
-    "name": "Apple green",
-    "thumbnailUrl": "https://...signed-url..."
-  }
+  "outputs": [
+    {
+      "type": "document",
+      "documentId": { "creativeCloudFileId": "urn:aaid:sc:EU:3da..." },
+      "name": "Apple green",
+      "thumbnail": { "url": "https://...signed-url..." }
+    }
+  ]
 }
 ```
 
 ![Variation created](./images/e2e-generate-edit-variant--variant-created.png)
 
-The variation is now stored in the user's account, inside an **Express API Documents** folder in **My Stuff > Files**.
+The variation is stored in the signed-in user's default storage. See [Find your generated documents](./create-variation.md#find-your-generated-documents) to locate it in Adobe Express.
 
 ![Variation in My Stuff](./images/e2e-generate-edit-variant--my-stuff.png)
 
@@ -432,7 +467,7 @@ The variation is now stored in the user's account, inside an **Express API Docum
 
 After the backend generates the variation, users can immediately customize or export the final result using the Adobe Express editor _without leaving your experience_ thanks to the [Embed SDK](https://developer.adobe.com/express/embed-sdk/docs/guides/). This is especially useful in self-service scenarios where business users start from company-approved templates but still need lightweight creative control over the generated variation.
 
-The Embed SDK exposes an **Editor Workflow** with an [`edit()`](https://developer.adobe.com/express/embed-sdk/docs/v4/sdk/src/workflows/3p/editor-workflow/classes/editor-workflow#edit) method that takes the same `documentId` (the variation URN returned in step 5) and launches the Full Editor experience in your page.
+The Embed SDK exposes an **Editor Workflow** with an [`edit()`](https://developer.adobe.com/express/embed-sdk/docs/v4/sdk/src/workflows/3p/editor-workflow/classes/editor-workflow#edit) method that launches the Full Editor experience in your page.
 
 ### 6.1 Load and initialize the SDK
 
@@ -460,10 +495,10 @@ const { editor } = await window.CCEverywhere.initialize(hostInfo, configParams);
 
 ### 6.2 Open the variation for editing
 
-Pass the variation URN from step 5 as `documentId` and call `editor.edit()`:
+Pass `variationDocumentId`, the URN extracted in step 5, to your browser-side Embed SDK code as `documentId` and call `editor.edit()`:
 
 ```js
-const docConfig = { documentId: "<DOCUMENT_URN>" };
+const docConfig = { documentId: variationDocumentId };
 const appConfig = {}; // optional editor configuration
 const exportConfig = []; // optional export targets
 const containerConfig = {}; // optional container configuration
@@ -484,4 +519,4 @@ Alternatively, you can open the variation in Adobe Express (in a new Browser tab
 
 - Run the full flow end to end with the [companion sample app](https://github.com/AdobeDocs/express-api-samples/tree/main/oauth-web-app) (Node/Express backend + a single static HTML page).
 - Need to export the variation as JPG/PNG/MP4/PDF programmatically rather than handing it back to the user? Add a [rendition export step](./export-document.md) right after step 5.
-- Building the company-owned-templates variant of this workflow with **Server-to-Server** auth instead of OAuth Web App? See [Generate and Edit a Variant (Server-to-Server)](./e2e-generate-edit-variant-oauth-s2s.md); steps 2 through 6 stay the same, only the first step changes.
+- Building the company-owned-templates variant of this workflow with **Server-to-Server** auth instead of OAuth Web App? See [Generate and Edit a Variant (Server-to-Server)](./e2e-generate-edit-variant-oauth-s2s.md); use the technical account's token and the shared-project destination in step 4.
