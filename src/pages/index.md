@@ -15,11 +15,12 @@ Effortlessly create and customize mixed-media designs with on-brand precision.
 
 &lt;br/ &gt;
 
-<Announcement slots="heading, text" className="request-access-announcement" variant="secondary" borderColor="#c148ed" hasborder="true" />
+<Announcement slots="heading, text, text2" className="request-access-announcement" variant="secondary" borderColor="#c148ed" hasborder="true" />
 
 ### The Adobe Express API is now Generally Available!
 
-**We'd like to thank all the developers who participated in the beta program!**  
+**We'd like to thank all the developers who participated in the beta program!**
+
 Your feedback has been invaluable in helping us refine the APIs,  
 improve the developer experience, and shape the product for the V1 release.
 
@@ -27,9 +28,9 @@ If you've been using the beta APIs, we encourage you to check out our [Beta to V
 
 If you're interested in using the Adobe Express APIs in production for new projects or integrations, **we'd love to hear from you!** Get in touch with our team to discuss your use case and explore how we can support your use case.
 
-- [Contact us](https://airtable.com/appu5RTWgdM95jynx/pagyuT1qspNJcPU2E/form)
+<Announcement slots="button" variant="secondary"/>
 
-&lt;br/ &gt;
+- [Contact us here!](https://airtable.com/appu5RTWgdM95jynx/pagyuT1qspNJcPU2E/form)
 
 <Resources slots="text, links"/>
 

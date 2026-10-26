@@ -542,5 +542,5 @@ Alternatively, you can open the variation in Adobe Express (in a new Browser tab
 ## Next steps
 
 - Run the full flow end to end with the [companion sample app](https://github.com/AdobeDocs/express-api-samples/tree/main/oauth-server-to-server) (Node/Express backend + a single static HTML page, Server-to-Server variant).
-- Need to skip the "open in Express" hand-off entirely and just give the user a finished asset? Add a [rendition export step](./export-document.md) right after step 5 to return a JPG/PNG/MP4/PDF instead.
+- Need to skip the "open in Express" hand-off entirely and just give the user a finished asset? In step 4, request an `image`, `pdf`, or `video` entry in the Create Variation request's `outputs` array, alongside or instead of the `document` output; read the results from `outputs` in the step-5 status response. See [Choose output formats](./create-variation.md#choose-output-formats).
 - Building the per-user variant of this workflow where each user picks from their own templates and the variation lands in their personal **My Stuff**? See [Generate and Edit a Variant (OAuth Web App)](./e2e-generate-edit-variant-oauth-web-app.md)—use a per-user token and omit the shared-project destination in step 4.
