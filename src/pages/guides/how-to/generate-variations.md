@@ -72,7 +72,7 @@ Next, using one of the `id`'s (document URN) returned from the tagged documents 
 
 ```sh
 curl -i -X POST \
-  --url 'https://express-api.adobe.io/beta/generate-variation \
+  --url 'https://express-api.adobe.io/v1/generate-variation \
   -H 'Authorization: Bearer YOUR_AUTH_TOKEN_HERE' \
   -H 'X-API-KEY: YOUR_API_KEY_HERE' \
   -d '{
@@ -176,7 +176,7 @@ async function generateVariation(id, variationDetails) {
     variationDetails,
   };
 
-  let resp = await fetch(`${BASE}/beta/generate-variation`, {
+  let resp = await fetch(`${BASE}/v1/generate-variation`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${process.env.AUTH_TOKEN}`,
@@ -281,7 +281,7 @@ async function generateVariation(id, variationDetails) {
     variationDetails,
   };
 
-  let resp = await fetch(`${BASE}/beta/generate-variation`, {
+  let resp = await fetch(`${BASE}/v1/generate-variation`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${process.env.AUTH_TOKEN}`,

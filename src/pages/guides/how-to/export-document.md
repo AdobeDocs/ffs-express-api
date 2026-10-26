@@ -69,7 +69,7 @@ A sample `curl` request and response is included below.
 
 ```sh
 curl --request POST \
-  --url 'https://express-api.adobe.io/beta/export-rendition' \
+  --url 'https://express-api.adobe.io/v1/export-rendition' \
   -H 'Accept: */*' \
   -H 'Authorization: Bearer YOUR_AUTH_TOKEN_HERE' \
   -H 'X-Api-Key: YOUR_API_KEY_HERE' \
@@ -156,7 +156,7 @@ async function exportRendition(id, pages, options) {
     options,
   };
 
-  let resp = await fetch(`${BASE}/beta/export-rendition`, {
+  let resp = await fetch(`${BASE}/v1/export-rendition`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${process.env.AUTH_TOKEN}`,
@@ -259,7 +259,7 @@ async function exportRendition(id, pages, options) {
     options,
   };
 
-  let resp = await fetch(`${BASE}/beta/export-rendition`, {
+  let resp = await fetch(`${BASE}/v1/export-rendition`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${process.env.AUTH_TOKEN}`,

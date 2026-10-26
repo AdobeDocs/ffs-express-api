@@ -67,7 +67,6 @@ All API error responses follow a consistent structure:
 
 - **Symptom**: 429 Too Many Requests
 - **Resolution**:
-
   1. Implement exponential backoff
   2. Cache responses where possible
   3. Monitor usage patterns
@@ -80,7 +79,7 @@ Your request has been completed.
 
 <CodeBlock slots="heading, code" repeat="3" languages="JSON, JSON, JSON" />
 
-#### GET /beta/tagged-documents
+#### GET /v1/tagged-documents
 
 ```json
 {
@@ -98,7 +97,7 @@ Your request has been completed.
 }
 ```
 
-#### GET /beta/tagged-documents/\{documentId\}
+#### GET /v1/tagged-documents/\{documentId\}
 
 ```json
 {
@@ -164,7 +163,7 @@ Your request has been completed.
 
 The request has been accepted for processing. Check the status using `GET /status/{jobId}`.
 
-#### POST /beta/generate-variation
+#### POST /v1/generate-variation
 
 ```json
 {
@@ -185,27 +184,27 @@ The request has been accepted for processing. Check the status using `GET /statu
 
 These errors indicate issues with the request made by the client.
 
-| Error Code | Name                  | Message                                                                                                                                                                         | What to Do?                                                                                                                              |
-| ---------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `400`      | Bad Request           | We cannot process the request due to a client error.                                                                                                                            | Check the request syntax and ensure it includes all required parameters. Check out the [API references](../../api/index.md).          |
+| Error Code | Name                  | Message                                                                                                                                                                         | What to Do?                                                                                                                                    |
+| ---------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `400`      | Bad Request           | We cannot process the request due to a client error.                                                                                                                            | Check the request syntax and ensure it includes all required parameters. Check out the [API references](../../api/index.md).                   |
 | `401`      | Unauthorized          | The client needs to authenticate the request to move further.                                                                                                                   | Ensure that the authentication token is included and valid. Learn more about [authenticating your requests](../index.md#call-the-express-api). |
-| `403`      | Forbidden             | The server understands the request, but the client does not have permission to access the resource—missing or insufficient permissions for the authenticated user cause this.   | Ensure the token used is for the same user accessing the document. Check if the user has access to the requested document.               |
-| `404`      | Not Found             | The server could not find the requested resource. This error could happen if the requested URL or endpoint does not exist, is misspelled, or is inaccessible to the user.       | Check the URL and ensure the resource exists.                                                                                            |
-| `422`      | Unprocessable Content | The server understands the request but cannot process it due to semantic errors or invalid data. This error often happens when input is invalid or required fields are missing. | Review the validation errors for each endpoint and correct the request data accordingly.                                                 |
-| `429`      | Too Many Requests     | You have sent too many requests in a given time (rate limiting).                                                                                                                | Reduce the request rate and try again later. Learn more about [rate limits](../rate-limits/index.md).                                    |
+| `403`      | Forbidden             | The server understands the request, but the client does not have permission to access the resource—missing or insufficient permissions for the authenticated user cause this.   | Ensure the token used is for the same user accessing the document. Check if the user has access to the requested document.                     |
+| `404`      | Not Found             | The server could not find the requested resource. This error could happen if the requested URL or endpoint does not exist, is misspelled, or is inaccessible to the user.       | Check the URL and ensure the resource exists.                                                                                                  |
+| `422`      | Unprocessable Content | The server understands the request but cannot process it due to semantic errors or invalid data. This error often happens when input is invalid or required fields are missing. | Review the validation errors for each endpoint and correct the request data accordingly.                                                       |
+| `429`      | Too Many Requests     | You have sent too many requests in a given time (rate limiting).                                                                                                                | Reduce the request rate and try again later. Learn more about [rate limits](../rate-limits/index.md).                                          |
 
 ### Validation Errors (`422`)
 
 In a `422` error, you will get validation errors specific to different endpoints.
 
-| Endpoint                                   | Validation Error Messages                                                                                                                                                                      | What to Do?                                                                                                             |
-| ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `GET /beta/tagged-documents`              | `json { "error_code": "validation_error", "message": "Validation error", "validation_errors": [ "start must not be less than 0" ] }`                                                           | Check for the page index and ensure that it is valid.                                                                   |
-| `GET /beta/tagged-documents/{documentId}` | `json { "error_code": "validation_error", "message": "Validation error", "validation_errors": [ "The 'start' value must be greater than or equal to 1", "start must be a positive number"] }`  | Check whether the index is valid.                                                                                       |
-| `POST /beta/generate-variation`           | `json { "error_code": "validation_error", "message": "Validation error", "validation_errors": [ "property variationDetail should not exist", "variationDetails must be a non-empty object"] }` | Check that the request body has the correct fields.                                                                     |
-| `POST /beta/export-rendition`             | `json { "error_code": "validation_error", "message": "Invalid start page. Document contains 1 pages" }`                                                                                        | Check whether the request page index is valid.                                                                          |
-|                                            | `json { "error_code": "validation_error", "message": "Validation error", "validation_errors": [ "options.format must be one of the following values: image/jpeg, image/png, video/mp4, or application/pdf" ] }`               | Check the chosen format is correct.                                                                               |
-| `GET /status/{jobId}`                      | `json { "error_code": "unknown_job_id", "message": "Unknown job Id" }`                                                                                                                         | Check the `jobId` requested is a valid id generated from `/beta/generate-variation` and `/beta/export-rendition` API. |
+| Endpoint                                | Validation Error Messages                                                                                                                                                                                       | What to Do?                                                                                                       |
+| --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `GET /v1/tagged-documents`              | `json { "error_code": "validation_error", "message": "Validation error", "validation_errors": [ "start must not be less than 0" ] }`                                                                            | Check for the page index and ensure that it is valid.                                                             |
+| `GET /v1/tagged-documents/{documentId}` | `json { "error_code": "validation_error", "message": "Validation error", "validation_errors": [ "The 'start' value must be greater than or equal to 1", "start must be a positive number"] }`                   | Check whether the index is valid.                                                                                 |
+| `POST /v1/generate-variation`           | `json { "error_code": "validation_error", "message": "Validation error", "validation_errors": [ "property variationDetail should not exist", "variationDetails must be a non-empty object"] }`                  | Check that the request body has the correct fields.                                                               |
+| `POST /v1/export-rendition`             | `json { "error_code": "validation_error", "message": "Invalid start page. Document contains 1 pages" }`                                                                                                         | Check whether the request page index is valid.                                                                    |
+|                                         | `json { "error_code": "validation_error", "message": "Validation error", "validation_errors": [ "options.format must be one of the following values: image/jpeg, image/png, video/mp4, or application/pdf" ] }` | Check the chosen format is correct.                                                                               |
+| `GET /status/{jobId}`                   | `json { "error_code": "unknown_job_id", "message": "Unknown job Id" }`                                                                                                                                          | Check the `jobId` requested is a valid id generated from `/v1/generate-variation` and `/v1/export-rendition` API. |
 
 ### Server Errors (5xx)
 
@@ -220,14 +219,14 @@ These errors indicate issues with the server.
 
 Let us look at some examples.
 
-### Example 1: Handling a `401` Error for `GET /beta/tagged-documents`
+### Example 1: Handling a `401` Error for `GET /v1/tagged-documents`
 
 For example, one might see this error if the authentication token is not included or is invalid.
 
 **Request:**
 
 ```sh
-GET /beta/tagged-documents
+GET /v1/tagged-documents
 ```
 
 **Response:**
@@ -247,11 +246,11 @@ GET /beta/tagged-documents
 **Corrected Request:**
 
 ```bash
-GET /beta/tagged-documents
+GET /v1/tagged-documents
 Authorization: Bearer your-auth-token
 ```
 
-### Example 2: Handling a `422` Error for `POST /beta/generate-variation`
+### Example 2: Handling a `422` Error for `POST /v1/generate-variation`
 
 #### Sample code 1
 
@@ -351,7 +350,7 @@ Authorization: Bearer your-auth-token
 }
 ```
 
-### Example 3: Handling a `422` Error for `POST /beta/export-rendition`
+### Example 3: Handling a `422` Error for `POST /v1/export-rendition`
 
 <CodeBlock slots="heading, code" repeat="2" languages="JSON, JSON" />
 
@@ -479,25 +478,21 @@ def make_api_request():
 ### Error Handling
 
 1. **Always Include Required Headers**
-
    - Authorization token
    - x-request-id for request tracking
    - Content-Type for POST/PUT requests
 
 2. **Implement Retry Logic**
-
    - Use exponential backoff for rate limits
    - Handle token refresh automatically
    - Set maximum retry attempts
 
 3. **Log Error Details**
-
    - Include error code and message
    - Log request ID for tracking
    - Record timestamp and context
 
 4. **Validate Input**
-
    - Check required parameters
    - Validate data formats
    - Handle edge cases
@@ -505,13 +500,11 @@ def make_api_request():
 ### Security Considerations
 
 1. **Token Management**
-
    - Store tokens securely
    - Refresh before expiration
    - Never log sensitive data
 
 2. **Error Messages**
-
    - Don't expose internal details
    - Use generic messages for users
    - Log detailed errors server-side

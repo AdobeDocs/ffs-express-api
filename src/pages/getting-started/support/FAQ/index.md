@@ -56,7 +56,7 @@ The Adobe Express API supports a wide range of use cases, including:
 
 ### What are the key features of the Adobe Express API?
 
-The key features of the Adobe Express (beta) API are:
+The key features of the Adobe Express API are:
 
 - **Tagged documents API**: Lists the tagged documents you own or that have been shared with you, with pagination and sorting.
 - **Tagged document details API**: Retrieves a document's pages and the details of its tagged elements (such as size and position).

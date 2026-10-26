@@ -36,12 +36,12 @@ With **webhook support**, you register an HTTPS endpoint once in the Developer C
 
 <InlineAlert variant="warning" slots="text" />
 
-Webhook support is available for the **Bulk Workflow APIs**, **Create Variation** (`POST /beta/create-variation`), and **Export Rendition** (`POST /beta/export-rendition`).
+Webhook support is available for the **Bulk Workflow APIs**, **Create Variation** (`POST /v1/create-variation`), and **Export Rendition** (`POST /v1/export-rendition`).
 
 ## How it works
 
 1. Register a webhook endpoint in your Developer Console project under the **Adobe Express API** events card.
-2. Submit an async request (for example, `POST /bulk-create-variation`, `POST /beta/create-variation`, or `POST /beta/export-rendition`). The API returns a `jobId`.
+2. Submit an async request (for example, `POST /bulk-create-variation`, `POST /v1/create-variation`, or `POST /v1/export-rendition`). The API returns a `jobId`.
 3. The Express API processes the job asynchronously.
 4. When the job reaches a terminal state, the Express API publishes a CloudEvents-formatted event to Adobe I/O Events.
 5. Adobe I/O Events delivers the notification to your registered webhook URL. The event type identifies the operation that finished. The `data` object always contains `jobId` and `status`; `outputs` and `error` are optional.

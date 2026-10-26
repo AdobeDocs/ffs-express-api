@@ -151,11 +151,11 @@ Provide a **Default Redirect URI** and a **Redirect URI pattern**. These are the
 ![OAuth WebApp Credentials](../images/create-credentials--oauth-web-credentials.png)
 _OAuth Web App credentials overview showing client ID (API key) and secret retrieval_
 
-**4. Manage beta access**
+**4. Manage access**
 
-- For projects in beta, add the users who can access your application.
-- In your project, navigate to **Credentials > OAuth Web App > Beta users**.
-- Add the email addresses of users who should have access. It may take a few minutes for beta user access to sync.
+- For projects in development, add the users who can access your application.
+- In your project, navigate to **Credentials > OAuth Web App > users**.
+- Add the email addresses of users who should have access. It may take a few minutes for user access to sync.
 
 **5. Use the client ID and client secret**
 
@@ -182,11 +182,11 @@ Click **Save configured API**. On the next screen you'll see your **client ID (A
 
 ![OAuth SPA Credentials](../images/create-credentials--oauth-spa-credentials.png)
 
-**4. Manage beta access**
+**4. Manage access**
 
-- For projects in beta, add the users who can access your application.
-- In your project, navigate to **Credentials > OAuth Single-page App > Beta users**.
-- Add the email addresses of users who should have access. It may take a few minutes for beta user access to sync.
+- For projects in development, add the users who can access your application.
+- In your project, navigate to **Credentials > OAuth Single-page App > users**.
+- Add the email addresses of users who should have access. It may take a few minutes for user access to sync.
 
 **5. Use the client ID with the PKCE flow**
 
@@ -198,7 +198,7 @@ Click **Save configured API**. On the next screen you'll see your **client ID (A
 
 <InlineAlert variant="warning" slots="text" />
 
-Once you push a Single-page App project to production, you cannot move it back into development. Your app will be open to everyone and the beta users list will no longer apply.
+Once you push a Single-page App project to production, you cannot move it back into development. Your app will be open to everyone and users list will no longer apply.
 
 When you finish development, click **Push to production**.
 

@@ -75,7 +75,7 @@ This example demonstrates how to retrieve all tagged documents available to your
 
 ```bash
 curl -i -X GET \
-  'https://express-api.adobe.io/beta/tagged-documents?start=0&limit=10&sortBy=name' \
+  'https://express-api.adobe.io/v1/tagged-documents?start=0&limit=10&sortBy=name' \
   -H 'Authorization: Bearer <YOUR_TOKEN>' \
   -H 'X-API-KEY: YOUR-API-KEY'
 ```
@@ -92,7 +92,7 @@ curl -i -X GET \
     }
   ],
   "paging": {
-    "nextUrl": "https://<domain>/beta/tagged-documents?start=1&limit=1&sortBy=name",
+    "nextUrl": "https://<domain>/v1/tagged-documents?start=1&limit=1&sortBy=name",
     "totalRecords": 1
   }
 }
@@ -110,7 +110,7 @@ Once you have document IDs, you can retrieve detailed information about a specif
 
 ```bash
 curl -i -X GET \
-  'https://express-api.adobe.io/beta/tagged-documents/<YOUR_DOCUMENT_ID>' \
+  'https://express-api.adobe.io/v1/tagged-documents/<YOUR_DOCUMENT_ID>' \
   -H 'Authorization: Bearer <YOUR_TOKEN>' \
   -H 'X-API-KEY: YOUR-API-KEY'
 ```

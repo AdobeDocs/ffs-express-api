@@ -137,7 +137,7 @@ The JavaScript snippets in steps 2–5 show the raw API call for clarity. In a r
 #### cURL
 
 ```bash
-curl -s 'https://express-api.adobe.io/beta/tagged-documents?start=0&limit=25&sortBy=-modifiedDate' \
+curl -s 'https://express-api.adobe.io/v1/tagged-documents?start=0&limit=25&sortBy=-modifiedDate' \
   -H "Authorization: Bearer $ACCESS_TOKEN" \
   -H "X-API-KEY: $CLIENT_ID"
 ```
@@ -146,7 +146,7 @@ curl -s 'https://express-api.adobe.io/beta/tagged-documents?start=0&limit=25&sor
 
 ```js
 const resp = await fetch(
-  "https://express-api.adobe.io/beta/tagged-documents?start=0&limit=25&sortBy=-modifiedDate",
+  "https://express-api.adobe.io/v1/tagged-documents?start=0&limit=25&sortBy=-modifiedDate",
   {
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -161,7 +161,7 @@ const { documents, paging } = await resp.json();
 
 ```python
 resp = requests.get(
-    "https://express-api.adobe.io/beta/tagged-documents",
+    "https://express-api.adobe.io/v1/tagged-documents",
     params={"start": 0, "limit": 25, "sortBy": "-modifiedDate"},
     headers={
         "Authorization": f"Bearer {access_token}",
@@ -195,14 +195,14 @@ Render each document's `thumbnailUrl` and `name` as a card in your UI and let th
 
 ## 3. Inspect the template's tagged elements
 
-Before the user can fill in tag values, your UI needs to know what tags the template actually has. Call `GET /beta/tagged-documents/{id}` for the selected document.
+Before the user can fill in tag values, your UI needs to know what tags the template actually has. Call `GET /v1/tagged-documents/{id}` for the selected document.
 
 <CodeBlock slots="heading, code" repeat="3" languages="bash, javascript, python" />
 
 #### cURL
 
 ```bash
-curl -s "https://express-api.adobe.io/beta/tagged-documents/$DOCUMENT_ID" \
+curl -s "https://express-api.adobe.io/v1/tagged-documents/$DOCUMENT_ID" \
   -H "Authorization: Bearer $ACCESS_TOKEN" \
   -H "X-API-KEY: $CLIENT_ID"
 ```
@@ -211,7 +211,7 @@ curl -s "https://express-api.adobe.io/beta/tagged-documents/$DOCUMENT_ID" \
 
 ```js
 const resp = await fetch(
-  `https://express-api.adobe.io/beta/tagged-documents/${encodeURIComponent(documentId)}`,
+  `https://express-api.adobe.io/v1/tagged-documents/${encodeURIComponent(documentId)}`,
   {
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -226,7 +226,7 @@ const detail = await resp.json();
 
 ```python
 import urllib.parse
-url = f"https://express-api.adobe.io/beta/tagged-documents/{urllib.parse.quote(document_id, safe='')}"
+url = f"https://express-api.adobe.io/v1/tagged-documents/{urllib.parse.quote(document_id, safe='')}"
 detail = requests.get(url, headers={
     "Authorization": f"Bearer {access_token}",
     "X-API-KEY": client_id,
@@ -277,7 +277,7 @@ Submit the user's values as `tagMappings`. The keys are the tag names from step 
 #### cURL
 
 ```bash
-curl -s -X POST 'https://express-api.adobe.io/beta/generate-variation' \
+curl -s -X POST 'https://express-api.adobe.io/v1/generate-variation' \
   -H "Authorization: Bearer $ACCESS_TOKEN" \
   -H "X-API-KEY: $CLIENT_ID" \
   -H 'Content-Type: application/json' \
@@ -296,27 +296,24 @@ curl -s -X POST 'https://express-api.adobe.io/beta/generate-variation' \
 #### JavaScript (fetch)
 
 ```js
-const resp = await fetch(
-  "https://express-api.adobe.io/beta/generate-variation",
-  {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      "X-API-KEY": clientId,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      id: documentId,
-      variationDetails: {
-        preferredDocumentName: "Apple green",
-        tagMappings: {
-          title: "APPLE GREEN",
-          "product-image": "https://uc4fcd1dc97e1127dcb839ff192c.dl...",
-        },
-      },
-    }),
+const resp = await fetch("https://express-api.adobe.io/v1/generate-variation", {
+  method: "POST",
+  headers: {
+    Authorization: `Bearer ${accessToken}`,
+    "X-API-KEY": clientId,
+    "Content-Type": "application/json",
   },
-);
+  body: JSON.stringify({
+    id: documentId,
+    variationDetails: {
+      preferredDocumentName: "Apple green",
+      tagMappings: {
+        title: "APPLE GREEN",
+        "product-image": "https://uc4fcd1dc97e1127dcb839ff192c.dl...",
+      },
+    },
+  }),
+});
 const { jobId, statusUrl } = await resp.json();
 ```
 
@@ -324,7 +321,7 @@ const { jobId, statusUrl } = await resp.json();
 
 ```python
 resp = requests.post(
-    "https://express-api.adobe.io/beta/generate-variation",
+    "https://express-api.adobe.io/v1/generate-variation",
     headers={
         "Authorization": f"Bearer {access_token}",
         "X-API-KEY": client_id,

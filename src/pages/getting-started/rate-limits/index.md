@@ -65,7 +65,7 @@ The [Export Rendition API](../../api/index.md) has an additional per-client limi
 
 - **5** invocations **per minute** per `client-id`
 
-This limit applies to the `/beta/export-rendition` route as a whole. Because rate limiting is enforced at the API route level, **image, PDF, and video export requests all share the same 5-per-minute budget** — they are not counted separately by format.
+This limit applies to the `/v1/export-rendition` route as a whole. Because rate limiting is enforced at the API route level, **image, PDF, and video export requests all share the same 5-per-minute budget** — they are not counted separately by format.
 
 If you need to export multiple formats or higher volumes, space requests out across the minute.
 
