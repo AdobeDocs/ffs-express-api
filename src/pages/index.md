@@ -43,7 +43,7 @@ The Adobe Express API provides an effortless way to incorporate Adobe Express fu
 
 ## What can Express API do?
 
-The Adobe Express (beta) API offers the following key features:
+The Adobe Express API offers the following key features:
 
 ### Get Details of a Tagged Document
 
