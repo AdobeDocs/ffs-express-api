@@ -19,7 +19,7 @@ Learn how to generate a single document variation based on a list of element var
 
 #### Deprecated API
 
-The Generate Variation API is deprecated and will be removed in a future release. Please use the [Create Variation API](./create-variation.md) instead.
+The Generate Variation API is deprecated and will be removed in a future release. It is only available on the Beta endpoint (`POST /beta/generate-variation`) and has no V1 equivalent. Please use the [Create Variation API](./create-variation.md) instead; see [Migrate from Beta to V1](../migration-beta-to-v1.md#replace-generate-variation-with-create-variation).
 
 ## Overview
 
@@ -64,7 +64,7 @@ In this example, you will learn how to generate a document variation using the A
 
 First, follow the steps in the [How to Get Tagged Documents Guide](get-tagged-documents.md) to get the tagged documents available for export.
 
-Next, using one of the `id`'s (document URN) returned from the tagged documents response, call the endpoint [`generate-variation`](../../api/index.md) with a set of `variationDetails` defined for use in the new variation of your document. A sample `curl` request and response is included below.
+Next, using one of the document URNs returned from the tagged documents response (`templateOrDocument.creativeCloudFileId` in V1), call the endpoint [`generate-variation`](../../api/index.md) with a set of `variationDetails` defined for use in the new variation of your document. A sample `curl` request and response is included below.
 
 <CodeBlock slots="heading, code" repeat="2" languages="CURL, JSON" />
 
@@ -72,7 +72,7 @@ Next, using one of the `id`'s (document URN) returned from the tagged documents 
 
 ```sh
 curl -i -X POST \
-  --url 'https://express-api.adobe.io/v1/generate-variation \
+  --url 'https://express-api.adobe.io/beta/generate-variation' \
   -H 'Authorization: Bearer YOUR_AUTH_TOKEN_HERE' \
   -H 'X-API-KEY: YOUR_API_KEY_HERE' \
   -d '{
@@ -176,7 +176,7 @@ async function generateVariation(id, variationDetails) {
     variationDetails,
   };
 
-  let resp = await fetch(`${BASE}/v1/generate-variation`, {
+  let resp = await fetch(`${BASE}/beta/generate-variation`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${process.env.AUTH_TOKEN}`,
@@ -281,7 +281,7 @@ async function generateVariation(id, variationDetails) {
     variationDetails,
   };
 
-  let resp = await fetch(`${BASE}/v1/generate-variation`, {
+  let resp = await fetch(`${BASE}/beta/generate-variation`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${process.env.AUTH_TOKEN}`,

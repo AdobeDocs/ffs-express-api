@@ -86,7 +86,9 @@ curl -i -X GET \
 {
   "documents": [
     {
-      "id": "urn:aaid:sc:VA6C2:1ee6d0fe-cd84-590f-b064-285b7d6cc051",
+      "templateOrDocument": {
+        "creativeCloudFileId": "urn:aaid:sc:VA6C2:1ee6d0fe-cd84-590f-b064-285b7d6cc051"
+      },
       "name": "My Document.express",
       "thumbnailUrl": "https://aep-cs-blobstore-stage-va6c2-data.s3.amazonaws.com"
     }
@@ -102,7 +104,7 @@ curl -i -X GET \
 
 ### Fetch Document Details Example
 
-Once you have document IDs, you can retrieve detailed information about a specific document:
+Once you have document URNs (`templateOrDocument.creativeCloudFileId`), you can retrieve detailed information about a specific document:
 
 <CodeBlock slots="heading, code" repeat="2" languages="CURL, JSON" />
 
@@ -120,7 +122,9 @@ curl -i -X GET \
 ```json
 {
   "name": "MyDocument",
-  "id": "urn:aaid:sc:VA6C2:d8638bc5-33d0-3aaf-9e08-9932a8fccf0f",
+  "templateOrDocument": {
+    "creativeCloudFileId": "urn:aaid:sc:VA6C2:d8638bc5-33d0-3aaf-9e08-9932a8fccf0f"
+  },
   "documentPages": [
     {
       "pageNumber": 1,
@@ -130,7 +134,7 @@ curl -i -X GET \
         "width": 1080,
         "height": 1920
       },
-      "taggedElements": [
+      "dataFields": [
         {
           "name": "logoImage",
           "type": "image",
@@ -153,7 +157,8 @@ curl -i -X GET \
           "size": {
             "width": 252.43186950683594,
             "height": 70.70060157775879
-          }
+          },
+          "text": "Jane Doe"
         }
       ]
     }
@@ -161,9 +166,9 @@ curl -i -X GET \
 }
 ```
 
-The response provides detailed information about each tagged element, including its name, type, position, and dimensions. This information is essential when generating document variations.
+The response provides detailed information about each tagged element (data field), including its name, type, position, and dimensions; text fields also return their current value in `text`. This information is essential when creating document variations.
 
-For detailed examples of generating variations and exporting renditions, see the [how-to guides](how-to/tag-documents.md).
+For detailed examples of creating variations and exporting renditions, see the [how-to guides](how-to/tag-documents.md).
 
 ## Best Practices and Limitations
 
@@ -178,5 +183,5 @@ For optimal results with the Express API:
 ## Next Steps
 
 - Explore the [complete API reference](../api/index.md) for detailed endpoint documentation
-- Learn how to [generate document variations](how-to/generate-variations.md)
+- Learn how to [create document variations](how-to/create-variation.md)
 - Understand [authentication and security](../getting-started/index.md) for the Express API

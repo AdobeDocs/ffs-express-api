@@ -185,9 +185,9 @@ async function getJobResult(result, endpoint) {
   if (!result.statusUrl) throw new Error("No status URL was returned");
   const jobResult = await pollJob(result.statusUrl);
   console.log(jobResult);
-  if (jobResult.status === "failed") {
+  if (["failed", "cancelled"].includes(jobResult.status)) {
     console.error(jobResult.errors ?? jobResult.pageRenditionsResult);
-    throw new Error(`${endpoint} job failed`);
+    throw new Error(`${endpoint} job ${jobResult.status}`);
   }
   if (jobResult.status === "partially_succeeded") {
     console.warn("Some outputs failed:", jobResult.errors ?? jobResult.pageRenditionsResult);
@@ -232,7 +232,7 @@ async function pollJob(jobUrl) {
 
     if (!resp.ok) throw new Error(`HTTP error! status: ${resp.status}`);
     const data = await resp.json();
-    if (["succeeded", "partially_succeeded", "failed"].includes(data.status)) return data;
+    if (["succeeded", "partially_succeeded", "failed", "cancelled"].includes(data.status)) return data;
     await delay(3000);
   }
 }
@@ -347,16 +347,16 @@ node e2e-workflow.mjs
 
 - **Polling Job Results**
 
-Poll until the job returns `succeeded`, `partially_succeeded`, or `failed`. Create Variation returns successful results in `outputs` and output failures in `errors`; each error has an `error_code` and optional `message`, `type`, and `pageNumber`. Read a document output's `documentId.creativeCloudFileId` to export the generated variation. Export Rendition returns `pageRenditionsResult` entries with either `renditionUrl` or `error`:
+Poll until the job returns `succeeded`, `partially_succeeded`, `failed`, or `cancelled`. Create Variation returns successful results in `outputs` and output failures in `errors`; each error has an `error_code` and optional `message`, `type`, and `pageNumber`. Read a document output's `documentId.creativeCloudFileId` to export the generated variation. Export Rendition returns `pageRenditionsResult` entries with either `renditionUrl` or `error`:
 
 ```js
 async function getJobResult(result, endpoint) {
   if (!result.statusUrl) throw new Error("No status URL was returned");
   const jobResult = await pollJob(result.statusUrl);
   console.log(jobResult);
-  if (jobResult.status === "failed") {
+  if (["failed", "cancelled"].includes(jobResult.status)) {
     console.error(jobResult.errors ?? jobResult.pageRenditionsResult);
-    throw new Error(`${endpoint} job failed`);
+    throw new Error(`${endpoint} job ${jobResult.status}`);
   }
   if (jobResult.status === "partially_succeeded") {
     console.warn("Some outputs failed:", jobResult.errors ?? jobResult.pageRenditionsResult);
@@ -407,7 +407,7 @@ async function getJobResult(result, endpoint) {
 
       if (!resp.ok) throw new Error(`HTTP error! status: ${resp.status}`);
       const data = await resp.json();
-      if (["succeeded", "partially_succeeded", "failed"].includes(data.status)) return data;
+      if (["succeeded", "partially_succeeded", "failed", "cancelled"].includes(data.status)) return data;
       await delay(3000);
     }
   }

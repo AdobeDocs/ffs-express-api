@@ -233,7 +233,7 @@ detail = requests.get(url, headers={
 }).json()
 ```
 
-The response lists each page and its `dataFields`. Each field's `name` and `type` identify the mapping to submit in step 4: `text` takes replacement text; `image` and `video` take a pre-signed `source.url` on an allowed domain (AWS S3, Dropbox, or Azure Blob Storage).
+The response lists each page and its `dataFields`. Each field's `name` and `type` identify the mapping to submit in step 4: `text` takes replacement text; `image` and `video` take a pre-signed HTTPS `source.url` from a supported cloud storage provider (AWS S3, Dropbox, or Azure Blob Storage). Text fields also return their current value in `text`.
 
 This endpoint is paginated by page: append `?start=<n>` to fetch tagged elements starting at page `n` if the template has more pages than the default page size returns.
 
@@ -392,7 +392,7 @@ Use the returned `jobId` as `JOB_ID` in the cURL polling request; the JavaScript
 
 ## 5. Poll the job
 
-Poll `GET /status/{jobId}` every few seconds until it returns `succeeded`, `partially_succeeded`, or `failed`; an unfinished job can report `pending` or `running`. Successful results are in `outputs`; `errors` describes failed outputs with an `error_code` and optional `message`, `type`, and `pageNumber`.
+Poll `GET /status/{jobId}` every few seconds until it returns `succeeded`, `partially_succeeded`, `failed`, or `cancelled`; an unfinished job can report `pending` or `running`. Successful results are in `outputs`; `errors` describes failed outputs with an `error_code` and optional `message`, `type`, and `pageNumber`.
 
 <CodeBlock slots="heading, code" repeat="3" languages="bash, javascript, python" />
 
@@ -418,14 +418,15 @@ async function pollJob(jobId, accessToken, clientId) {
         },
       },
     ).then((r) => r.json());
-    if (["succeeded", "failed", "partially_succeeded"].includes(r.status))
+    if (["succeeded", "failed", "partially_succeeded", "cancelled"].includes(r.status))
       return r;
     await new Promise((res) => setTimeout(res, 3000));
   }
 }
 
 const result = await pollJob(jobId, accessToken, clientId);
-if (result.status === "failed") throw new Error(JSON.stringify(result.errors));
+if (["failed", "cancelled"].includes(result.status))
+  throw new Error(`Job ${result.status}: ${JSON.stringify(result.errors)}`);
 if (result.status === "partially_succeeded") console.warn(result.errors);
 const documentOutput = result.outputs?.find((output) => output.type === "document");
 if (!documentOutput) throw new Error("No document output was returned");
@@ -446,13 +447,13 @@ def poll_job(job_id, access_token, client_id):
                 "X-API-KEY": client_id,
             },
         ).json()
-        if r["status"] in ("succeeded", "failed", "partially_succeeded"):
+        if r["status"] in ("succeeded", "failed", "partially_succeeded", "cancelled"):
             return r
         time.sleep(3)
 
 result = poll_job(job["jobId"], access_token, client_id)
-if result["status"] == "failed":
-    raise RuntimeError(result.get("errors"))
+if result["status"] in ("failed", "cancelled"):
+    raise RuntimeError(f"Job {result['status']}: {result.get('errors')}")
 if result["status"] == "partially_succeeded":
     print(result.get("errors"))
 document_output = next(

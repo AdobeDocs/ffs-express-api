@@ -81,7 +81,9 @@ Example response shape:
 {
   "documents": [
     {
-      "id": "string",
+      "templateOrDocument": {
+        "creativeCloudFileId": "string"
+      },
       "name": "string",
       "thumbnailUrl": "string"
     }

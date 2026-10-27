@@ -1,6 +1,6 @@
 ---
 title: Create Document Variations
-description: Create single, bulk, and batch document variations on the Express API V1 endpoint by mapping tagged data fields, overriding specific pages, and returning multiple output formats.
+description: Create document variations on the Express API V1 endpoint by mapping tagged data fields, overriding specific pages, and returning multiple output formats.
 keywords:
   - Adobe Express
   - Adobe Express API
@@ -8,10 +8,6 @@ keywords:
   - create-variation
   - V1 API
   - dataFieldMappings
-  - Bulk create variation
-  - bulk-create-variation
-  - Batch create variation
-  - batch-create-variation
   - Page overrides
   - Page ranges
   - Image output
@@ -25,7 +21,7 @@ hideBreadcrumbNav: true
 
 # Create Document Variations
 
-Learn how to create document variations—one at a time, or in bulk and batches—by mapping tagged data fields, optionally overriding specific pages, and returning one or more output formats in a single request.
+Learn how to create document variations by mapping tagged data fields, optionally overriding specific pages, and returning one or more output formats in a single request.
 
 <InlineAlert variant="info" slots="heading, text" />
 
@@ -50,7 +46,7 @@ The Express API is rate-limited. Exceeding the limit returns HTTP `429 Too Many 
 
 - An Adobe Developer Console project with the **Adobe Express API** added, and a valid access token plus API key. See [Create credentials](../../getting-started/create-credentials/index.md).
 - At least one tagged Express document you own. Tag elements using **Data Fields**, as described [in this guide](./tag-documents.md).
-- For image and video mappings, pre-signed URLs on an allowed domain (AWS S3, Azure Blob Storage, or Dropbox).
+- For image and video mappings, pre-signed HTTPS URLs from a supported cloud storage provider (AWS S3, Azure Blob Storage, or Dropbox).
 
 ## Get your document ID
 
@@ -118,11 +114,11 @@ You can also request several formats from the same variation in one call—mix a
 ]
 ```
 
-Each requested output comes back as its own entry in the status response's `outputs` array. See [Choose output formats](#choose-output-formats) for every type and its options.
+Results come back in the status response's `outputs` array: `image` and `video` outputs return one entry per rendered page, while `pdf` and `document` outputs return a single entry each. See [Choose output formats](#choose-output-formats) for every type and its options.
 
 ## Poll the job
 
-Call `GET /status/{jobId}` with the `jobId` from the previous step. The job returns `running` until it finishes, then `succeeded` (or `partially_succeeded` / `failed`). When it succeeds, the `outputs` array holds one result per requested output.
+Call `GET /status/{jobId}` with the `jobId` from the previous step. The job reports `pending` or `running` until it finishes, then `succeeded` (or `partially_succeeded`, `failed`, or `cancelled`). When it succeeds, the `outputs` array holds the results: one entry per rendered page for `image` and `video` outputs, and one entry per `pdf` or `document` output.
 
 <CodeBlock slots="heading, code" repeat="2" languages="CURL, JSON" />
 
@@ -204,7 +200,7 @@ When some outputs succeed and others do not, `status` is `partially_succeeded` a
 ]
 ```
 
-Image and video URLs must be pre-signed and served from an allowed domain (AWS S3, Azure Blob Storage, or Dropbox).
+Image and video URLs must be pre-signed HTTPS URLs from a supported cloud storage provider (AWS S3, Azure Blob Storage, or Dropbox); other URLs are rejected.
 
 <InlineAlert variant="warning" slots="text" />
 
@@ -274,7 +270,7 @@ A `document` output persists a new Express document. Supply a `preferredDocument
 }
 ```
 
-`pdfType` is `standard` (default) or `print`. Set `downloadIndividualPdfFiles` to `true` to get one PDF per page instead of a single combined file. The `config` object carries print settings (`bleed`, `cropMargins`) for `print`, or `accessibilityTags` for `standard`.
+`pdfType` is `standard` (default) or `print`. Set `downloadIndividualPdfFiles` to `true` to get one PDF per page instead of a single combined file; the status response then returns a single `destination.url` pointing to a ZIP archive of the per-page PDFs. The `config` object carries print settings (`bleed`, `cropMargins`) for `print`, or `accessibilityTags` for `standard`.
 
 <InlineAlert variant="warning" slots="text" />
 
@@ -333,7 +329,11 @@ async function pollJob(statusUrl) {
       },
     });
     const data = await resp.json();
-    if (["succeeded", "partially_succeeded", "failed"].includes(data.status))
+    if (
+      ["succeeded", "partially_succeeded", "failed", "cancelled"].includes(
+        data.status,
+      )
+    )
       return data;
     await delay(3000);
   }
@@ -364,8 +364,8 @@ const { jobId, statusUrl } = await createVariation(body);
 console.log("Job started:", jobId);
 
 const result = await pollJob(statusUrl);
-if (result.status === "failed") {
-  console.error("Job failed:", result.errors);
+if (result.status === "failed" || result.status === "cancelled") {
+  console.error(`Job ${result.status}:`, result.errors);
 } else {
   for (const output of result.outputs ?? []) {
     console.log(
@@ -384,183 +384,6 @@ Set your credentials as environment variables before running it:
 export API_KEY=yourApiKeyHere
 export AUTH_TOKEN=yourTokenHere
 node index.mjs
-```
-
-## Generate variations at scale: Bulk and Batch
-
-For backend, non-interactive workloads that generate many variations from one template, V1 adds two new endpoints. Both are asynchronous—submit the job, then poll `GET /status/{jobId}` exactly as you do for a single variation—and both can be cancelled while they run with `POST /cancel/{jobId}`. See the [API Reference](../../api/index.md) for the exhaustive request and response surface.
-
-### Bulk Create Variation
-
-`POST /v1/bulk-create-variation` reads its variations from an external data source: a manifest JSON that points at one or more NDJSON chunk files, where each line is one variation carrying its own `dataFieldMappings` (plus optional `pageOverrides` and `variationRequestId`). Use it for high-scale, unbounded workloads—up to 20,000 rows per NDJSON file, with up to 32 pending jobs per API key. Use pre-signed URLs for the manifest and each NDJSON chunk file; they must be served from AWS S3, CloudFront, or Google Cloud Storage. The per-row image and video URLs follow the same allowlist as single Create Variation. Outputs can be image, document, pdf, or video.
-
-<CodeBlock slots="heading, code" repeat="2" languages="CURL, JSON" />
-
-#### Request
-
-```bash
-curl -i -X POST \
-  --url 'https://express-api.adobe.io/v1/bulk-create-variation' \
-  -H 'Authorization: Bearer YOUR_AUTH_TOKEN_HERE' \
-  -H 'X-API-KEY: YOUR_API_KEY_HERE' \
-  -H 'Content-Type: application/json' \
-  -d '{
-    "templateOrDocument": {
-      "creativeCloudFileId": "urn:aaid:sc:VA6C2:82d42ecf-8ce8-310b-b976-6f104a0d4fae"
-    },
-    "input": {
-      "source": { "url": "https://my-bucket.s3.amazonaws.com/manifest.json" },
-      "mediaType": "application/json"
-    },
-    "outputs": [
-      { "type": "image", "mediaType": "image/jpeg", "size": 1024 }
-    ]
-  }'
-```
-
-#### Response
-
-```json
-{
-  "jobId": "af121560-218e-4dd9-918d-add12b3b6d98",
-  "statusUrl": "https://express-api.adobe.io/status/af121560-218e-4dd9-918d-add12b3b6d98",
-  "cancelUrl": "https://express-api.adobe.io/cancel/af121560-218e-4dd9-918d-add12b3b6d98"
-}
-```
-
-The manifest lists each chunk file and its row count. `totalRecords` must equal the sum of every chunk's `chunkRecords`, and no chunk may exceed the 20,000-row cap—otherwise the job is rejected before it starts:
-
-```json
-{
-  "totalRecords": 500,
-  "chunks": [
-    {
-      "source": { "url": "https://my-bucket.s3.amazonaws.com/chunk-1.ndjson" },
-      "mediaType": "application/x-ndjson",
-      "chunkRecords": 500
-    }
-  ]
-}
-```
-
-Each line of a chunk file is one variation—the same input shape as a single Create Variation:
-
-```json
-{
-  "variationRequestId": "row-001",
-  "dataFieldMappings": [
-    { "name": "headline", "type": "text", "text": "Fall Sale" },
-    {
-      "name": "heroImage",
-      "type": "image",
-      "source": { "url": "https://my-bucket.s3.amazonaws.com/hero1.jpg" }
-    }
-  ]
-}
-```
-
-When the job succeeds, the status response's `outputs` array holds a downloadable **output manifest**. Download it to get the per-chunk NDJSON result files, whose lines carry each row's outputs and errors:
-
-```json
-{
-  "jobId": "af121560-218e-4dd9-918d-add12b3b6d98",
-  "status": "succeeded",
-  "summary": {
-    "totalRecords": 500,
-    "successfulRecords": 498,
-    "failedRecords": 2
-  },
-  "outputs": [
-    {
-      "mediaType": "application/json",
-      "destination": { "url": "https://.../output-manifest.json" }
-    }
-  ]
-}
-```
-
-### Batch Create Variation
-
-`POST /v1/batch-create-variation` takes its variations inline in the request body—no upload. Send a `variations` array where each entry carries a **required, unique** `variationRequestId` plus its `dataFieldMappings` (and optional `pageOverrides`). Use it for bounded backend jobs of up to **30 variations** in a request body of at most **1 MB**. Batch outputs are **image and document only**. Results come back inline in the status response's `results[]`, ordered to match your submission—there is no file to download.
-
-<CodeBlock slots="heading, code" repeat="2" languages="CURL, JSON" />
-
-#### Request
-
-```bash
-curl -i -X POST \
-  --url 'https://express-api.adobe.io/v1/batch-create-variation' \
-  -H 'Authorization: Bearer YOUR_AUTH_TOKEN_HERE' \
-  -H 'X-API-KEY: YOUR_API_KEY_HERE' \
-  -H 'Content-Type: application/json' \
-  -d '{
-    "templateOrDocument": {
-      "creativeCloudFileId": "urn:aaid:sc:VA6C2:82d42ecf-8ce8-310b-b976-6f104a0d4fae"
-    },
-    "variations": [
-      {
-        "variationRequestId": "row-001",
-        "dataFieldMappings": [
-          { "name": "headline", "type": "text", "text": "Summer Sale" }
-        ]
-      },
-      {
-        "variationRequestId": "row-002",
-        "dataFieldMappings": [
-          { "name": "headline", "type": "text", "text": "Winter Sale" }
-        ]
-      }
-    ],
-    "outputs": [
-      { "type": "image", "mediaType": "image/jpeg", "size": 1024 }
-    ]
-  }'
-```
-
-#### Response
-
-```json
-{
-  "jobId": "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
-  "statusUrl": "https://express-api.adobe.io/status/b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
-  "cancelUrl": "https://express-api.adobe.io/cancel/b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e"
-}
-```
-
-Poll `GET /status/{jobId}`; when it succeeds, each variation's outputs are inline under `results[]`, in submission order:
-
-```json
-{
-  "jobId": "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
-  "status": "succeeded",
-  "summary": { "totalRecords": 2, "successfulRecords": 2, "failedRecords": 0 },
-  "results": [
-    {
-      "variationRequestId": "row-001",
-      "status": "succeeded",
-      "outputs": [
-        {
-          "type": "image",
-          "mediaType": "image/jpeg",
-          "pageNumber": 1,
-          "destination": { "url": "https://.../row-001.jpg" }
-        }
-      ]
-    },
-    {
-      "variationRequestId": "row-002",
-      "status": "succeeded",
-      "outputs": [
-        {
-          "type": "image",
-          "mediaType": "image/jpeg",
-          "pageNumber": 1,
-          "destination": { "url": "https://.../row-002.jpg" }
-        }
-      ]
-    }
-  ]
-}
 ```
 
 ## Find your generated documents

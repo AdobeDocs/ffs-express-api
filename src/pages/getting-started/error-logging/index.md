@@ -37,7 +37,8 @@ All API error responses follow a consistent structure:
 {
   "error_code": "error code",
   "message": "Message for user",
-  "validation_errors": ["Validation error messages as an array of strings."]
+  "validation_errors": ["Validation error messages as an array of strings."],
+  "metadata": {}
 }
 ```
 
@@ -48,6 +49,20 @@ All API error responses follow a consistent structure:
 - **validation_errors**: (Optional) Array of strings with validation failure details
   - Only present for validation errors (422)
   - Contains specific field-level error messages
+- **metadata**: (Optional) Additional machine-readable context for the error, such as the offending stock assets. The same detail is returned when a job failure is surfaced through `GET /status/{jobId}`.
+
+### Common `error_code` values
+
+| HTTP status | `error_code`                                                       |
+| ----------- | ------------------------------------------------------------------ |
+| `400`       | `client_error`                                                     |
+| `401`       | `unauthorized_error`                                               |
+| `403`       | `access_error`                                                     |
+| `404`       | `not_found`                                                        |
+| `422`       | `validation_error`, or `stock_content_detected` (export-rendition) |
+| `429`       | `rate_limited`                                                     |
+| `500`       | `runtime_error`                                                    |
+| `503`       | `service_unavailable`                                              |
 
 ## Common Scenarios
 
@@ -85,7 +100,9 @@ Your request has been completed.
 {
   "documents": [
     {
-      "id": "urn:aaid:sc:AP:0000aaaa-0000-000a-0000-000000aaaaaa",
+      "templateOrDocument": {
+        "creativeCloudFileId": "urn:aaid:sc:AP:0000aaaa-0000-000a-0000-000000aaaaaa"
+      },
       "name": "Sample Document",
       "thumbnailUrl": "https://aep-cs-blobstore-stage-jpn3-data.s3-ap-northeast-1.amazonaws.com/0daeb5c1-1f95-434e-8de1-16181b98e8fe?x-region=jpn3&x-version-id"
     }
@@ -102,7 +119,9 @@ Your request has been completed.
 ```json
 {
   "name": "Sample Document",
-  "id": "urn:aaid:sc:AP:0000aaaa-0000-000a-0000-000000aaaaaa",
+  "templateOrDocument": {
+    "creativeCloudFileId": "urn:aaid:sc:AP:0000aaaa-0000-000a-0000-000000aaaaaa"
+  },
   "documentPages": [
     {
       "pageNumber": 1,
@@ -112,7 +131,7 @@ Your request has been completed.
         "width": 1080,
         "height": 1920
       },
-      "taggedElements": [
+      "dataFields": [
         {
           "name": "TagOne",
           "type": "text",
@@ -123,7 +142,8 @@ Your request has been completed.
           "size": {
             "width": 215.67306518554688,
             "height": 68.75729370117188
-          }
+          },
+          "text": "TagOne Value"
         },
         {
           "name": "TagTwo",
@@ -135,7 +155,8 @@ Your request has been completed.
           "size": {
             "width": 218.76632690429688,
             "height": 68.75729370117188
-          }
+          },
+          "text": "TagTwo Value"
         }
       ]
     }
@@ -149,7 +170,9 @@ Your request has been completed.
 {
   "jobId": "46f1039a-0822-4652-9a1b-b08b1a2b5173",
   "status": "succeeded",
-  "id": "urn:aaid:sc:AP:59a259d1-5c1e-3110-a6fb-00a00000000",
+  "templateOrDocument": {
+    "creativeCloudFileId": "urn:aaid:sc:AP:59a259d1-5c1e-3110-a6fb-00a00000000"
+  },
   "pageRenditionsResult": [
     {
       "renditionUrl": "https://aep-cs-blobstore-stage-jpn3-data.s3-ap-northeast-1.amazonaws.com/7e705f70-738e-40f9-b3ef-03b4b6089e9c?x-region=jpn3",
@@ -163,7 +186,7 @@ Your request has been completed.
 
 The request has been accepted for processing. Check the status using `GET /status/{jobId}`.
 
-#### POST /v1/generate-variation
+#### POST /v1/create-variation
 
 ```json
 {
@@ -197,14 +220,14 @@ These errors indicate issues with the request made by the client.
 
 In a `422` error, you will get validation errors specific to different endpoints.
 
-| Endpoint                                | Validation Error Messages                                                                                                                                                                                       | What to Do?                                                                                                       |
-| --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `GET /v1/tagged-documents`              | `json { "error_code": "validation_error", "message": "Validation error", "validation_errors": [ "start must not be less than 0" ] }`                                                                            | Check for the page index and ensure that it is valid.                                                             |
-| `GET /v1/tagged-documents/{documentId}` | `json { "error_code": "validation_error", "message": "Validation error", "validation_errors": [ "The 'start' value must be greater than or equal to 1", "start must be a positive number"] }`                   | Check whether the index is valid.                                                                                 |
-| `POST /v1/generate-variation`           | `json { "error_code": "validation_error", "message": "Validation error", "validation_errors": [ "property variationDetail should not exist", "variationDetails must be a non-empty object"] }`                  | Check that the request body has the correct fields.                                                               |
-| `POST /v1/export-rendition`             | `json { "error_code": "validation_error", "message": "Invalid start page. Document contains 1 pages" }`                                                                                                         | Check whether the request page index is valid.                                                                    |
-|                                         | `json { "error_code": "validation_error", "message": "Validation error", "validation_errors": [ "options.format must be one of the following values: image/jpeg, image/png, video/mp4, or application/pdf" ] }` | Check the chosen format is correct.                                                                               |
-| `GET /status/{jobId}`                   | `json { "error_code": "unknown_job_id", "message": "Unknown job Id" }`                                                                                                                                          | Check the `jobId` requested is a valid id generated from `/v1/generate-variation` and `/v1/export-rendition` API. |
+| Endpoint                                     | Validation Error Messages                                                                                                                                                                                       | What to Do?                                                                                                                                   |
+| -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `GET /v1/tagged-documents`                   | `json { "error_code": "validation_error", "message": "Validation error", "validation_errors": [ "start must not be less than 0" ] }`                                                                            | Check for the page index and ensure that it is valid.                                                                                         |
+| `GET /v1/tagged-documents/{documentId}`      | `json { "error_code": "validation_error", "message": "Validation error", "validation_errors": [ "The 'start' value must be greater than or equal to 1", "start must be a positive number"] }`                   | Check whether the index is valid.                                                                                                             |
+| `POST /v1/export-rendition`                  | `json { "error_code": "validation_error", "message": "Invalid start page. Document contains 1 pages" }`                                                                                                         | Check whether the request page index is valid.                                                                                                |
+| `POST /beta/generate-variation` (deprecated) | `json { "error_code": "validation_error", "message": "Validation error", "validation_errors": [ "property variationDetail should not exist", "variationDetails must be a non-empty object"] }`                  | Check that the request body has the correct fields.                                                                                           |
+| `POST /beta/export-rendition` (deprecated)   | `json { "error_code": "validation_error", "message": "Validation error", "validation_errors": [ "options.format must be one of the following values: image/jpeg, image/png, video/mp4, or application/pdf" ] }` | Check the chosen format is correct. In V1, `options.format` is replaced by `options.type` and `options.mediaType`.                            |
+| `GET /status/{jobId}`                        | `json { "error_code": "unknown_job_id", "message": "Unknown job Id" }`                                                                                                                                          | Check the `jobId` requested is a valid id returned by an asynchronous endpoint, such as `/v1/create-variation` or `/v1/export-rendition`. |
 
 ### Server Errors (5xx)
 
@@ -233,11 +256,8 @@ GET /v1/tagged-documents
 
 ```json
 {
-  "error": {
-    "code": "401",
-    "message": "Unauthorized",
-    "details": "Authentication token is missing or invalid."
-  }
+  "error_code": "unauthorized_error",
+  "message": "Not authorized"
 }
 ```
 
@@ -250,7 +270,9 @@ GET /v1/tagged-documents
 Authorization: Bearer your-auth-token
 ```
 
-### Example 2: Handling a `422` Error for `POST /v1/generate-variation`
+### Example 2: Handling a `422` Error for `POST /beta/generate-variation` (deprecated)
+
+Generate Variation is deprecated and only available on the Beta endpoint; use [Create Variation](../../guides/how-to/create-variation.md) for new integrations.
 
 #### Sample code 1
 
@@ -358,10 +380,13 @@ Authorization: Bearer your-auth-token
 
 ```json
 {
-  "id": "urn:aaid:sc:AP:59a259d1-5c1e-3110-a6fb-00a00000000",
-  "pages": "1-",
+  "templateOrDocument": {
+    "creativeCloudFileId": "urn:aaid:sc:AP:59a259d1-5c1e-3110-a6fb-00a00000000"
+  },
+  "pages": "10",
   "options": {
-    "format": "image/jpg"
+    "type": "image",
+    "mediaType": "image/jpeg"
   }
 }
 ```
@@ -371,23 +396,23 @@ Authorization: Bearer your-auth-token
 ```json
 {
   "error_code": "validation_error",
-  "message": "Validation error",
-  "validation_errors": [
-    "options.format must be one of the following values: image/jpeg, image/png, video/mp4, or application/pdf"
-  ]
+  "message": "Invalid start page. Document contains 1 pages"
 }
 ```
 
-**Solution:** Input the right format for `options`.
+**Solution:** Request only pages that exist in the document.
 
 **Corrected Request:**
 
 ```json
 {
-  "id": "urn:aaid:sc:AP:59a259d1-5c1e-3110-a6fb-00a00000000",
-  "pages": "1-",
+  "templateOrDocument": {
+    "creativeCloudFileId": "urn:aaid:sc:AP:59a259d1-5c1e-3110-a6fb-00a00000000"
+  },
+  "pages": "1",
   "options": {
-    "format": "image/jpeg"
+    "type": "image",
+    "mediaType": "image/jpeg"
   }
 }
 ```
@@ -411,18 +436,18 @@ async function makeApiRequest() {
     if (!response.ok) {
       const errorData = await response.json();
 
-      switch (errorData.error_code) {
-        case "401":
+      switch (response.status) {
+        case 401: // error_code: "unauthorized_error"
           // Handle authentication error
           await refreshToken();
           return makeApiRequest();
-        case "429":
+        case 429: // error_code: "rate_limited"
           // Handle rate limiting
-          const retryAfter = response.headers.get("Retry-After");
+          const retryAfter = Number(response.headers.get("Retry-After") ?? 60);
           await delay(retryAfter * 1000);
           return makeApiRequest();
         default:
-          throw new Error(`API Error: ${errorData.message}`);
+          throw new Error(`API Error (${errorData.error_code}): ${errorData.message}`);
       }
     }
 

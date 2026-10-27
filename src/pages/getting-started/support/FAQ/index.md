@@ -119,7 +119,7 @@ These are substitution limits, not request-rate limits. See [Template substituti
 
 ### What storage options are supported for tag mappings?
 
-For image and video replacements, `input.dataFieldMappings` supports pre-signed URLs from `AWS`, `Dropbox`, and `Azure (windows.net)`. An image mapping in the request's `input` object looks like this:
+For image and video replacements, `input.dataFieldMappings` accepts pre-signed HTTPS URLs from `AWS`, `Dropbox`, and `Azure (windows.net)`; other URLs are rejected. An image mapping in the request's `input` object looks like this:
 
 ```json
 {

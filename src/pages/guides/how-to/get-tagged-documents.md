@@ -45,10 +45,10 @@ Use the following `curl` command to fetch tagged documents:
 #### Request
 
 ```bash
-     curl -i -X GET
-       'https://express-api.adobe.io/v1/tagged-documents?start=0&limit=5&sortBy=name'
-       -H 'Authorization: Bearer YOUR_AUTH_TOKEN_HERE'
-       -H 'X-API-KEY: YOUR_API_KEY_HERE'
+curl -i -X GET \
+  'https://express-api.adobe.io/v1/tagged-documents?start=0&limit=5&sortBy=name' \
+  -H 'Authorization: Bearer YOUR_AUTH_TOKEN_HERE' \
+  -H 'X-API-KEY: YOUR_API_KEY_HERE'
 ```
 
 #### Response
@@ -57,7 +57,9 @@ Use the following `curl` command to fetch tagged documents:
 {
   "documents": [
     {
-      "id": "string",
+      "templateOrDocument": {
+        "creativeCloudFileId": "string"
+      },
       "name": "string",
       "thumbnailUrl": "string"
     }
@@ -69,12 +71,12 @@ Use the following `curl` command to fetch tagged documents:
 }
 ```
 
-This should return an array of `id`'s (document URNs) available for the user. If this returns an empty list, ensure you have first [created and tagged your documents using the Data Fields](./tag-documents.md).
+This should return an array of documents available for the user, each identified by its document URN in `templateOrDocument.creativeCloudFileId`. If this returns an empty list, ensure you have first [created and tagged your documents using the Data Fields](./tag-documents.md).
 
 ## Step 3: Using the Tagged Documents
 
 1. **Access the Tagged Documents**:
-   - Use the `id` and `name` fields from the response to identify and work with your tagged documents.
+   - Use the `templateOrDocument.creativeCloudFileId` and `name` fields from the response to identify and work with your tagged documents.
    - The `thumbnailUrl` can be used to display a preview of the document.
 
 2. **Pagination**:
@@ -132,7 +134,7 @@ try {
   const documents = data.documents || [];
   documents.forEach((doc) => {
     console.log(
-      `ID: ${doc.id}, Name: ${doc.name}, Thumbnail URL: ${doc.thumbnailUrl}`,
+      `ID: ${doc.templateOrDocument.creativeCloudFileId}, Name: ${doc.name}, Thumbnail URL: ${doc.thumbnailUrl}`,
     );
   });
 } catch (error) {
@@ -144,8 +146,8 @@ This Node.js script fetches all tagged documents, then processes and prints the 
 
 ## Next steps
 
-Now that you have access to your tagged documents, you can use a document ID to perform further operations, including:
+Now that you have access to your tagged documents, you can use a document URN (`templateOrDocument.creativeCloudFileId`) to perform further operations, including:
 
-- [Exporting a rendition](export-document.md) of your document using the document ID.
+- [Exporting a rendition](export-document.md) of your document using the document URN.
 
-- [Generating variations](generate-variations.md) of your document using the document ID, along with your desired variation details.
+- [Creating variations](create-variation.md) of your document using the document URN, along with the data-field mappings and outputs you want.
