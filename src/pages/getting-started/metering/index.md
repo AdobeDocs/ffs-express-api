@@ -37,9 +37,9 @@ Credits are calculated based on the operation performed and, where applicable, t
 | ----------------------- | ----------------------------------------- | ------- | ----------------- |
 | Create Variation        | Baseline                                  | 0.5     | Per modified page |
 | Create Variation        | JPG or PNG output, additional to baseline | 0.5     | Per output image  |
-| Create Variation        | PDF output, additional to baseline        | 2       | Per output page   |
+| Create Variation        | PDF output, additional to baseline        | 1       | Per output page   |
 | Export Rendition        | JPG or PNG output                         | 0.5     | Per output image  |
-| Export Rendition        | PDF output                                | 2       | Per output page   |
+| Export Rendition        | PDF output                                | 1       | Per output page   |
 | Tagged document details | Document metadata                         | 0.25    | Per document      |
 
 For **Create Variation**, credits for modified pages and generated outputs are calculated separately and added together. For example, an operation that modifies two pages and produces two PNG images consumes credits for both the two modified pages and the two output images. PDF output is always charged per-page.
