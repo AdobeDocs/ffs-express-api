@@ -60,8 +60,8 @@ The following examples show how credit rates apply to common operations.
 |                                      | PNG outputs       | 2        | 0.5  | 1          |
 |                                      | **TOTAL**         |          |      | **(2)**    |
 | **Create Variation with PDF output** | Modified pages    | 2        | 0.5  | 1          |
-|                                      | PDF output pages  | 3        | 2    | 6          |
-|                                      | **TOTAL**         |          |      | **(7)**    |
+|                                      | PDF output pages  | 3        | 1    | 3          |
+|                                      | **TOTAL**         |          |      | **(4)**    |
 | **Export Rendition with JPG output** | JPG outputs       | 4        | 0.5  | 2          |
 |                                      | **TOTAL**         |          |      | **(2)**    |
 | **Get tagged document details**      | Document metadata | 1        | 0.25 | 0.25       |
