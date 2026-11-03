@@ -80,13 +80,6 @@ Select the completion events for the operations you want to receive notification
 - Export Rendition: `com.adobe.express-api.v1.export-rendition.completed`
 
 Each event covers all terminal outcomes. Read `data.status` to determine the outcome. You can subscribe to any combination of event types. Click **Next**.
-Select the completion events for the operations you want to receive notifications for:
-
-- Create Variation: `com.adobe.express-api.v1.create-variation.completed`
-- Bulk Create Variation: `com.adobe.express-api.v1.bulk-create-variation.completed`
-- Export Rendition: `com.adobe.express-api.v1.export-rendition.completed`
-
-Each event covers all terminal outcomes. Read `data.status` to determine the outcome. You can subscribe to any combination of event types. Click **Next**.
 
 ![Developer Console Event Subscription](./images/handle-webhooks--console-event-subscription.png)
 
@@ -136,20 +129,12 @@ After saving, check that the **Status** shown in the _Registration Details_ tab 
 ## Event types
 
 Adobe Express API exposes one completion event per operation. All events follow the [CloudEvents 1.0 specification](https://cloudevents.io/).
-Adobe Express API exposes one completion event per operation. All events follow the [CloudEvents 1.0 specification](https://cloudevents.io/).
 
 | Event type                                                 | Description                                                        |
 | ---------------------------------------------------------- | ------------------------------------------------------------------ |
 | `com.adobe.express-api.v1.create-variation.completed`      | Emitted when a Create Variation job reaches a terminal state.      |
 | `com.adobe.express-api.v1.bulk-create-variation.completed` | Emitted when a Bulk Create Variation job reaches a terminal state. |
 | `com.adobe.express-api.v1.export-rendition.completed`      | Emitted when an Export Rendition job reaches a terminal state.     |
-
-The `.completed` suffix means the operation finished, not necessarily that it succeeded. The outcome is carried only in `data.status`: `succeeded`, `partially_succeeded`, `failed`, or `cancelled`. There are no separate event types for these outcomes.
-| Event type | Description |
-| ---------------------------------------------------------- | ------------------------------------------------------------------ |
-| `com.adobe.express-api.v1.create-variation.completed` | Emitted when a Create Variation job reaches a terminal state. |
-| `com.adobe.express-api.v1.bulk-create-variation.completed` | Emitted when a Bulk Create Variation job reaches a terminal state. |
-| `com.adobe.express-api.v1.export-rendition.completed` | Emitted when an Export Rendition job reaches a terminal state. |
 
 The `.completed` suffix means the operation finished, not necessarily that it succeeded. The outcome is carried only in `data.status`: `succeeded`, `partially_succeeded`, `failed`, or `cancelled`. There are no separate event types for these outcomes.
 
@@ -161,12 +146,9 @@ Events are delivered as HTTP POST requests to your webhook URL. The body is a JS
 
 #### Create Variation: succeeded
 
-#### Create Variation: succeeded
-
 ```json
 {
   "specversion": "1.0",
-  "type": "com.adobe.express-api.v1.create-variation.completed",
   "type": "com.adobe.express-api.v1.create-variation.completed",
   "source": "urn:aio_provider_metadata:cc_ffs_exapi_job_status",
   "id": "5b5341fb-b4c1-422d-bc1a-b4ca248ec6da",
@@ -182,12 +164,9 @@ Events are delivered as HTTP POST requests to your webhook URL. The body is a JS
 
 #### Bulk Create Variation: cancelled
 
-#### Bulk Create Variation: cancelled
-
 ```json
 {
   "specversion": "1.0",
-  "type": "com.adobe.express-api.v1.bulk-create-variation.completed",
   "type": "com.adobe.express-api.v1.bulk-create-variation.completed",
   "source": "urn:aio_provider_metadata:cc_ffs_exapi_job_status",
   "id": "8023f672-0de6-41cd-bbb9-e99b0a142560",
@@ -196,7 +175,6 @@ Events are delivered as HTTP POST requests to your webhook URL. The body is a JS
   "requestorclientid": "<YOUR_CLIENT_ID>",
   "data": {
     "jobId": "57b96a1e-4896-4cad-bb82-b5674454b4b5",
-    "status": "cancelled"
     "status": "cancelled"
   }
 }
@@ -259,9 +237,7 @@ This ensures that only events triggered by jobs submitted with your client ID ar
 You can also filter by:
 
 - **Event type** — subscribe only to the operations you need (for example, `com.adobe.express-api.v1.create-variation.completed`).
-- **Event type** — subscribe only to the operations you need (for example, `com.adobe.express-api.v1.create-variation.completed`).
 - **Job ID** — filter for a specific job identifier.
-- **Status** — filter by `data.status` (for example, `succeeded`).
 - **Status** — filter by `data.status` (for example, `succeeded`).
 
 Click the **Filter Definition > Select a Pattern** dropdown for a series of demo patterns that you can copy/paste in the filter definition below. For details on advanced filtering options, see [Subscriber Defined Filtering](https://developer.adobe.com/events/docs/guides/subscriber_defined_filtering/).
