@@ -43,26 +43,26 @@ Rate limits are not part of this migration and are not defined in the API spec i
 
 The field renames you will make:
 
-| Beta                                                                      | V1                                                            |
-| ------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| `id` (bare string)                                                        | `templateOrDocument.creativeCloudFileId`                      |
-| `input.mappings` (grouped by type)                                        | `input.dataFieldMappings` (flat array)                        |
-| `tagName` (per mapping entry)                                             | `name`                                                        |
+| Beta                                                                      | V1                                                             |
+| ------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| `id` (bare string)                                                        | `templateOrDocument.creativeCloudFileId`                       |
+| `input.mappings` (grouped by type)                                        | `input.dataFieldMappings` (flat array)                         |
+| `tagName` (per mapping entry)                                             | `name`                                                         |
 | `options.format` (export-rendition)                                       | `options.type` + `options.mediaType` (PDF: `type: "pdf"` only) |
-| `ImageRenditionOptions` • `PdfRenditionOptions` • `VideoRenditionOptions` | `ImageOutput` • `PdfOutput` • `VideoOutput`                   |
-| `taggedElements` (tagged-documents detail response)                       | `dataFields`                                                  |
-| `value` (per tagged text field)                                           | `text`                                                        |
+| `ImageRenditionOptions` • `PdfRenditionOptions` • `VideoRenditionOptions` | `ImageOutput` • `PdfOutput` • `VideoOutput`                    |
+| `taggedElements` (tagged-documents detail response)                       | `dataFields`                                                   |
+| `value` (per tagged text field)                                           | `text`                                                         |
 
 ## Endpoint mapping
 
-| Beta endpoint                             | V1 endpoint                             | What to do                                                                                                                                       |
-| ----------------------------------------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `GET /beta/tagged-documents`              | `GET /v1/tagged-documents`              | Update path; read `templateOrDocument` in each entry                                                                                             |
+| Beta endpoint                             | V1 endpoint                             | What to do                                                                                                                                           |
+| ----------------------------------------- | --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `GET /beta/tagged-documents`              | `GET /v1/tagged-documents`              | Update path; read `templateOrDocument` in each entry                                                                                                 |
 | `GET /beta/tagged-documents/{documentId}` | `GET /v1/tagged-documents/{documentId}` | Update path; read `templateOrDocument`; the element list is now `dataFields` (was `taggedElements`), each text field's value is `text` (was `value`) |
-| `POST /beta/create-variation`             | `POST /v1/create-variation`             | Update path; switch `mappings` to `dataFieldMappings`                                                                                            |
-| `POST /beta/export-rendition`             | `POST /v1/export-rendition`             | Update path; switch `id` to `templateOrDocument` and `format` to `type` + `mediaType`                                                            |
-| `POST /beta/generate-variation`           | None (deprecated)                       | Move to `create-variation`, its successor                                                                                                        |
-| `GET /status/{jobId}`                     | `GET /status/{jobId}`                   | Path unchanged; V1 export-rendition results carry `templateOrDocument` instead of `id`                                                           |
+| `POST /beta/create-variation`             | `POST /v1/create-variation`             | Update path; switch `mappings` to `dataFieldMappings`                                                                                                |
+| `POST /beta/export-rendition`             | `POST /v1/export-rendition`             | Update path; switch `id` to `templateOrDocument` and `format` to `type` + `mediaType`                                                                |
+| `POST /beta/generate-variation`           | None (deprecated)                       | Move to `create-variation`, its successor                                                                                                            |
+| `GET /status/{jobId}`                     | `GET /status/{jobId}`                   | Path unchanged; V1 export-rendition results carry `templateOrDocument` instead of `id`                                                               |
 
 ## Update the base path
 
@@ -238,7 +238,10 @@ V1 `export-rendition` jobs return the same `jobId`, `status`, and `pageRendition
   "status": "succeeded",
   "id": "urn:aaid:sc:VA6C2:82d42ecf-8ce8-310b-b976-6f104a0d4fae",
   "pageRenditionsResult": [
-    { "pageNumber": 1, "renditionUrl": "https://example.com/rendition/page1.png" }
+    {
+      "pageNumber": 1,
+      "renditionUrl": "https://example.com/rendition/page1.png"
+    }
   ]
 }
 ```
@@ -253,12 +256,15 @@ V1 `export-rendition` jobs return the same `jobId`, `status`, and `pageRendition
     "creativeCloudFileId": "urn:aaid:sc:VA6C2:82d42ecf-8ce8-310b-b976-6f104a0d4fae"
   },
   "pageRenditionsResult": [
-    { "pageNumber": 1, "renditionUrl": "https://example.com/rendition/page1.png" }
+    {
+      "pageNumber": 1,
+      "renditionUrl": "https://example.com/rendition/page1.png"
+    }
   ]
 }
 ```
 
-See the [API Reference](../api/index.md) {/* TODO: repoint to V1 reference when published */} for the full result union.
+See the [API Reference](../api/index.md) for the full result union.
 
 ## Verify your migration
 
@@ -272,7 +278,7 @@ Work through each call your integration makes:
 
 ## References
 
-- [Adobe Express API Reference](../api/index.md) {/* TODO: repoint to V1 reference when published */}—the full request and response surface.
+- [Adobe Express API Reference](../api/index.md)—the full request and response surface.
 - [Create a Document Variation](./how-to/create-variation.md)—the `create-variation` recipe, and the successor to `generate-variation`.
 - [Get Tagged Documents](./how-to/get-tagged-documents.md)—list your tagged documents and read `templateOrDocument`.
 - [Rate limits](../getting-started/rate-limits/index.md)—current request limits.

@@ -627,7 +627,10 @@ async function main() {
           ],
         },
         outputs: [
-          { type: "document", preferredDocumentName: `Business Card - ${Name}` },
+          {
+            type: "document",
+            preferredDocumentName: `Business Card - ${Name}`,
+          },
         ],
       });
 
@@ -1259,7 +1262,10 @@ async function main() {
           ],
         },
         outputs: [
-          { type: "document", preferredDocumentName: `Business Card - ${Name}` },
+          {
+            type: "document",
+            preferredDocumentName: `Business Card - ${Name}`,
+          },
         ],
       });
 
@@ -1642,8 +1648,6 @@ async function main() {
 main();
 ```
 
-<a id="servicesexpressjs"></a>
-
 #### services/express-api.js
 
 ```js
@@ -1682,7 +1686,9 @@ export async function getExpressStatus(jobId) {
   });
   const data = await resp.json();
   if (!resp.ok) {
-    throw new Error(`Status request failed: ${data.error_code} ${data.message ?? ""}`);
+    throw new Error(
+      `Status request failed: ${data.error_code} ${data.message ?? ""}`,
+    );
   }
   return data;
 }
@@ -1706,7 +1712,9 @@ export async function exportRendition(requestBody) {
   });
   const data = await resp.json();
   if (!resp.ok) {
-    throw new Error(`Export request failed: ${data.error_code} ${data.message ?? ""}`);
+    throw new Error(
+      `Export request failed: ${data.error_code} ${data.message ?? ""}`,
+    );
   }
   return data;
 }
@@ -1729,7 +1737,9 @@ export async function createVariation(requestBody) {
   });
   const data = await resp.json();
   if (!resp.ok) {
-    throw new Error(`Variation request failed: ${data.error_code} ${data.message ?? ""}`);
+    throw new Error(
+      `Variation request failed: ${data.error_code} ${data.message ?? ""}`,
+    );
   }
   return data;
 }
@@ -1756,7 +1766,9 @@ export async function retrieveTagDetails(
   );
   const data = await resp.json();
   if (!resp.ok) {
-    throw new Error(`Tag request failed: ${data.error_code} ${data.message ?? ""}`);
+    throw new Error(
+      `Tag request failed: ${data.error_code} ${data.message ?? ""}`,
+    );
   }
   return data;
 }
@@ -2017,11 +2029,17 @@ export const checkExpressJobs = async (jobIds, getStatusFn) => {
   const statuses = await Promise.all(jobIds.map((jobId) => getStatusFn(jobId)));
   for (const result of statuses) {
     if (
-      !["pending", "running", "succeeded", "partially_succeeded", "failed"].includes(
-        result.status,
-      )
+      ![
+        "pending",
+        "running",
+        "succeeded",
+        "partially_succeeded",
+        "failed",
+      ].includes(result.status)
     ) {
-      throw new Error(`Unexpected job status for ${result.jobId}: ${result.status}`);
+      throw new Error(
+        `Unexpected job status for ${result.jobId}: ${result.status}`,
+      );
     }
     // Create Variation reports output failures in errors[]
     for (const error of result.errors ?? []) {
