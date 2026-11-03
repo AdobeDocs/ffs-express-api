@@ -81,10 +81,14 @@ All API error responses follow a consistent structure:
 ### Rate Limiting
 
 - **Symptom**: 429 Too Many Requests
+- **Common Causes**:
+  - Too many requests per minute to an endpoint (request rate limit)
+  - Your organization or account reached its usage limit for metered operations
 - **Resolution**:
   1. Implement exponential backoff
   2. Cache responses where possible
   3. Monitor usage patterns
+  4. If metered operations keep returning 429, contact Adobe to [request a higher usage limit](../rate-limits/index.md#usage-limits)
 
 ## Successful Response Examples
 
@@ -207,14 +211,14 @@ The request has been accepted for processing. Check the status using `GET /statu
 
 These errors indicate issues with the request made by the client.
 
-| Error Code | Name                  | Message                                                                                                                                                                         | What to Do?                                                                                                                                    |
-| ---------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| `400`      | Bad Request           | We cannot process the request due to a client error.                                                                                                                            | Check the request syntax and ensure it includes all required parameters. Check out the [API references](../../api/index.md).                   |
-| `401`      | Unauthorized          | The client needs to authenticate the request to move further.                                                                                                                   | Ensure that the authentication token is included and valid. Learn more about [authenticating your requests](../index.md#call-the-express-api). |
-| `403`      | Forbidden             | The server understands the request, but the client does not have permission to access the resource—missing or insufficient permissions for the authenticated user cause this.   | Ensure the token used is for the same user accessing the document. Check if the user has access to the requested document.                     |
-| `404`      | Not Found             | The server could not find the requested resource. This error could happen if the requested URL or endpoint does not exist, is misspelled, or is inaccessible to the user.       | Check the URL and ensure the resource exists.                                                                                                  |
-| `422`      | Unprocessable Content | The server understands the request but cannot process it due to semantic errors or invalid data. This error often happens when input is invalid or required fields are missing. | Review the validation errors for each endpoint and correct the request data accordingly.                                                       |
-| `429`      | Too Many Requests     | You have sent too many requests in a given time (rate limiting).                                                                                                                | Reduce the request rate and try again later. Learn more about [rate limits](../rate-limits/index.md).                                          |
+| Error Code | Name                  | Message                                                                                                                                                                         | What to Do?                                                                                                                                                                                                                              |
+| ---------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `400`      | Bad Request           | We cannot process the request due to a client error.                                                                                                                            | Check the request syntax and ensure it includes all required parameters. Check out the [API references](../../api/index.md).                                                                                                             |
+| `401`      | Unauthorized          | The client needs to authenticate the request to move further.                                                                                                                   | Ensure that the authentication token is included and valid. Learn more about [authenticating your requests](../index.md#call-the-express-api).                                                                                           |
+| `403`      | Forbidden             | The server understands the request, but the client does not have permission to access the resource—missing or insufficient permissions for the authenticated user cause this.   | Ensure the token used is for the same user accessing the document. Check if the user has access to the requested document.                                                                                                               |
+| `404`      | Not Found             | The server could not find the requested resource. This error could happen if the requested URL or endpoint does not exist, is misspelled, or is inaccessible to the user.       | Check the URL and ensure the resource exists.                                                                                                                                                                                            |
+| `422`      | Unprocessable Content | The server understands the request but cannot process it due to semantic errors or invalid data. This error often happens when input is invalid or required fields are missing. | Review the validation errors for each endpoint and correct the request data accordingly.                                                                                                                                                 |
+| `429`      | Too Many Requests     | You have sent too many requests in a given time (rate limiting), or your organization or account has reached its usage limit.                                                   | Reduce the request rate and try again later. If metered operations keep returning `429`, request a higher usage limit. Learn more about [rate limits](../rate-limits/index.md) and [usage limits](../rate-limits/index.md#usage-limits). |
 
 ### Validation Errors (`422`)
 

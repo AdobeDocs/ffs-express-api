@@ -5,6 +5,7 @@ keywords:
   - Adobe Express API
   - Metering
   - Credits
+  - Usage limits
   - Rate card
   - Create Variation
   - Export Rendition
@@ -25,6 +26,8 @@ When you integrate with the Adobe Express API, credit usage depends on the opera
 The rate card measures usage in **Credits** based on units such as modified pages, output images, output pages, and documents. Credits are based on the work performed, not simply on the number of HTTP requests made.
 
 **Rate limits** are separate from metering and billing. They control how many requests you can make and how frequently you can make them; they do not determine how many credits an operation consumes. See [Rate limits](../rate-limits/index.md) for request limits and capacity guidance.
+
+The metered operations are also subject to a **Usage Limit** that applies to your **Organization or account as a whole**, across all of its credentials. When you reach it, requests to metered operations fail with HTTP 429 and no job is created. See [Usage limits](../rate-limits/index.md#usage-limits) for details and how to request a higher limit.
 
 ## Credit rates
 
@@ -97,3 +100,7 @@ No. `GET /v1/tagged-documents` consumes no credits; tagged document details have
 ### Do credit rates replace request rate limits?
 
 No. Request rate limits still apply; for higher capacity, contact your account manager or use the [Express API Rate Limit Increase Form](https://www.adobe.com/go/express-api-ratelimiting).
+
+### What happens if my organization reaches its usage limit?
+
+Requests to metered operations fail with HTTP 429, and no job is created. See [Usage limits](../rate-limits/index.md#usage-limits) to learn how to request a higher limit.
