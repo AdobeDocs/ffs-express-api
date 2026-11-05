@@ -33,7 +33,7 @@ The number of requests you send and the generation work they create are separate
 | Work queues                  | Generation work waiting for processing.                           | Excess demand may queue rather than fail immediately, so jobs can take longer to finish.    |
 | Capacity escalation requests | Discussions with Adobe about higher limits and workload capacity. | Plan capacity changes with Adobe before large-scale deployment.                             |
 
-Create Variation and Export Rendition run asynchronously. Track completion by [polling `GET /status/{jobId}`](../../guides/how-to/create-variation.md#poll-the-job) or through [webhook notifications](../../guides/how-to/handle-webhook-events-api.md#overview); a submitted job does not mean its outputs are ready. Request counts also differ from credit usage: credits measure the work an operation performs. See [Metering and credits](../metering/index.md) for how operations consume credits.
+Create Variation and Export Rendition run asynchronously. Track completion by [polling `GET /status/{jobId}`](../../guides/how-to/create-variation.md#poll-the-job) or through [webhook notifications](../../guides/how-to/handle-webhook-events-api.md#overview); a submitted job does not mean its outputs are ready. Request counts also differ from credit usage: credits measure the work an operation performs. See [Credit metering](../rate-limits/index.md#credit-metering) for how operations consume credits.
 
 <InlineAlert variant="warning" slots="text" />
 

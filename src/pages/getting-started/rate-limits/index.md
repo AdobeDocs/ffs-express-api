@@ -1,6 +1,6 @@
 ---
 title: Rate Limits - Express API
-description: Learn how request rate limits and usage limits work in the Adobe Express API, including HTTP 429 responses and how to request higher limits.
+description: Learn how request rate limits, usage limits, and credit metering work in the Adobe Express API, including HTTP 429 responses and how to request higher limits.
 keywords:
   - Adobe Express API
   - Rate limits
@@ -17,6 +17,8 @@ keywords:
   - Rate limit management
   - Usage quotas
   - Usage limits
+  - Credit metering
+  - Credits
   - Rate limit headers
   - Rate limit monitoring
   - Scalability considerations
@@ -39,7 +41,7 @@ hideBreadcrumbNav: true
 Express API places two kinds of default limits on API usage:
 
 - **Request rate limits** control how many requests you can make to each endpoint per minute.
-- **Usage limits** control how much your organization or account can use the [metered operations](../metering/index.md).
+- **Usage limits** control how much your organization or account can use the [metered operations](#credit-metering).
 
 ## Why do API rate limits exist?
 
@@ -70,7 +72,7 @@ If you need additional capacity, contact your account manager to request a highe
 
 ## Usage limits
 
-In addition to the request rate limits, the following [metered operations](../metering/index.md) are subject to a usage limit. This limit applies to your organization or account as a whole, no matter which credentials (client IDs) send the requests.
+In addition to the request rate limits, the following [metered operations](#credit-metering) are subject to a usage limit. This limit applies to your organization or account as a whole, no matter which credentials (client IDs) send the requests.
 
 - `POST /v1/create-variation`
 - `POST /v1/export-rendition`
@@ -83,6 +85,27 @@ When your organization or account reaches its usage limit, the API rejects the r
 ### How to request a higher usage limit
 
 If you need more capacity, contact Adobe and describe your use case. Adobe reviews the request and can raise your limit.
+
+## Credit metering
+
+Credits measure the work an Express API operation performs, not the number of HTTP requests. Request rate limits are separate: they control request volume and frequency, not how many credits an operation consumes.
+
+Metered work uses these operation-specific units:
+
+| Metered operation | Work counted |
+| --- | --- |
+| Create Variation (`POST /v1/create-variation`) | Modified pages, plus JPG/PNG output images or PDF output pages. |
+| Export Rendition (`POST /v1/export-rendition`) | JPG/PNG output images or PDF output pages. |
+| Tagged-document details (`GET /v1/tagged-documents/{documentId}`) | Each document whose details you retrieve. |
+
+For Create Variation, credits for modified pages and generated outputs are calculated separately and added together. For example, a request that modifies two pages and produces two PNG images consumes credits for both the two modified pages and the two output images. PDF output is counted per output page, not per PDF file.
+
+Listing tagged documents (`GET /v1/tagged-documents`) and checking job status or retrieving results (`GET /status/{jobId}`) do not consume credits. Status polling is separate from the metered work that generates outputs.
+
+For actual rates, see both HelpX rate cards:
+
+- [Firefly Services and Firefly Creative Production operation rate card (Version A)](https://helpx.adobe.com/business/enterprise/products-entitlements/manage-entitlements/fireflyservices-ratecard-ver-a.html)
+- [Firefly Services and Firefly Creative Production operations rate card (Legacy)](https://helpx.adobe.com/business/enterprise/products-entitlements/manage-entitlements/automation-operation-definition.html)
 
 ## Troubleshooting
 

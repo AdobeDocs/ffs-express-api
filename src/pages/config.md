@@ -32,7 +32,6 @@
   - [Error Logging](/getting-started/error-logging/index.md)
   - [Technical Usage Notes](/getting-started/usage/index.md)
   - [Rate Limits](/getting-started/rate-limits/index.md)
-  - [Metering and Credits](/getting-started/metering/index.md)
   - [Preparing for Production](/getting-started/preparing-for-production/index.md)
   - Support header
   - [FAQ](getting-started/support/FAQ/index.md)

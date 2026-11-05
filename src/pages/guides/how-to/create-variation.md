@@ -42,6 +42,10 @@ The Create Variation API (`POST /v1/create-variation`) takes a tagged Express te
 
 The Express API is rate-limited. Exceeding the limit returns HTTP `429 Too Many Requests`. See [Rate limits](../../getting-started/rate-limits/index.md) for the current limits.
 
+## Credit use
+
+Create Variation calculates credit use for modified pages and generated outputs separately, then adds them together. JPG and PNG outputs are counted per output image; PDF output is counted per output page. See [Credit metering](../../getting-started/rate-limits/index.md#credit-metering) for details and links to the rate cards.
+
 ## Prerequisites
 
 - An Adobe Developer Console project with the **Adobe Express API** added, and a valid access token plus API key. See [Create credentials](../../getting-started/create-credentials/index.md).

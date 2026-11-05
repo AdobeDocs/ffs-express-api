@@ -19,6 +19,7 @@ Answers to the most common questions about the Adobe Express API. If you don't s
 
 - [Access and onboarding](#access-and-onboarding)
 - [About the API](#about-the-api)
+- [Credits and metering](#credits-and-metering)
 - [Renditions and exports](#renditions-and-exports)
 - [Documents and storage](#documents-and-storage)
 - [Troubleshooting Errors](#troubleshooting-errors)
@@ -67,6 +68,22 @@ The key features of the Adobe Express API are:
 - **Create variation API**: Creates a variation of a tagged template or document by filling in its tagged elements, and renders it as an image, PDF, video, or saved Express document.
 - **Export rendition API**: Exports pages of an existing document as JPG, PNG, MP4, or PDF.
 - **Status API**: Checks the status of asynchronous jobs, such as variation creation and exports, and retrieves their results.
+
+## 💳 Credits and metering
+
+### Does each API request consume the same amount of credits?
+
+No. Credit use depends on the operation and its units of work, such as modified pages or output images, rather than a fixed amount per HTTP request.
+
+### Does polling for job status consume credits?
+
+No. Calls to `GET /status/{jobId}` do not consume credits. Polling is separate from the metered work that generates outputs.
+
+### Do listing tagged documents and retrieving their details both consume credits?
+
+No. Listing documents with `GET /v1/tagged-documents` does not consume credits. Retrieving details with `GET /v1/tagged-documents/{documentId}` is metered for each document.
+
+See [Credit metering](../../rate-limits/index.md#credit-metering) for the work units and links to the rate cards.
 
 ## 🖼️ Renditions and exports
 
