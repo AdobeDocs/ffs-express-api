@@ -21,7 +21,7 @@ Express API enables you to integrate Adobe Express functionalities into your app
 
 The Express API allows you to programmatically interact with Adobe Express documents that have been tagged for automation. By tagging specific elements (text, images, and videos) in your Express documents, you can modify them via API calls to create customized variations and generate renditions.
 
-The Express API endpoints currently only operate on the Express documents tagged for automation workflows. The [Tag Elements Add-on](https://adobesparkpost.app.link/TR9Mb7TXFLb?mode=private&claimCode=wjmj67nj9:PLYN7XLJ) facilitates the functionality of tagging elements in an Express document, enabling the document for automation.
+The Express API endpoints currently only operate on the Express documents tagged for automation workflows; use the **Data Fields** native functionality to add tags, as explained in [this guide](./how-to/tag-documents.md).
 
 ## Terminology
 
@@ -47,29 +47,23 @@ Before you begin:
 
 ## Step 1: Preparing Documents for API Access
 
-1. **Install the Add-on**:
-   - Log into [Adobe Express](https://new.express.adobe.com/)
-   - Install the [Tag Elements Add-on](https://adobesparkpost.app.link/TR9Mb7TXFLb?mode=private&claimCode=wjmj67nj9:PLYN7XLJ) by opening the URL and clicking **ADD**
-   - Find the add-on in the **Add-ons section** under **Your add-ons**
-
-2. **Create and Tag a Document**:
-   - Create a new Express document or open an existing one
-   - Design your document with the elements you want to modify via API
-   - Open the Tag Elements Add-on
-   - Select an element (text, image or video)
-   - Enter a descriptive tag name in the input field (this will be the identifier in API calls)
-   - Click **Create tag**
-   - Repeat for all elements you want to programmatically modify
+1. [**Create and Tag a Document**](./how-to/tag-documents.md):
+   - Create a new Express document or open an existing one.
+   - Design your document with the elements you want to modify via API.
+   - Select an element (text, image or video), right-click and click **Assign data field** to open the **Data fields** panel.
+   - Enter a descriptive tag name in the input field (this will be the identifier in API calls).
+   - Repeat for all elements you want to programmatically modify.
+   - Click **Done** at the bottom of the Data fields panel.
 
 ## Step 2: Using the Express API
 
 The Express API provides five key endpoints:
 
-- [**Tagged documents API**](../api/index.md): Lists all your tagged documents
-- [**Tagged document details API**](../api/index.md): Retrieves metadata and tagged element information for a specific document
-- [**Generate variation API**](../api/index.md): Creates a new document variation by modifying tagged elements
-- [**Export rendition API**](../api/index.md): Exports a document as JPG, PNG, MP4, or PDF
-- [**Status API**](../api/index.md): Checks the status of asynchronous operations like variation generation
+- [**Tagged documents API**](../api/index.md): Lists the tagged documents you own or that have been shared with you, with pagination and sorting.
+- [**Tagged document details API**](../api/index.md): Retrieves a document's pages and the details of its tagged elements (such as size and position).
+- [**Create variation API**](../api/index.md): Creates a variation of a tagged template or document by filling in its tagged elements, and renders it as an image, PDF, video, or saved Express document.
+- [**Export rendition API**](../api/index.md): Exports pages of an existing document as JPG, PNG, MP4, or PDF.
+- [**Status API**](../api/index.md): Checks the status of asynchronous jobs, such as variation creation and exports, and retrieves their results.
 
 ### Fetch Tagged Documents Example
 
@@ -81,7 +75,7 @@ This example demonstrates how to retrieve all tagged documents available to your
 
 ```bash
 curl -i -X GET \
-  'https://express-api.adobe.io/beta/tagged-documents?start=0&limit=10&sortBy=name' \
+  'https://express-api.adobe.io/v1/tagged-documents?start=0&limit=10&sortBy=name' \
   -H 'Authorization: Bearer <YOUR_TOKEN>' \
   -H 'X-API-KEY: YOUR-API-KEY'
 ```
@@ -92,13 +86,15 @@ curl -i -X GET \
 {
   "documents": [
     {
-      "id":"urn:aaid:sc:VA6C2:1ee6d0fe-cd84-590f-b064-285b7d6cc051",
+      "templateOrDocument": {
+        "creativeCloudFileId": "urn:aaid:sc:VA6C2:1ee6d0fe-cd84-590f-b064-285b7d6cc051"
+      },
       "name": "My Document.express",
       "thumbnailUrl": "https://aep-cs-blobstore-stage-va6c2-data.s3.amazonaws.com"
     }
   ],
   "paging": {
-    "nextUrl": "https://<domain>/beta/tagged-documents?start=1&limit=1&sortBy=name",
+    "nextUrl": "https://<domain>/v1/tagged-documents?start=1&limit=1&sortBy=name",
     "totalRecords": 1
   }
 }
@@ -108,7 +104,7 @@ curl -i -X GET \
 
 ### Fetch Document Details Example
 
-Once you have document IDs, you can retrieve detailed information about a specific document:
+Once you have document URNs (`templateOrDocument.creativeCloudFileId`), you can retrieve detailed information about a specific document:
 
 <CodeBlock slots="heading, code" repeat="2" languages="CURL, JSON" />
 
@@ -116,7 +112,7 @@ Once you have document IDs, you can retrieve detailed information about a specif
 
 ```bash
 curl -i -X GET \
-  'https://express-api.adobe.io/beta/tagged-documents/<YOUR_DOCUMENT_ID>' \
+  'https://express-api.adobe.io/v1/tagged-documents/<YOUR_DOCUMENT_ID>' \
   -H 'Authorization: Bearer <YOUR_TOKEN>' \
   -H 'X-API-KEY: YOUR-API-KEY'
 ```
@@ -126,7 +122,9 @@ curl -i -X GET \
 ```json
 {
   "name": "MyDocument",
-  "id": "urn:aaid:sc:VA6C2:d8638bc5-33d0-3aaf-9e08-9932a8fccf0f",
+  "templateOrDocument": {
+    "creativeCloudFileId": "urn:aaid:sc:VA6C2:d8638bc5-33d0-3aaf-9e08-9932a8fccf0f"
+  },
   "documentPages": [
     {
       "pageNumber": 1,
@@ -136,7 +134,7 @@ curl -i -X GET \
         "width": 1080,
         "height": 1920
       },
-      "taggedElements": [
+      "dataFields": [
         {
           "name": "logoImage",
           "type": "image",
@@ -159,17 +157,18 @@ curl -i -X GET \
           "size": {
             "width": 252.43186950683594,
             "height": 70.70060157775879
-          }
-        }        
+          },
+          "text": "Jane Doe"
+        }
       ]
     }
   ]
 }
 ```
 
-The response provides detailed information about each tagged element, including its name, type, position, and dimensions. This information is essential when generating document variations.
+The response provides detailed information about each tagged element (data field), including its name, type, position, and dimensions; text fields also return their current value in `text`. This information is essential when creating document variations.
 
-For detailed examples of generating variations and exporting renditions, see the [how-to guides](how-to/tag-documents.md).
+For detailed examples of creating variations and exporting renditions, see the [how-to guides](how-to/tag-documents.md).
 
 ## Best Practices and Limitations
 
@@ -184,5 +183,5 @@ For optimal results with the Express API:
 ## Next Steps
 
 - Explore the [complete API reference](../api/index.md) for detailed endpoint documentation
-- Learn how to [generate document variations](how-to/generate-variations.md)
+- Learn how to [create document variations](how-to/create-variation.md)
 - Understand [authentication and security](../getting-started/index.md) for the Express API

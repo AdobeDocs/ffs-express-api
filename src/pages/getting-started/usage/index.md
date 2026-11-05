@@ -85,36 +85,39 @@ Impact:
   - *Example*: For a text element inside a group at coordinates (100, 100) with respect to the group, if the group itself is positioned at (50, 50) on the page, the API returns the text element's position as (100, 100) instead of its absolute position (150, 150) on the page.
   - *Example*: For a cropped image where the original image is at (200, 200) and the crop area starts at (50, 50) within the image, the API returns the image's position as (200, 200) instead of its absolute position (250, 250) on the page.
 
-### Generate Variation API
+### Create Variation API
+
+- **Generate Variation**: The Generate Variation API (`POST /beta/generate-variation`) is deprecated and has no V1 endpoint. Use the Create Variation API (`POST /v1/create-variation`) instead.
 
 - **Document Availability**: Generated documents are temporarily stored in a folder named **"Express API Documents"**. They remain accessible for **30 days**, after which the system automatically removes them.
 
-- **Tag Mappings**: The `tagMappings` field supports pre-signed URLs from `AWS`, `Dropbox`, and `Azure (windows.net)`.
+- **Data Field Mappings**: Image and video mappings in `input.dataFieldMappings` accept pre-signed HTTPS URLs from `AWS`, `Dropbox`, and `Azure (windows.net)`; other URLs are rejected.
 
-  - *Example*: A tag mapping might look like this:
-  
+  - *Example*: A set of data field mappings might look like this:
+
     ```json
     {
-    "tagMappings":
-      {
-        "imageTag": "PRE-SIGNED URL",
-        "textTag": "Hello World",
-        "videoTag": "PRE-SIGNED VIDEO URL"
+      "input": {
+        "dataFieldMappings": [
+          { "name": "imageTag", "type": "image", "source": { "url": "PRE-SIGNED URL" } },
+          { "name": "textTag", "type": "text", "text": "Hello World" },
+          { "name": "videoTag", "type": "video", "source": { "url": "PRE-SIGNED VIDEO URL" } }
+        ]
       }
     }
     ```
 
-- **Thumbnail URLs**: The thumbnail URLs returned with the generate variation response are valid for **24 hours**.
+- **Thumbnail URLs**: A `document` output can include an optional thumbnail URL in the job status response.
 
   - *Example*: A thumbnail URL provided in the response might look like this:
 
     ```json
     {
-      "thumbnailUrl": "https://example.com/thumbnail.jpg"
+      "thumbnail": {
+        "url": "https://example.com/thumbnail.jpg"
+      }
     }
     ```
-
-    Ensure that you download or use the thumbnail within **12 hours**.
 
 ### Export Rendition API
 

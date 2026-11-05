@@ -15,33 +15,34 @@ hideBreadcrumbNav: true
 
 Answers to the most common questions about the Adobe Express API. If you don't see your question here, [contact support](../index.md).
 
-## Access and onboarding
+## On this page
 
-### How do I request access?
+- [Access and onboarding](#access-and-onboarding)
+- [About the API](#about-the-api)
+- [Credits and metering](#credits-and-metering)
+- [Renditions and exports](#renditions-and-exports)
+- [Documents and storage](#documents-and-storage)
+- [Troubleshooting Errors](#troubleshooting-errors)
 
-Fill out the [Express API Beta Access Request Form](https://airtable.com/appiNBn2w6uT0cpkR/pag3db7joqgtwXSOv/form). If you're already a Firefly Services customer and your administrator has provisioned you, you can [create your credentials](../../create-credentials/index.md) in the Adobe Developer Console.
-
-<InlineAlert variant="info" slots="text" />
-
-If you create credentials in the Developer Console before filling out the form, we'll reach out so you can complete it.
-
-### Will Adobe need to approve my integration?
-
-The beta program is only available for testing and evaluation of the APIs. Do not use output from the API for commercial purposes or deploy projects using the beta APIs to production.
-
-### I participated in the Express API Alpha— what do I need to do to access the Express API Beta?
-
-The private alpha endpoints will remain active during a brief deprecation period—you should move to the beta APIs as soon as is feasible. If you have existing API credentials, we will be reaching out to the email used to create the credentials to communicate a deadline. If you are an Alpha customer that does not have access to Firefly Services, please reach out to us to [let us know](../index.md).
-
-### Can I request a higher rate limit?
-
-Yes. Contact your account manager or fill out the [Express API Rate Limit Increase Form](https://www.adobe.com/go/express-api-ratelimiting), and we'll evaluate your request. See [Rate Limits](../../rate-limits/index.md) for current defaults.
+## 🔑 Access and onboarding
 
 ### How do I use the Adobe Express API?
 
 First, get your API key and access token. Then send requests to the API endpoints using the appropriate HTTP methods and parameters. See the [Getting Started](../../../guides/index.md) guide for step-by-step instructions.
 
-## About the API
+### Can I request a higher rate limit?
+
+Yes. Contact your account manager or fill out the [Express API Rate Limit Increase Form](https://www.adobe.com/go/express-api-ratelimiting), and we'll evaluate your request. See [Rate Limits](../../rate-limits/index.md) for current defaults.
+
+### How do I plan for production usage?
+
+Access is self-service, and initial limits are intentionally conservative for evaluation and testing. Test your integration and validate its workflow and outputs, then discuss your expected usage and capacity requirements with Adobe before large-scale deployment. See [Preparing for production](../../preparing-for-production/index.md).
+
+### How do API rate limits differ from processing capacity?
+
+API rate limits control how many requests you can make and how frequently. Processing capacity limits control generation work separately; PDF generation is constrained by downstream processing capacity. See [Preparing for production](../../preparing-for-production/index.md#rate-limits-processing-capacity-and-queues) for the capacity model and [Rate Limits](../../rate-limits/index.md) for current request-rate limits.
+
+## 🧩 About the API
 
 ### What is the Adobe Express API?
 
@@ -60,41 +61,62 @@ The Adobe Express API supports a wide range of use cases, including:
 
 ### What are the key features of the Adobe Express API?
 
-The key features of the Adobe Express (beta) API are:
+The key features of the Adobe Express API are:
 
-- [Get details of a tagged document](../../../api/index.md)
-- [Get all tagged documents](../../../api/index.md)
-- [Generate variation](../../../api/index.md)
-- [Export rendition](../../../api/index.md)
-- **Get Job Status:** Check the status of a job submitted to the Adobe Express API. The response includes the job's current status and any error messages from processing.
+- **Tagged documents API**: Lists the tagged documents you own or that have been shared with you, with pagination and sorting.
+- **Tagged document details API**: Retrieves a document's pages and the details of its tagged elements (such as size and position).
+- **Create variation API**: Creates a variation of a tagged template or document by filling in its tagged elements, and renders it as an image, PDF, video, or saved Express document.
+- **Export rendition API**: Exports pages of an existing document as JPG, PNG, MP4, or PDF.
+- **Status API**: Checks the status of asynchronous jobs, such as variation creation and exports, and retrieves their results.
 
-## Renditions and exports
+## 💳 Credits and metering
+
+### Does each API request consume the same amount of credits?
+
+No. Credit use depends on the operation and its units of work, such as modified pages or output images, rather than a fixed amount per HTTP request.
+
+### Does polling for job status consume credits?
+
+No. Calls to `GET /status/{jobId}` do not consume credits. Polling is separate from the metered work that generates outputs.
+
+### Do listing tagged documents and retrieving their details both consume credits?
+
+No. Listing documents with `GET /v1/tagged-documents` does not consume credits. Retrieving details with `GET /v1/tagged-documents/{documentId}` is metered for each document.
+
+See [Credit metering](../../rate-limits/index.md#credit-metering) for the work units and links to the rate cards.
+
+## 🖼️ Renditions and exports
 
 ### What formats can I export?
 
-The Export Rendition API supports `JPG`, `PNG`, and `MP4` formats. Pass a document ID, and you'll get a pre-signed URL for each page rendition along with a status URL to track progress.
+The Export Rendition API supports `JPG`, `PNG`, `PDF`, and `MP4` formats. Submit the document's `templateOrDocument.creativeCloudFileId`, then poll the returned status URL for the pre-signed rendition URLs.
 
 - Image URLs are valid for 4 hours, with sizes up to 8192px.
+- PDF URLs are valid for 24 hours.
 - Video URLs are valid for 24 hours, with sizes up to 4096px.
 
 ### What's the maximum supported size for renditions?
 
 Image renditions max out at 8192px, and video renditions at 4096px. Requests above these limits return an error.
 
-<InlineAlert variant="warning" slots="text1" />
+<InlineAlert variant="warning" slots="text" />
 
 - Rendition size is capped at the original document dimensions. Image renditions can be specified up to 8192px on the longest side, with aspect ratio maintained.
 - Renditions can be downscaled but not upscaled. For example, with a 1024 x 1024 document, renditions from 1 x 1 up to 1024 x 1024 are supported—any size value over 1024 produces a 1024 x 1024 output.
 
 ### How long are pre-signed rendition URLs valid?
 
-Image rendition URLs (`renditionUrl`) are valid for 4 hours. Video rendition URLs are valid for 24 hours. Download or consume the rendition within that window.
+Image rendition URLs are valid for 4 hours. PDF and video rendition URLs are valid for 24 hours. Export Rendition returns these URLs in `renditionUrl`; Create Variation returns them in `destination.url`. Download or consume the rendition within that window.
 
-### How long are thumbnail URLs valid for generating variations?
+### Where can I find thumbnail URLs?
 
-Thumbnail URLs returned in the Generate Variation response are valid for 24 hours. Download or consume them within that window.
+The Tagged Documents list returns `thumbnailUrl` for each document. Tagged document details return page thumbnails in `documentPages[].thumbnailUrl`, valid for 4 hours. Create Variation document outputs can include an optional `thumbnail.url` in the status response.
 
-## Documents and storage
+### Why can a job take longer under high demand?
+
+Excess generation demand may queue rather than fail immediately, so jobs can take longer to finish. This does not remove API rate limits; overuse can still return HTTP 429. See [Preparing for production](../../preparing-for-production/index.md#rate-limits-processing-capacity-and-queues).
+
+## 📄 Documents and storage
 
 ### How long are generated documents stored?
 
@@ -104,23 +126,51 @@ Generated documents are stored in an **Express API Documents** folder for 30 day
 
 A document URN (Uniform Resource Name) is a unique, persistent identifier for a digital document. It stays valid even if the document's location or access method changes.
 
+### What are the template substitution limits?
+
+- **Images**: 10 image substitutions per template.
+- **Text**: Unlimited text replacements.
+- **Video**: 2 video replacements per template; 250 MB size limit.
+
+These are substitution limits, not request-rate limits. See [Template substitution limits](../../preparing-for-production/index.md#template-substitution-limits).
+
 ### What storage options are supported for tag mappings?
 
-The `tagMappings` field supports pre-signed URLs from `AWS`, `Dropbox`, and `Azure (windows.net)`. An example tag mapping looks like this:
+For image and video replacements, `input.dataFieldMappings` accepts pre-signed HTTPS URLs from `AWS`, `Dropbox`, and `Azure (windows.net)`; other URLs are rejected. An image mapping in the request's `input` object looks like this:
 
 ```json
 {
-  "tagMappings":
-    {
-      "imageTag": "PRE-SIGNED URL",
-      "textTag": "Hello World",
-      "videoTag": "PRE-SIGNED VIDEO URL"
-    }
+  "input": {
+    "dataFieldMappings": [
+      {
+        "name": "imageTag",
+        "type": "image",
+        "source": {
+          "url": "PRE_SIGNED_URL"
+        }
+      }
+    ]
+  }
 }
 ```
 
-## Troubleshooting
+Replace `PRE_SIGNED_URL` with your image's pre-signed URL. The `name` must match an image data field in your template. See [Replace text, images, and videos](../../../guides/how-to/create-variation.md#replace-text-images-and-videos).
 
-### Why does `/beta/tagged-documents` return an empty array?
+## 🐞 Troubleshooting Errors
 
-If you're getting an empty array from the [tagged documents API](../../../api/index.md), check that you've saved your changes after [tagging the elements in your document](../../../guides/how-to/tag-documents.md#step-2-create-tags-for-a-document).
+### `access_error` due to Typekit entitlements
+
+The technical account you're using must not have any Premium entitlements, such as Typekit Fonts. Access to Premium Fonts will cause a rejection with the following error:
+
+```json
+{
+  "error_code": "access_error",
+  "message": "The account associated with the provided access token has 'typekit' entitlements beyond the free tier, which is not permitted for API access"
+}
+```
+
+Please assign a **Default Free Membership** to the technical account to avoid this error, as described [in this guide](../../create-credentials/index.md#product-profiles-and-entitlements).
+
+### Why does `/v1/tagged-documents` return an empty array?
+
+If you're getting an empty array from the [tagged documents API](../../../api/index.md), check that you've saved your changes after [tagging the elements in your document](../../../guides/how-to/tag-documents.md#assign-data-fields-to-elements).

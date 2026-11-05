@@ -44,7 +44,7 @@ You can complete all of this yourself, no Admin Console rights required:
 - An Adobe Developer Console project with the **Adobe Express API** added and an [OAuth Server-to-Server credential](../../getting-started/create-credentials/index.md#server-to-server).
 - Your `client_id` (API key), `client_secret`, and the **technical account email**—all visible on the credential overview page.
 - Scopes such as `openid`, `AdobeID`, `read_organizations`, and `ee.express_api`.
-- At least one tagged Express template **shared with the Technical Account**. In Adobe Express, open the doc → **Share** → paste the technical account email → **Can edit**. Tag elements with the [Tag Elements add-on](https://adobesparkpost.app.link/TR9Mb7TXFLb?mode=private&claimCode=wjmj67nj9:PLYN7XLJ).
+- At least one tagged Express template **shared with the Technical Account**. In Adobe Express, open the doc → **Share** → paste the technical account email → **Can edit**. Tag elements using **Data Fields**, as described [in this guide](./tag-documents.md).
 - Node.js 18+ (or any backend that can do an HTTPS POST).
 
 ### Admin Console setup
@@ -57,7 +57,7 @@ One-time setup, requires an Adobe org admin, needed only for the final hand-off 
 
 ![Storage project](./images/e2e-generate-edit-variant-s2s--storage-project.png)
 
-- The **Storage project URN**. You will pass this URN as `projectId` in step 4 so that variations land inside the shared project—not in the technical account's private storage. Without a `projectId`, end users won't see the variations. The URN is visible in the Admin Console's project URL, when you select one of the available projects:
+- The **Storage project URN**. You will pass this URN as `destinationFolder.creativeCloudProjectId` on the document output in step 4 so that variations land inside the shared project—not in the technical account's private storage. Without this destination, end users won't see the variations. The URN is visible in the Admin Console's project URL, when you select one of the available projects:
 
 ```text
 https://adminconsole.adobe.com/<ORG_ID>/storage/projects/<PROJECT_URN>
@@ -86,15 +86,15 @@ curl -s -X POST 'https://ims-na1.adobelogin.com/ims/token/v3' \
 
 ```js
 const body = new URLSearchParams({
-  grant_type: 'client_credentials',
+  grant_type: "client_credentials",
   client_id: process.env.CLIENT_ID,
   client_secret: process.env.CLIENT_SECRET,
-  scope: 'openid,AdobeID,ee.express_api',
+  scope: "openid,AdobeID,ee.express_api",
 });
 
-const resp = await fetch('https://ims-na1.adobelogin.com/ims/token/v3', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+const resp = await fetch("https://ims-na1.adobelogin.com/ims/token/v3", {
+  method: "POST",
+  headers: { "Content-Type": "application/x-www-form-urlencoded" },
   body,
 });
 const tokens = await resp.json();
@@ -133,7 +133,7 @@ In a real app you should never call `https://express-api.adobe.io` directly from
 #### cURL
 
 ```bash
-curl -s 'https://express-api.adobe.io/beta/tagged-documents?start=0&limit=25&sortBy=-modifiedDate' \
+curl -s 'https://express-api.adobe.io/v1/tagged-documents?start=0&limit=25&sortBy=-modifiedDate' \
   -H "Authorization: Bearer $ACCESS_TOKEN" \
   -H "X-API-KEY: $CLIENT_ID"
 ```
@@ -142,13 +142,13 @@ curl -s 'https://express-api.adobe.io/beta/tagged-documents?start=0&limit=25&sor
 
 ```js
 const resp = await fetch(
-  'https://express-api.adobe.io/beta/tagged-documents?start=0&limit=25&sortBy=-modifiedDate',
+  "https://express-api.adobe.io/v1/tagged-documents?start=0&limit=25&sortBy=-modifiedDate",
   {
     headers: {
       Authorization: `Bearer ${accessToken}`,
-      'X-API-KEY': clientId,
+      "X-API-KEY": clientId,
     },
-  }
+  },
 );
 const { documents, paging } = await resp.json();
 ```
@@ -157,7 +157,7 @@ const { documents, paging } = await resp.json();
 
 ```python
 resp = requests.get(
-    "https://express-api.adobe.io/beta/tagged-documents",
+    "https://express-api.adobe.io/v1/tagged-documents",
     params={"start": 0, "limit": 25, "sortBy": "-modifiedDate"},
     headers={
         "Authorization": f"Bearer {access_token}",
@@ -173,7 +173,9 @@ Response shape:
 {
   "documents": [
     {
-      "id": "urn:aaid:sc:EU:e6723...",
+      "templateOrDocument": {
+        "creativeCloudFileId": "urn:aaid:sc:EU:e6723..."
+      },
       "name": "Demo Template.express",
       "thumbnailUrl": "https://aep-cs-blobstore-prod-irl1-data..."
     }
@@ -187,20 +189,20 @@ Response shape:
 
 The API does not currently support filtering by tag name or category server-side, so the "share with the technical account" convention _is_ your catalog filter. If you need finer control (for example, a single tech account with templates for several teams), use a name prefix and filter client-side.
 
-Render each document's `thumbnailUrl` and `name` as a card and let the user click one. Keep the `id`—you need it for steps 3 and 4.
+Render each document's `thumbnailUrl` and `name` as a card and let the user click one. Keep `templateOrDocument.creativeCloudFileId` as `DOCUMENT_ID` (cURL), `documentId` (JavaScript), or `document_id` (Python) for steps 3 and 4.
 
 ![List the company's tagged templates](./images/e2e-generate-edit-variant-s2s--list-template.png)
 
 ## 3. Inspect the template's tagged elements
 
-Before the user can fill in tag values, your UI needs to know what tags the template actually has. Call `GET /beta/tagged-documents/{id}` for the selected document.
+Before the user can fill in tag values, your UI needs to know what tags the template actually has. Call `GET /v1/tagged-documents/{id}` for the selected document.
 
 <CodeBlock slots="heading, code" repeat="3" languages="bash, javascript, python" />
 
 #### cURL
 
 ```bash
-curl -s "https://express-api.adobe.io/beta/tagged-documents/$DOCUMENT_ID" \
+curl -s "https://express-api.adobe.io/v1/tagged-documents/$DOCUMENT_ID" \
   -H "Authorization: Bearer $ACCESS_TOKEN" \
   -H "X-API-KEY: $CLIENT_ID"
 ```
@@ -209,13 +211,13 @@ curl -s "https://express-api.adobe.io/beta/tagged-documents/$DOCUMENT_ID" \
 
 ```js
 const resp = await fetch(
-  `https://express-api.adobe.io/beta/tagged-documents/${encodeURIComponent(documentId)}`,
+  `https://express-api.adobe.io/v1/tagged-documents/${encodeURIComponent(documentId)}`,
   {
     headers: {
       Authorization: `Bearer ${accessToken}`,
-      'X-API-KEY': clientId,
+      "X-API-KEY": clientId,
     },
-  }
+  },
 );
 const detail = await resp.json();
 ```
@@ -224,39 +226,41 @@ const detail = await resp.json();
 
 ```python
 import urllib.parse
-url = f"https://express-api.adobe.io/beta/tagged-documents/{urllib.parse.quote(document_id, safe='')}"
+url = f"https://express-api.adobe.io/v1/tagged-documents/{urllib.parse.quote(document_id, safe='')}"
 detail = requests.get(url, headers={
     "Authorization": f"Bearer {access_token}",
     "X-API-KEY": client_id,
 }).json()
 ```
 
-The response lists each page and its `taggedElements`. The `type` of each tag tells you what input to render: `text` accepts a plain string; `image` and `video` accept a pre-signed URL on an allowed domain (AWS, Dropbox, Azure).
+The response lists each page and its `dataFields`. Each field's `name` and `type` identify the mapping to submit in step 4: `text` takes replacement text; `image` and `video` take a pre-signed HTTPS `source.url` from a supported cloud storage provider (AWS S3, Dropbox, or Azure Blob Storage). Text fields also return their current value in `text`.
 
 This endpoint is paginated by page: append `?start=<n>` to fetch tagged elements starting at page `n` if the template has more pages than the default page size returns.
 
 ```json
 {
-  "id": "urn:aaid:sc:EU:e6723...",
+  "templateOrDocument": {
+    "creativeCloudFileId": "urn:aaid:sc:EU:e6723..."
+  },
   "name": "Demo Template.express",
   "documentPages": [
     {
       "pageNumber": 1,
       "pageTitle": "",
       "size": { "width": 1080, "height": 1350 },
-      "taggedElements": [
-				{
-					"name": "use-case", "type": "text",
-					"position": { "x": 151, "y": 407 },
-					"size": { "width": 662, "height": 93 },
-					"value": "PRODUCTIVITY"
-				},
-				{
-					"name": "price", "type": "text",
-					"position": { "x": 611, "y": 1016 },
-					"size": { "width": 301, "height": 93 },
-					"value": "$875"
-				}
+      "dataFields": [
+        {
+          "name": "use-case", "type": "text",
+          "position": { "x": 151, "y": 407 },
+          "size": { "width": 662, "height": 93 },
+          "text": "PRODUCTIVITY"
+        },
+        {
+          "name": "price", "type": "text",
+          "position": { "x": 611, "y": 1016 },
+          "size": { "width": 301, "height": 93 },
+          "text": "$875"
+        },
         {
           "name": "product-image", "type": "image",
           "position": { "x":  257, "y":  358 },
@@ -273,54 +277,67 @@ This endpoint is paginated by page: append `?start=<n>` to fetch tagged elements
 
 ## 4. Generate the variation
 
-Submit the user's values as `tagMappings`. The keys are the tag names from step 3; the values are strings (text) or pre-signed URLs (images, videos). The request shape is identical to the OAuth flow—only the bearer token and `projectId` differ.
+Call `POST /v1/create-variation` with the selected template, `input.dataFieldMappings`, and a `document` output to persist an editable Express document. Each mapping uses the `name` and `type` from step 3, plus `text` or `source.url`. See [Create Document Variations](./create-variation.md) for the V1 request options.
 
-Set `variationDetails.projectId` to the URN of the **shared project** from the [Admin Console setup](#prerequisites). This is what makes the variation visible to the end users you've shared that project with; omit it and the variation lands in the technical account's own `Express API Documents` folder, where end users have no access. `projectId` is optional in the OpenAPI spec but effectively required for this workflow.
+Set the document output's `destinationFolder.creativeCloudProjectId` to the URN of the **shared project** from the [Admin Console setup](#admin-console-setup). The destination is optional in the API but required for this shared-project workflow; omitting it saves the document in the technical account's default storage.
+
+Export `SHARED_PROJECT_ID` with that URN and `PRODUCT_IMAGE_URL` with the full pre-signed URL of your replacement image as environment variables before running the examples.
 
 <CodeBlock slots="heading, code" repeat="3" languages="bash, javascript, python" />
 
 #### cURL
 
 ```bash
-curl -s -X POST 'https://express-api.adobe.io/beta/generate-variation' \
+curl -s -X POST 'https://express-api.adobe.io/v1/create-variation' \
   -H "Authorization: Bearer $ACCESS_TOKEN" \
   -H "X-API-KEY: $CLIENT_ID" \
   -H 'Content-Type: application/json' \
   -d '{
-    "id": "'"$DOCUMENT_ID"'",
-    "variationDetails": {
-      "preferredDocumentName": "Macbook Neo",
-      "projectId": "'"$SHARED_PROJECT_ID"'",
-      "tagMappings": {
-        "use-case": "EVERYDAY",
-        "price": "$520",
-        "product-image": "https://uc4fcd1dc97e1127dcb839ff192c.dl..."
+    "templateOrDocument": { "creativeCloudFileId": "'"$DOCUMENT_ID"'" },
+    "input": {
+      "dataFieldMappings": [
+        { "name": "use-case", "type": "text", "text": "EVERYDAY" },
+        { "name": "price", "type": "text", "text": "$520" },
+        { "name": "product-image", "type": "image", "source": { "url": "'"$PRODUCT_IMAGE_URL"'" } }
+      ]
+    },
+    "outputs": [
+      {
+        "type": "document",
+        "preferredDocumentName": "Macbook Neo",
+        "destinationFolder": { "creativeCloudProjectId": "'"$SHARED_PROJECT_ID"'" }
       }
-    }
+    ]
   }'
 ```
 
 #### JavaScript (fetch)
 
 ```js
-const resp = await fetch('https://express-api.adobe.io/beta/generate-variation', {
-  method: 'POST',
+const resp = await fetch("https://express-api.adobe.io/v1/create-variation", {
+  method: "POST",
   headers: {
     Authorization: `Bearer ${accessToken}`,
-    'X-API-KEY': clientId,
-    'Content-Type': 'application/json',
+    "X-API-KEY": clientId,
+    "Content-Type": "application/json",
   },
   body: JSON.stringify({
-    id: documentId,
-    variationDetails: {
-      preferredDocumentName: 'Macbook Neo',
-      projectId: sharedProjectId,
-      tagMappings: {
-        'use-case': "EVERYDAY",
-        'price': "$520",
-        'product-image': 'https://uc4fcd1dc97e1127dcb839ff192c.dl...',
-      },
+    templateOrDocument: { creativeCloudFileId: documentId },
+    input: {
+      dataFieldMappings: [
+        { name: "use-case", type: "text", text: "EVERYDAY" },
+        { name: "price", type: "text", text: "$520" },
+        {
+          name: "product-image", type: "image",
+          source: { url: process.env.PRODUCT_IMAGE_URL },
+        },
+      ],
     },
+    outputs: [{
+      type: "document",
+      preferredDocumentName: "Macbook Neo",
+      destinationFolder: { creativeCloudProjectId: process.env.SHARED_PROJECT_ID },
+    }],
   }),
 });
 const { jobId, statusUrl } = await resp.json();
@@ -330,23 +347,29 @@ const { jobId, statusUrl } = await resp.json();
 
 ```python
 resp = requests.post(
-    "https://express-api.adobe.io/beta/generate-variation",
+    "https://express-api.adobe.io/v1/create-variation",
     headers={
         "Authorization": f"Bearer {access_token}",
         "X-API-KEY": client_id,
         "Content-Type": "application/json",
     },
     json={
-        "id": document_id,
-        "variationDetails": {
-            "preferredDocumentName": "Macbook Neo",
-            "projectId": shared_project_id,
-            "tagMappings": {
-                "use-case": "EVERYDAY",
-                "price": "$520",
-                "product-image": "https://uc4fcd1dc97e1127dcb839ff192c.dl..."
-            },
+        "templateOrDocument": {"creativeCloudFileId": document_id},
+        "input": {
+            "dataFieldMappings": [
+                {"name": "use-case", "type": "text", "text": "EVERYDAY"},
+                {"name": "price", "type": "text", "text": "$520"},
+                {
+                    "name": "product-image", "type": "image",
+                    "source": {"url": os.environ["PRODUCT_IMAGE_URL"]},
+                },
+            ],
         },
+        "outputs": [{
+            "type": "document",
+            "preferredDocumentName": "Macbook Neo",
+            "destinationFolder": {"creativeCloudProjectId": os.environ["SHARED_PROJECT_ID"]},
+        }],
     },
 )
 job = resp.json()
@@ -361,15 +384,15 @@ Response (HTTP 202):
 }
 ```
 
-The variation is created by the technical account. With a valid `projectId` and the Admin Console setup from [Prerequisites](#prerequisites) in place, it lands in the **shared project** and is visible to the end users you've shared that project with. Omit `projectId` and it lives in the technical account's own `Express API Documents` folder instead—fine for validating steps 1–5, but the end user won't be able to open it in step 6.
+The variation is created by the technical account. With the shared-project destination and the Admin Console setup from [Prerequisites](#prerequisites) in place, it lands in the **shared project** and is visible to the end users you've shared that project with.
 
-Hold on to `jobId` for the next step.
+Use the returned `jobId` as `JOB_ID` in the cURL polling request; the JavaScript and Python examples use `jobId` and `job["jobId"]`, respectively.
 
 ![Filled out tag mappings](./images/e2e-generate-edit-variant-s2s--filled-tag-details.png)
 
 ## 5. Poll the job
 
-`GET /status/{jobId}` returns `running` until the variation is ready, then `succeeded` (or `failed`/`partially_succeeded`). Poll every few seconds.
+Poll `GET /status/{jobId}` every few seconds until it returns `succeeded`, `partially_succeeded`, `failed`, or `cancelled`; an unfinished job can report `pending` or `running`. Successful results are in `outputs`; `errors` describes failed outputs with an `error_code` and optional `message`, `type`, and `pageNumber`.
 
 <CodeBlock slots="heading, code" repeat="3" languages="bash, javascript, python" />
 
@@ -386,16 +409,28 @@ curl -s "https://express-api.adobe.io/status/$JOB_ID" \
 ```js
 async function pollJob(jobId, accessToken, clientId) {
   while (true) {
-    const r = await fetch(`https://express-api.adobe.io/status/${encodeURIComponent(jobId)}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        'X-API-KEY': clientId,
+    const r = await fetch(
+      `https://express-api.adobe.io/status/${encodeURIComponent(jobId)}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "X-API-KEY": clientId,
+        },
       },
-    }).then((r) => r.json());
-    if (['succeeded', 'failed', 'partially_succeeded'].includes(r.status)) return r;
+    ).then((r) => r.json());
+    if (["succeeded", "failed", "partially_succeeded", "cancelled"].includes(r.status))
+      return r;
     await new Promise((res) => setTimeout(res, 3000));
   }
 }
+
+const result = await pollJob(jobId, accessToken, clientId);
+if (["failed", "cancelled"].includes(result.status))
+  throw new Error(`Job ${result.status}: ${JSON.stringify(result.errors)}`);
+if (result.status === "partially_succeeded") console.warn(result.errors);
+const documentOutput = result.outputs?.find((output) => output.type === "document");
+if (!documentOutput) throw new Error("No document output was returned");
+const variationDocumentId = documentOutput.documentId.creativeCloudFileId;
 ```
 
 #### Python
@@ -412,28 +447,44 @@ def poll_job(job_id, access_token, client_id):
                 "X-API-KEY": client_id,
             },
         ).json()
-        if r["status"] in ("succeeded", "failed", "partially_succeeded"):
+        if r["status"] in ("succeeded", "failed", "partially_succeeded", "cancelled"):
             return r
         time.sleep(3)
+
+result = poll_job(job["jobId"], access_token, client_id)
+if result["status"] in ("failed", "cancelled"):
+    raise RuntimeError(f"Job {result['status']}: {result.get('errors')}")
+if result["status"] == "partially_succeeded":
+    print(result.get("errors"))
+document_output = next(
+    (output for output in result.get("outputs", []) if output["type"] == "document"),
+    None,
+)
+if document_output is None:
+    raise RuntimeError("No document output was returned")
+variation_document_id = document_output["documentId"]["creativeCloudFileId"]
 ```
 
-When the job succeeds, you get the new document back:
+When the job succeeds, read the new document's URN from the `document` output's `documentId.creativeCloudFileId` (not a top-level `document.id`):
 
 ```json
 {
   "jobId": "af121560-218e-4dd9-918d-add12b3b6d98",
   "status": "succeeded",
-  "document": {
-    "id": "urn:aaid:sc:EU:3da...",
-    "name": "Macbook Neo",
-    "thumbnailUrl": "https://...signed-url..."
-  }
+  "outputs": [
+    {
+      "type": "document",
+      "documentId": { "creativeCloudFileId": "urn:aaid:sc:EU:3da..." },
+      "name": "Macbook Neo",
+      "thumbnail": { "url": "https://...signed-url..." }
+    }
+  ]
 }
 ```
 
 ![Variation created](./images/e2e-generate-edit-variant-s2s--variant-created.png)
 
-The variation is now stored in the user's account. Check the **My Stuff > Projects** section, select the Project and then the **Express API Documents** folder to see the variation.
+The variation is stored in the shared project. Check **My Stuff > Projects** and select that project to find the variation.
 
 ![Variation in My Stuff](./images/e2e-generate-edit-variant-s2s--my-stuff.png)
 
@@ -441,7 +492,7 @@ The variation is now stored in the user's account. Check the **My Stuff > Projec
 
 After the backend generates the variation, users can immediately customize or export the final result using the Adobe Express editor _without leaving your experience_ thanks to the [Embed SDK](https://developer.adobe.com/express/embed-sdk/docs/guides/). This is especially useful in self-service scenarios where business users start from company-approved templates but still need lightweight creative control over the generated variation.
 
-The Embed SDK exposes an **Editor Workflow** with an [`edit()`](https://developer.adobe.com/express/embed-sdk/docs/v4/sdk/src/workflows/3p/editor-workflow/classes/editor-workflow#edit) method that takes the same `documentId` (the variation URN returned in step 5) and launches the Full Editor experience in your page.
+The Embed SDK exposes an **Editor Workflow** with an [`edit()`](https://developer.adobe.com/express/embed-sdk/docs/v4/sdk/src/workflows/3p/editor-workflow/classes/editor-workflow#edit) method that launches the Full Editor experience in your page.
 
 ### 6.1 Load and initialize the SDK
 
@@ -454,27 +505,27 @@ Load the SDK script, then call `CCEverywhere.initialize` once with the Embed SDK
 The Embed SDK and Express API rely on **different Client IDs**. Both are generated when you create credentials in the Developer Console, but the Projects that contain them are independent.
 
 ```js
-  await import('https://cc-embed.adobe.com/sdk/v4/CCEverywhere.js');
+await import("https://cc-embed.adobe.com/sdk/v4/CCEverywhere.js");
 
-  const hostInfo = {
-    clientId: '<CLIENT_ID>',
-    appName: 'Embed SDK & Express API integration',
-  };
+const hostInfo = {
+  clientId: "<CLIENT_ID>",
+  appName: "Embed SDK & Express API integration",
+};
 
-  // lets the user start interacting with the embedded editor; sign-in is only prompted when they save or export.
-  const configParams = { loginMode: 'delayed' };
+// lets the user start interacting with the embedded editor; sign-in is only prompted when they save or export.
+const configParams = { loginMode: "delayed" };
 
-  const { editor } = await window.CCEverywhere.initialize(hostInfo, configParams);
+const { editor } = await window.CCEverywhere.initialize(hostInfo, configParams);
 ```
 
 ### 6.2 Open the variation for editing
 
-Pass the variation URN from step 5 as `documentId` and call `editor.edit()`:
+Pass `variationDocumentId`, the URN extracted in step 5, to your browser-side Embed SDK code as `documentId` and call `editor.edit()`:
 
 ```js
-const docConfig = { documentId: '<DOCUMENT_URN>' };
-const appConfig = {};       // optional editor configuration
-const exportConfig = [];    // optional export targets
+const docConfig = { documentId: variationDocumentId };
+const appConfig = {}; // optional editor configuration
+const exportConfig = []; // optional export targets
 const containerConfig = {}; // optional container configuration
 editor.edit(docConfig, appConfig, exportConfig);
 ```
@@ -492,5 +543,5 @@ Alternatively, you can open the variation in Adobe Express (in a new Browser tab
 ## Next steps
 
 - Run the full flow end to end with the [companion sample app](https://github.com/AdobeDocs/express-api-samples/tree/main/oauth-server-to-server) (Node/Express backend + a single static HTML page, Server-to-Server variant).
-- Need to skip the "open in Express" hand-off entirely and just give the user a finished asset? Add a [rendition export step](./export-document.md) right after step 5 to return a JPG/PNG/MP4/PDF instead.
-- Building the per-user variant of this workflow where each user picks from their own templates and the variation lands in their personal **My Stuff**? See [Generate and Edit a Variant (OAuth Web App)](./e2e-generate-edit-variant-oauth-web-app.md)—steps 2 through 6 are identical; only step 1 differs.
+- Need to skip the "open in Express" hand-off entirely and just give the user a finished asset? In step 4, request an `image`, `pdf`, or `video` entry in the Create Variation request's `outputs` array, alongside or instead of the `document` output; read the results from `outputs` in the step-5 status response. See [Choose output formats](./create-variation.md#choose-output-formats).
+- Building the per-user variant of this workflow where each user picks from their own templates and the variation lands in their personal **My Stuff**? See [Generate and Edit a Variant (OAuth Web App)](./e2e-generate-edit-variant-oauth-web-app.md)—use a per-user token and omit the shared-project destination in step 4.

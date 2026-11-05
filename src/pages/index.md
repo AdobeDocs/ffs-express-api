@@ -1,33 +1,42 @@
 ---
-title: Overview - Adobe Express API beta
-description: This is the overview page of Adobe Express(beta) API
+title: Overview - Adobe Express API
+description: This is the overview page of Adobe Express API
 contributors:
   - https://github.com/nimithajalal
   - https://github.com/hollyschinsky
+  - https://github.com/undavide
 ---
 
 <Superhero slots="heading, text" background="rgb(111, 46, 135)"/>
 
-# Adobe Express API (beta)
+# Adobe Express API
 
 Effortlessly create and customize mixed-media designs with on-brand precision.
 
-<Announcement slots="heading, text, button" className="request-access-announcement" variant="secondary" borderColor="#c148ed" hasborder="true" />
-
-### The Adobe Express API is now in beta
-
-We'd like to get to know you better! To participate in the beta, please submit Adobe Express API Beta Access form so
-better understand your needs and use cases. For more information, read the [FAQ](getting-started/support/FAQ/index.md#access-and-onboarding).
-
-- [Request Access](https://www.adobe.com/go/express-api-access)
-
 &lt;br/ &gt;
+
+<Announcement slots="heading, text, text2" className="request-access-announcement" variant="secondary" borderColor="#c148ed" hasborder="true" />
+
+### The Adobe Express API is now Generally Available!
+
+**We'd like to thank all the developers who participated in the beta program!**
+
+Your feedback has been invaluable in helping us refine the APIs,  
+improve the developer experience, and shape the product for the V1 release.
+
+If you've been using the beta APIs, we encourage you to check out our [Beta to V1 Migration Guide](./guides/migration-beta-to-v1.md) to learn about the changes and ensure a smooth transition to the latest version.
+
+If you're interested in using the Adobe Express APIs in production for new projects or integrations, **we'd love to hear from you!** Get in touch with our team to discuss your use case and explore how we can support your use case.
+
+<Announcement slots="button" variant="secondary"/>
+
+- [Contact us here!](https://airtable.com/appu5RTWgdM95jynx/pagyuT1qspNJcPU2E/form)
 
 <Resources slots="text, links"/>
 
 **Useful Resources**
 
-* [Express API Quickstart](guides/index.md)
+- [Express API Quickstart](guides/index.md)
 
 ## What is the Adobe Express API?
 
@@ -35,7 +44,7 @@ The Adobe Express API provides an effortless way to incorporate Adobe Express fu
 
 ## What can Express API do?
 
-The Adobe Express (beta) API offers the following key features:
+The Adobe Express API offers the following key features:
 
 ### Get Details of a Tagged Document
 
@@ -45,9 +54,9 @@ The Tagged Document Details API retrieves comprehensive information about pages 
 
 The Tagged Documents API retrieves a list of all tagged documents accessible to the user, including owned and shared documents, along with their metadata. The API supports pagination and sorting options, allowing you to specify the starting point, number of documents to return, and sorting order. The response includes the requested documents and their associated metadata.
 
-### Generate Variation
+### Create Variation
 
-The Generate Variation API enables you to create document variations based on provided input parameters. The generated document is stored temporarily and remains available in your designated folder for 30 days, after which it is automatically removed. The API ensures proper document creation and accessibility within your directory.
+The Create Variation API enables you to create document variations based on provided input parameters. The document can be exported on-the-fly, or stored temporarily, and remains available in your designated folder for 30 days, after which it is automatically removed. The API ensures proper document creation and accessibility within your directory.
 
 ### Export Rendition
 
@@ -89,4 +98,4 @@ Learn how to create credentials for your services — Admin only.
 
 [Try the API](api/index.md)
 
-Try the Adobe Express (beta) API. Explore, make calls, with full endpoint descriptions.
+Try the Adobe Express API. Explore, make calls, with full endpoint descriptions.

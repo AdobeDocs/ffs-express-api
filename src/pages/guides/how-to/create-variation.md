@@ -1,11 +1,13 @@
 ---
 title: Create Document Variations
-description: Learn how to create a document variation with per-element mappings, per-page overrides, and multiple output formats in a single request.
+description: Create document variations on the Express API V1 endpoint by mapping tagged data fields, overriding specific pages, and returning multiple output formats.
 keywords:
   - Adobe Express
   - Adobe Express API
   - Create variation
   - create-variation
+  - V1 API
+  - dataFieldMappings
   - Page overrides
   - Page ranges
   - Image output
@@ -17,68 +19,56 @@ contributors:
 hideBreadcrumbNav: true
 ---
 
-# Create a Document Variation
+# Create Document Variations
 
-Learn how to create a single document variation by mapping tagged elements, optionally overriding specific pages, and returning one or more output formats in a single request.
+Learn how to create document variations by mapping tagged data fields, optionally overriding specific pages, and returning one or more output formats in a single request.
 
-<InlineAlert variant="warning" slots="heading, text" />
+<InlineAlert variant="info" slots="heading, text" />
 
-#### Beta API
+#### V1 API
 
-The Create Variation API is currently in beta and may change before its production release.
+Create Variation is available on the V1 endpoint, the generally-available-track successor to the Beta API. V1 and Beta coexist during the transition—see [Migrate from Beta to V1](../migration-beta-to-v1.md) if you have an existing Beta integration.
 
-## Overview
+The Create Variation API (`POST /v1/create-variation`) takes a tagged Express template, replaces its tagged data fields with your values, and produces one or more outputs. The process is asynchronous:
 
-The Create Variation API (`POST /beta/create-variation`) takes a tagged Express template, replaces its tagged elements with your values, and produces one or more outputs. The process is asynchronous:
-
-1. Submit the template ID, your element mappings, and the outputs you want.
+1. Submit the template ID, your data-field mappings, and the outputs you want.
 2. Receive a `jobId` and a `statusUrl` (HTTP 202).
 3. Poll `GET /status/{jobId}` until the job reaches `succeeded`.
 4. Read the results from the `outputs` array in the status response.
 
 <InlineAlert variant="info" slots="heading, text" />
 
-#### Rate limit
+#### Rate limits
 
-The beta Create Variation API is rate-limited to **5 requests per minute (rpm)** by default. Exceeding the limit returns HTTP `429 Too Many Requests`. Higher throughput tiers are available on request; contact Adobe if your integration needs more.
+The Express API is rate-limited. Exceeding the limit returns HTTP `429 Too Many Requests`. See [Rate limits](../../getting-started/rate-limits/index.md) for the current limits.
 
-## Create Variation vs. Generate Variation
+## Credit use
 
-Create Variation will supersede Generate Variation and Export Rendition. While both APIs process tagged templates asynchronously, Create Variation offers greater expressiveness. Use this table to compare their capabilities and prepare for the transition.
-
-|                    | [Generate Variation](./generate-variations.md) | Create Variation                                                                                        |
-| ------------------ | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| Endpoint           | `POST /beta/generate-variation`                | `POST /beta/create-variation`                                                                           |
-| Template reference | `id` (tagged document URN)                     | `templateOrDocument.creativeCloudFileId`                                                                |
-| Element mappings   | Flat `tagMappings` (name → string or URL)      | Typed arrays: `textMappings`, `imageMappings`, `videoMappings`                                          |
-| Per-page control   | None                                           | `pageOverrides` (different values per page)                                                             |
-| Output             | One Express document                           | `outputs[]`—any of `image`, `document`, `pdf`, `video`, each with its own page range and format options |
-
-In short, **Create Variation** folds document creation _and_ rendition export into one call—request an image, a PDF, a video, and a persisted document from the same variation, and target specific pages for each.
+Create Variation calculates credit use for modified pages and generated outputs separately, then adds them together. JPG and PNG outputs are counted per output image; PDF output is counted per output page. See [Credit metering](../../getting-started/rate-limits/index.md#credit-metering) for details and links to the rate cards.
 
 ## Prerequisites
 
 - An Adobe Developer Console project with the **Adobe Express API** added, and a valid access token plus API key. See [Create credentials](../../getting-started/create-credentials/index.md).
-- At least one tagged Express document you own. Tag elements with the [Tag Elements add-on](https://adobesparkpost.app.link/TR9Mb7TXFLb?mode=private&claimCode=wjmj67nj9:PLYN7XLJ).
-- For image and video mappings, pre-signed URLs on an allowed domain (AWS S3, Azure Blob Storage, or Dropbox).
+- At least one tagged Express document you own. Tag elements using **Data Fields**, as described [in this guide](./tag-documents.md).
+- For image and video mappings, pre-signed HTTPS URLs from a supported cloud storage provider (AWS S3, Azure Blob Storage, or Dropbox).
 
 ## Get your document ID
 
-Create Variation references its template by `creativeCloudFileId`. Follow the [Get Tagged Documents guide](./get-tagged-documents.md) to list the tagged documents you own; each entry's `id` (a document URN) is the value you pass as `creativeCloudFileId`.
+Create Variation references its template by `creativeCloudFileId`. Follow the [Get Tagged Documents guide](./get-tagged-documents.md) to list the tagged documents you own; each V1 entry's `templateOrDocument.creativeCloudFileId` (a document URN) is the value you pass as `creativeCloudFileId`.
 
-To discover the tag names and types a template exposes, call `GET /beta/tagged-documents/{id}`—the response lists each page's `taggedElements` with a `name` and a `type` (`text`, `image`, or `video`). Those `name` values are the `tagName`s you map in the next step.
+To discover the data-field names and types a template exposes, call `GET /v1/tagged-documents/{id}`—the response lists each page's `dataFields`, each with a `name` and a `type` (`text`, `image`, or `video`). Those `name` values are what you map in `dataFieldMappings` in the next step.
 
 ## Create a variation
 
-Make a `POST` request to `/beta/create-variation` with three things: `templateOrDocument` (the template `creativeCloudFileId`), `input` (your `mappings`), and `outputs` (the formats you want back). A minimal request replaces one text and one image element and asks for a single JPEG rendition of page 1.
+Make a `POST` request to `/v1/create-variation` with three things: `templateOrDocument` (the template `creativeCloudFileId`), `input` (your `dataFieldMappings`), and `outputs` (the formats you want back). A minimal request replaces one text and one image data field and asks for a single JPEG rendition of page 1.
 
 <CodeBlock slots="heading, code" repeat="2" languages="CURL, JSON" />
 
 #### Request
 
-```sh
+```bash
 curl -i -X POST \
-  --url 'https://express-api.adobe.io/beta/create-variation' \
+  --url 'https://express-api.adobe.io/v1/create-variation' \
   -H 'Authorization: Bearer YOUR_AUTH_TOKEN_HERE' \
   -H 'X-API-KEY: YOUR_API_KEY_HERE' \
   -H 'Content-Type: application/json' \
@@ -87,14 +77,10 @@ curl -i -X POST \
       "creativeCloudFileId": "urn:aaid:sc:VA6C2:82d42ecf-8ce8-310b-b976-6f104a0d4fae"
     },
     "input": {
-      "mappings": {
-        "textMappings": [
-          { "tagName": "headline", "text": "Summer Sale" }
-        ],
-        "imageMappings": [
-          { "tagName": "heroImage", "source": { "url": "https://my-bucket.s3.us-east-2.amazonaws.com/hero.jpg" } }
-        ]
-      },
+      "dataFieldMappings": [
+        { "name": "headline", "type": "text", "text": "Summer Sale" },
+        { "name": "heroImage", "type": "image", "source": { "url": "https://my-bucket.s3.us-east-2.amazonaws.com/hero.jpg" } }
+      ],
       "variationRequestId": "variation-001"
     },
     "outputs": [
@@ -116,15 +102,15 @@ curl -i -X POST \
 
 The `outputs` array controls what you get back. To produce something other than an image, change the entry's `type`. For example, persist a new Express document instead of a rendition:
 
-```js
+```javascript
 "outputs": [
   { "type": "document", "preferredDocumentName": "Summer Sale" }
 ]
 ```
 
-You can also request several formats from the same variation in one call — mix as many output entries as you need:
+You can also request several formats from the same variation in one call—mix as many output entries as you need:
 
-```js
+```javascript
 "outputs": [
   { "type": "image", "mediaType": "image/png", "size": 2048 },
   { "type": "pdf", "pdfType": "standard", "pages": "1-3" },
@@ -132,17 +118,17 @@ You can also request several formats from the same variation in one call — mix
 ]
 ```
 
-Each requested output comes back as its own entry in the status response's `outputs` array. See [Choose output formats](#choose-output-formats) for every type and its options.
+Results come back in the status response's `outputs` array: `image` and `video` outputs return one entry per rendered page, while `pdf` and `document` outputs return a single entry each. See [Choose output formats](#choose-output-formats) for every type and its options.
 
 ## Poll the job
 
-Call `GET /status/{jobId}` with the `jobId` from the previous step. The job returns `running` until it finishes, then `succeeded` (or `partially_succeeded` / `failed`). When it succeeds, the `outputs` array holds one result per requested output.
+Call `GET /status/{jobId}` with the `jobId` from the previous step. The job reports `pending` or `running` until it finishes, then `succeeded` (or `partially_succeeded`, `failed`, or `cancelled`). When it succeeds, the `outputs` array holds the results: one entry per rendered page for `image` and `video` outputs, and one entry per `pdf` or `document` output.
 
 <CodeBlock slots="heading, code" repeat="2" languages="CURL, JSON" />
 
 #### Request
 
-```sh
+```bash
 curl -i -X GET \
   --url 'https://express-api.adobe.io/status/af121560-218e-4dd9-918d-add12b3b6d98' \
   -H 'Authorization: Bearer YOUR_AUTH_TOKEN_HERE' \
@@ -203,49 +189,41 @@ When some outputs succeed and others do not, `status` is `partially_succeeded` a
 
 ## Replace text, images, and videos
 
-`input.mappings` groups replacements by element type. Every entry's `tagName` must match a tag `name` from the tagged-document details.
+`input.dataFieldMappings` is a flat array of replacements. Every entry's `name` must match a data-field `name` from the tagged-document details, and its `type` selects the value shape:
 
-- `textMappings`: `{ "tagName": "...", "text": "..." }`
-- `imageMappings`: `{ "tagName": "...", "source": { "url": "<pre-signed URL>" } }`
-- `videoMappings`: `{ "tagName": "...", "source": { "url": "<pre-signed URL>" } }`
+- `text`: `{ "name": "...", "type": "text", "text": "..." }`
+- `image`: `{ "name": "...", "type": "image", "source": { "url": "<pre-signed URL>" } }`
+- `video`: `{ "name": "...", "type": "video", "source": { "url": "<pre-signed URL>" } }`
 
-```js
-"mappings": {
-  "textMappings": [
-    { "tagName": "headline", "text": "Summer Sale" },
-    { "tagName": "subtitle", "text": "Up to 50% off" }
-  ],
-  "imageMappings": [
-    { "tagName": "heroImage", "source": { "url": "https://my-bucket.s3.us-east-2.amazonaws.com/hero.jpg" } }
-  ],
-  "videoMappings": [
-    { "tagName": "promoVideo", "source": { "url": "https://my-bucket.s3.us-east-2.amazonaws.com/promo.mp4" } }
-  ]
-}
+```javascript
+"dataFieldMappings": [
+  { "name": "headline", "type": "text", "text": "Summer Sale" },
+  { "name": "subtitle", "type": "text", "text": "Up to 50% off" },
+  { "name": "heroImage", "type": "image", "source": { "url": "https://my-bucket.s3.us-east-2.amazonaws.com/hero.jpg" } },
+  { "name": "promoVideo", "type": "video", "source": { "url": "https://my-bucket.s3.us-east-2.amazonaws.com/promo.mp4" } }
+]
 ```
 
-Image and video URLs must be pre-signed and served from an allowed domain (AWS S3, Azure Blob Storage, or Dropbox).
+Image and video URLs must be pre-signed HTTPS URLs from a supported cloud storage provider (AWS S3, Azure Blob Storage, or Dropbox); other URLs are rejected.
 
 <InlineAlert variant="warning" slots="text" />
 
-**Known issue:** Video substitution may not always produce the expected results. We’re working to improve the experience.
+**Known issue:** Video substitution may not always produce the expected results.
 
 ## Override specific pages
 
-By default, a mapping applies everywhere its tag appears. To give a tag a different value on a specific page—for example, a shorter headline on a page with a tighter layout—add a `pageOverrides` entry. A page override's mappings win over the top-level `input.mappings` for that page.
+By default, a mapping applies everywhere its data field appears. To give a data field a different value on a specific page—for example, a shorter headline on a page with a tighter layout—add a `pageOverrides` entry. A page override's `dataFieldMappings` win over the top-level `input.dataFieldMappings` for that page.
 
-```js
+```javascript
 "input": {
-  "mappings": {
-    "textMappings": [ { "tagName": "headline", "text": "Global Headline" } ]
-  },
+  "dataFieldMappings": [ { "name": "headline", "type": "text", "text": "Global Headline" } ],
   "pageOverrides": [
     {
       "pageNumber": 2,
-      "mappings": {
-        "textMappings": [ { "tagName": "headline", "text": "Page 2 Headline" } ],
-        "imageMappings": [ { "tagName": "heroImage", "source": { "url": "https://my-bucket.s3.us-east-2.amazonaws.com/page2.jpg" } } ]
-      }
+      "dataFieldMappings": [
+        { "name": "headline", "type": "text", "text": "Page 2 Headline" },
+        { "name": "heroImage", "type": "image", "source": { "url": "https://my-bucket.s3.us-east-2.amazonaws.com/page2.jpg" } }
+      ]
     }
   ]
 }
@@ -296,7 +274,7 @@ A `document` output persists a new Express document. Supply a `preferredDocument
 }
 ```
 
-`pdfType` is `standard` (default) or `print`. Set `downloadIndividualPdfFiles` to `true` to get one PDF per page instead of a single combined file. The `config` object carries print settings (`bleed`, `cropMargins`) for `print`, or `accessibilityTags` for `standard`.
+`pdfType` is `standard` (default) or `print`. Set `downloadIndividualPdfFiles` to `true` to get one PDF per page instead of a single combined file; the status response then returns a single `destination.url` pointing to a ZIP archive of the per-page PDFs. The `config` object carries print settings (`bleed`, `cropMargins`) for `print`, or `accessibilityTags` for `standard`.
 
 <InlineAlert variant="warning" slots="text" />
 
@@ -326,11 +304,11 @@ Omit `pages` to include every page. Page numbers start at 1.
 
 The script below submits a create-variation request, polls the job, and logs each output's download URL. It uses the built-in `fetch` API (Node.js 18+).
 
-```js
+```javascript
 const BASE = "https://express-api.adobe.io";
 
 async function createVariation(body) {
-  const resp = await fetch(`${BASE}/beta/create-variation`, {
+  const resp = await fetch(`${BASE}/v1/create-variation`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${process.env.AUTH_TOKEN}`,
@@ -355,7 +333,11 @@ async function pollJob(statusUrl) {
       },
     });
     const data = await resp.json();
-    if (["succeeded", "partially_succeeded", "failed"].includes(data.status))
+    if (
+      ["succeeded", "partially_succeeded", "failed", "cancelled"].includes(
+        data.status,
+      )
+    )
       return data;
     await delay(3000);
   }
@@ -367,17 +349,16 @@ const body = {
       "urn:aaid:sc:VA6C2:82d42ecf-8ce8-310b-b976-6f104a0d4fae",
   },
   input: {
-    mappings: {
-      textMappings: [{ tagName: "headline", text: "Summer Sale" }],
-      imageMappings: [
-        {
-          tagName: "heroImage",
-          source: {
-            url: "https://my-bucket.s3.us-east-2.amazonaws.com/hero.jpg",
-          },
+    dataFieldMappings: [
+      { name: "headline", type: "text", text: "Summer Sale" },
+      {
+        name: "heroImage",
+        type: "image",
+        source: {
+          url: "https://my-bucket.s3.us-east-2.amazonaws.com/hero.jpg",
         },
-      ],
-    },
+      },
+    ],
     variationRequestId: "variation-001",
   },
   outputs: [{ type: "image", mediaType: "image/jpeg", size: 1024, pages: "1" }],
@@ -387,8 +368,8 @@ const { jobId, statusUrl } = await createVariation(body);
 console.log("Job started:", jobId);
 
 const result = await pollJob(statusUrl);
-if (result.status === "failed") {
-  console.error("Job failed:", result.errors);
+if (result.status === "failed" || result.status === "cancelled") {
+  console.error(`Job ${result.status}:`, result.errors);
 } else {
   for (const output of result.outputs ?? []) {
     console.log(

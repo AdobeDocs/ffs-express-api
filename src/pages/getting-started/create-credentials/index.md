@@ -82,17 +82,28 @@ Select the product profiles your admin assigned for Express. These control what 
 
 ![Server-to-Server Product Profiles](../images/create-credentials--product-profiles-1.png)
 
-<InlineAlert variant="info" slots="text" />
+<InlineAlert variant="info" slots="header, text, text2" />
 
-Product profiles must include **Adobe Express**, **Adobe Firefly Services**, and **non-Premium Fonts** access. As shown below, a **Default Free Membership** and **Firefly Creative Production for Enterprise** configurations will suffice. Please note that access to Premium Fonts will cause a rejection.
+#### Product Profiles and Entitlements
+
+Product profiles must include **Adobe Express**, **Adobe Firefly Services**, and **non-Premium Fonts** access—Premium Fonts such as Typekit will [result in an error](#access-to-premium-fonts-will-cause-a-rejection). As shown below, a **Default Free Membership** and **Firefly Creative Production for Enterprise** configurations will suffice.
 
 ![Server-to-Server Product Profiles selection](../images/create-credentials--product-profiles-2.png)
 
-<InlineAlert variant="warning" slots="heading, text1, text2" />
+<InlineAlert variant="error" slots="header, text, text1" />
 
-#### Admin Console Product Provisioning
+#### Access to Premium Fonts will cause a rejection
 
-If you have problems finding the correct Product Profiles in the Developer Console, ask your administrator to verify that the correct Products have been assigned to your User in the Admin Console.
+The technical account you're using **must not have any Premium entitlements**, for example, Typekit Fonts. Access to Premium Fonts will cause a rejection with the following error:
+
+```json
+{
+  "error_code": "access_error",
+  "message": "The account associated with the provided access token has 'typekit' entitlements beyond the free tier, which is not permitted for API access"
+}
+```
+
+If you have problems finding the correct Product Profiles in the Developer Console, **ask your administrator to verify that the correct Products have been assigned to your User in the Admin Console**.
 
 ![Admin Console User Products](../images/create-credentials--admin-console.png)
 
@@ -140,11 +151,11 @@ Provide a **Default Redirect URI** and a **Redirect URI pattern**. These are the
 ![OAuth WebApp Credentials](../images/create-credentials--oauth-web-credentials.png)
 _OAuth Web App credentials overview showing client ID (API key) and secret retrieval_
 
-**4. Manage beta access**
+**4. Manage access**
 
-- For projects in beta, add the users who can access your application.
-- In your project, navigate to **Credentials > OAuth Web App > Beta users**.
-- Add the email addresses of users who should have access. It may take a few minutes for beta user access to sync.
+- For projects in development, add the users who can access your application.
+- In your project, navigate to **Credentials > OAuth Web App > users**.
+- Add the email addresses of users who should have access. It may take a few minutes for user access to sync.
 
 **5. Use the client ID and client secret**
 
@@ -171,11 +182,11 @@ Click **Save configured API**. On the next screen you'll see your **client ID (A
 
 ![OAuth SPA Credentials](../images/create-credentials--oauth-spa-credentials.png)
 
-**4. Manage beta access**
+**4. Manage access**
 
-- For projects in beta, add the users who can access your application.
-- In your project, navigate to **Credentials > OAuth Single-page App > Beta users**.
-- Add the email addresses of users who should have access. It may take a few minutes for beta user access to sync.
+- For projects in development, add the users who can access your application.
+- In your project, navigate to **Credentials > OAuth Single-page App > users**.
+- Add the email addresses of users who should have access. It may take a few minutes for user access to sync.
 
 **5. Use the client ID with the PKCE flow**
 
@@ -187,7 +198,7 @@ Click **Save configured API**. On the next screen you'll see your **client ID (A
 
 <InlineAlert variant="warning" slots="text" />
 
-Once you push a Single-page App project to production, you cannot move it back into development. Your app will be open to everyone and the beta users list will no longer apply.
+Once you push a Single-page App project to production, you cannot move it back into development. Your app will be open to everyone and users list will no longer apply.
 
 When you finish development, click **Push to production**.
 

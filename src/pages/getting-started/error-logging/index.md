@@ -37,7 +37,8 @@ All API error responses follow a consistent structure:
 {
   "error_code": "error code",
   "message": "Message for user",
-  "validation_errors": ["Validation error messages as an array of strings."]
+  "validation_errors": ["Validation error messages as an array of strings."],
+  "metadata": {}
 }
 ```
 
@@ -48,6 +49,20 @@ All API error responses follow a consistent structure:
 - **validation_errors**: (Optional) Array of strings with validation failure details
   - Only present for validation errors (422)
   - Contains specific field-level error messages
+- **metadata**: (Optional) Additional machine-readable context for the error, such as the offending stock assets. The same detail is returned when a job failure is surfaced through `GET /status/{jobId}`.
+
+### Common `error_code` values
+
+| HTTP status | `error_code`                                                       |
+| ----------- | ------------------------------------------------------------------ |
+| `400`       | `client_error`                                                     |
+| `401`       | `unauthorized_error`                                               |
+| `403`       | `access_error`                                                     |
+| `404`       | `not_found`                                                        |
+| `422`       | `validation_error`, or `stock_content_detected` (export-rendition) |
+| `429`       | `rate_limited`                                                     |
+| `500`       | `runtime_error`                                                    |
+| `503`       | `service_unavailable`                                              |
 
 ## Common Scenarios
 
@@ -66,11 +81,14 @@ All API error responses follow a consistent structure:
 ### Rate Limiting
 
 - **Symptom**: 429 Too Many Requests
+- **Common Causes**:
+  - Too many requests per minute to an endpoint (request rate limit)
+  - Your organization or account reached its usage limit for metered operations
 - **Resolution**:
-
   1. Implement exponential backoff
   2. Cache responses where possible
   3. Monitor usage patterns
+  4. If metered operations keep returning 429, contact Adobe to [request a higher usage limit](../rate-limits/index.md#usage-limits)
 
 ## Successful Response Examples
 
@@ -80,13 +98,15 @@ Your request has been completed.
 
 <CodeBlock slots="heading, code" repeat="3" languages="JSON, JSON, JSON" />
 
-#### GET /beta/tagged-documents
+#### GET /v1/tagged-documents
 
 ```json
 {
   "documents": [
     {
-      "id": "urn:aaid:sc:AP:0000aaaa-0000-000a-0000-000000aaaaaa",
+      "templateOrDocument": {
+        "creativeCloudFileId": "urn:aaid:sc:AP:0000aaaa-0000-000a-0000-000000aaaaaa"
+      },
       "name": "Sample Document",
       "thumbnailUrl": "https://aep-cs-blobstore-stage-jpn3-data.s3-ap-northeast-1.amazonaws.com/0daeb5c1-1f95-434e-8de1-16181b98e8fe?x-region=jpn3&x-version-id"
     }
@@ -98,12 +118,14 @@ Your request has been completed.
 }
 ```
 
-#### GET /beta/tagged-documents/\{documentId\}
+#### GET /v1/tagged-documents/\{documentId\}
 
 ```json
 {
   "name": "Sample Document",
-  "id": "urn:aaid:sc:AP:0000aaaa-0000-000a-0000-000000aaaaaa",
+  "templateOrDocument": {
+    "creativeCloudFileId": "urn:aaid:sc:AP:0000aaaa-0000-000a-0000-000000aaaaaa"
+  },
   "documentPages": [
     {
       "pageNumber": 1,
@@ -113,7 +135,7 @@ Your request has been completed.
         "width": 1080,
         "height": 1920
       },
-      "taggedElements": [
+      "dataFields": [
         {
           "name": "TagOne",
           "type": "text",
@@ -124,7 +146,8 @@ Your request has been completed.
           "size": {
             "width": 215.67306518554688,
             "height": 68.75729370117188
-          }
+          },
+          "text": "TagOne Value"
         },
         {
           "name": "TagTwo",
@@ -136,7 +159,8 @@ Your request has been completed.
           "size": {
             "width": 218.76632690429688,
             "height": 68.75729370117188
-          }
+          },
+          "text": "TagTwo Value"
         }
       ]
     }
@@ -150,7 +174,9 @@ Your request has been completed.
 {
   "jobId": "46f1039a-0822-4652-9a1b-b08b1a2b5173",
   "status": "succeeded",
-  "id": "urn:aaid:sc:AP:59a259d1-5c1e-3110-a6fb-00a00000000",
+  "templateOrDocument": {
+    "creativeCloudFileId": "urn:aaid:sc:AP:59a259d1-5c1e-3110-a6fb-00a00000000"
+  },
   "pageRenditionsResult": [
     {
       "renditionUrl": "https://aep-cs-blobstore-stage-jpn3-data.s3-ap-northeast-1.amazonaws.com/7e705f70-738e-40f9-b3ef-03b4b6089e9c?x-region=jpn3",
@@ -164,7 +190,7 @@ Your request has been completed.
 
 The request has been accepted for processing. Check the status using `GET /status/{jobId}`.
 
-#### POST /beta/generate-variation
+#### POST /v1/create-variation
 
 ```json
 {
@@ -185,27 +211,27 @@ The request has been accepted for processing. Check the status using `GET /statu
 
 These errors indicate issues with the request made by the client.
 
-| Error Code | Name                  | Message                                                                                                                                                                         | What to Do?                                                                                                                              |
-| ---------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `400`      | Bad Request           | We cannot process the request due to a client error.                                                                                                                            | Check the request syntax and ensure it includes all required parameters. Check out the [API references](../../api/index.md).          |
-| `401`      | Unauthorized          | The client needs to authenticate the request to move further.                                                                                                                   | Ensure that the authentication token is included and valid. Learn more about [authenticating your requests](../index.md#call-the-express-api). |
-| `403`      | Forbidden             | The server understands the request, but the client does not have permission to access the resource—missing or insufficient permissions for the authenticated user cause this.   | Ensure the token used is for the same user accessing the document. Check if the user has access to the requested document.               |
-| `404`      | Not Found             | The server could not find the requested resource. This error could happen if the requested URL or endpoint does not exist, is misspelled, or is inaccessible to the user.       | Check the URL and ensure the resource exists.                                                                                            |
-| `422`      | Unprocessable Content | The server understands the request but cannot process it due to semantic errors or invalid data. This error often happens when input is invalid or required fields are missing. | Review the validation errors for each endpoint and correct the request data accordingly.                                                 |
-| `429`      | Too Many Requests     | You have sent too many requests in a given time (rate limiting).                                                                                                                | Reduce the request rate and try again later. Learn more about [rate limits](../rate-limits/index.md).                                    |
+| Error Code | Name                  | Message                                                                                                                                                                         | What to Do?                                                                                                                                                                                                                              |
+| ---------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `400`      | Bad Request           | We cannot process the request due to a client error.                                                                                                                            | Check the request syntax and ensure it includes all required parameters. Check out the [API references](../../api/index.md).                                                                                                             |
+| `401`      | Unauthorized          | The client needs to authenticate the request to move further.                                                                                                                   | Ensure that the authentication token is included and valid. Learn more about [authenticating your requests](../index.md#call-the-express-api).                                                                                           |
+| `403`      | Forbidden             | The server understands the request, but the client does not have permission to access the resource—missing or insufficient permissions for the authenticated user cause this.   | Ensure the token used is for the same user accessing the document. Check if the user has access to the requested document.                                                                                                               |
+| `404`      | Not Found             | The server could not find the requested resource. This error could happen if the requested URL or endpoint does not exist, is misspelled, or is inaccessible to the user.       | Check the URL and ensure the resource exists.                                                                                                                                                                                            |
+| `422`      | Unprocessable Content | The server understands the request but cannot process it due to semantic errors or invalid data. This error often happens when input is invalid or required fields are missing. | Review the validation errors for each endpoint and correct the request data accordingly.                                                                                                                                                 |
+| `429`      | Too Many Requests     | You have sent too many requests in a given time (rate limiting), or your organization or account has reached its usage limit.                                                   | Reduce the request rate and try again later. If metered operations keep returning `429`, request a higher usage limit. Learn more about [rate limits](../rate-limits/index.md) and [usage limits](../rate-limits/index.md#usage-limits). |
 
 ### Validation Errors (`422`)
 
 In a `422` error, you will get validation errors specific to different endpoints.
 
-| Endpoint                                   | Validation Error Messages                                                                                                                                                                      | What to Do?                                                                                                             |
-| ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `GET /beta/tagged-documents`              | `json { "error_code": "validation_error", "message": "Validation error", "validation_errors": [ "start must not be less than 0" ] }`                                                           | Check for the page index and ensure that it is valid.                                                                   |
-| `GET /beta/tagged-documents/{documentId}` | `json { "error_code": "validation_error", "message": "Validation error", "validation_errors": [ "The 'start' value must be greater than or equal to 1", "start must be a positive number"] }`  | Check whether the index is valid.                                                                                       |
-| `POST /beta/generate-variation`           | `json { "error_code": "validation_error", "message": "Validation error", "validation_errors": [ "property variationDetail should not exist", "variationDetails must be a non-empty object"] }` | Check that the request body has the correct fields.                                                                     |
-| `POST /beta/export-rendition`             | `json { "error_code": "validation_error", "message": "Invalid start page. Document contains 1 pages" }`                                                                                        | Check whether the request page index is valid.                                                                          |
-|                                            | `json { "error_code": "validation_error", "message": "Validation error", "validation_errors": [ "options.format must be one of the following values: image/jpeg, image/png, video/mp4, or application/pdf" ] }`               | Check the chosen format is correct.                                                                               |
-| `GET /status/{jobId}`                      | `json { "error_code": "unknown_job_id", "message": "Unknown job Id" }`                                                                                                                         | Check the `jobId` requested is a valid id generated from `/beta/generate-variation` and `/beta/export-rendition` API. |
+| Endpoint                                     | Validation Error Messages                                                                                                                                                                                       | What to Do?                                                                                                                                   |
+| -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `GET /v1/tagged-documents`                   | `json { "error_code": "validation_error", "message": "Validation error", "validation_errors": [ "start must not be less than 0" ] }`                                                                            | Check for the page index and ensure that it is valid.                                                                                         |
+| `GET /v1/tagged-documents/{documentId}`      | `json { "error_code": "validation_error", "message": "Validation error", "validation_errors": [ "The 'start' value must be greater than or equal to 1", "start must be a positive number"] }`                   | Check whether the index is valid.                                                                                                             |
+| `POST /v1/export-rendition`                  | `json { "error_code": "validation_error", "message": "Invalid start page. Document contains 1 pages" }`                                                                                                         | Check whether the request page index is valid.                                                                                                |
+| `POST /beta/generate-variation` (deprecated) | `json { "error_code": "validation_error", "message": "Validation error", "validation_errors": [ "property variationDetail should not exist", "variationDetails must be a non-empty object"] }`                  | Check that the request body has the correct fields.                                                                                           |
+| `POST /beta/export-rendition` (deprecated)   | `json { "error_code": "validation_error", "message": "Validation error", "validation_errors": [ "options.format must be one of the following values: image/jpeg, image/png, video/mp4, or application/pdf" ] }` | Check the chosen format is correct. In V1, `options.format` is replaced by `options.type` and `options.mediaType`.                            |
+| `GET /status/{jobId}`                        | `json { "error_code": "unknown_job_id", "message": "Unknown job Id" }`                                                                                                                                          | Check the `jobId` requested is a valid id returned by an asynchronous endpoint, such as `/v1/create-variation` or `/v1/export-rendition`. |
 
 ### Server Errors (5xx)
 
@@ -220,25 +246,22 @@ These errors indicate issues with the server.
 
 Let us look at some examples.
 
-### Example 1: Handling a `401` Error for `GET /beta/tagged-documents`
+### Example 1: Handling a `401` Error for `GET /v1/tagged-documents`
 
 For example, one might see this error if the authentication token is not included or is invalid.
 
 **Request:**
 
 ```sh
-GET /beta/tagged-documents
+GET /v1/tagged-documents
 ```
 
 **Response:**
 
 ```json
 {
-  "error": {
-    "code": "401",
-    "message": "Unauthorized",
-    "details": "Authentication token is missing or invalid."
-  }
+  "error_code": "unauthorized_error",
+  "message": "Not authorized"
 }
 ```
 
@@ -247,11 +270,13 @@ GET /beta/tagged-documents
 **Corrected Request:**
 
 ```bash
-GET /beta/tagged-documents
+GET /v1/tagged-documents
 Authorization: Bearer your-auth-token
 ```
 
-### Example 2: Handling a `422` Error for `POST /beta/generate-variation`
+### Example 2: Handling a `422` Error for `POST /beta/generate-variation` (deprecated)
+
+Generate Variation is deprecated and only available on the Beta endpoint; use [Create Variation](../../guides/how-to/create-variation.md) for new integrations.
 
 #### Sample code 1
 
@@ -351,7 +376,7 @@ Authorization: Bearer your-auth-token
 }
 ```
 
-### Example 3: Handling a `422` Error for `POST /beta/export-rendition`
+### Example 3: Handling a `422` Error for `POST /v1/export-rendition`
 
 <CodeBlock slots="heading, code" repeat="2" languages="JSON, JSON" />
 
@@ -359,10 +384,13 @@ Authorization: Bearer your-auth-token
 
 ```json
 {
-  "id": "urn:aaid:sc:AP:59a259d1-5c1e-3110-a6fb-00a00000000",
-  "pages": "1-",
+  "templateOrDocument": {
+    "creativeCloudFileId": "urn:aaid:sc:AP:59a259d1-5c1e-3110-a6fb-00a00000000"
+  },
+  "pages": "10",
   "options": {
-    "format": "image/jpg"
+    "type": "image",
+    "mediaType": "image/jpeg"
   }
 }
 ```
@@ -372,23 +400,23 @@ Authorization: Bearer your-auth-token
 ```json
 {
   "error_code": "validation_error",
-  "message": "Validation error",
-  "validation_errors": [
-    "options.format must be one of the following values: image/jpeg, image/png, video/mp4, or application/pdf"
-  ]
+  "message": "Invalid start page. Document contains 1 pages"
 }
 ```
 
-**Solution:** Input the right format for `options`.
+**Solution:** Request only pages that exist in the document.
 
 **Corrected Request:**
 
 ```json
 {
-  "id": "urn:aaid:sc:AP:59a259d1-5c1e-3110-a6fb-00a00000000",
-  "pages": "1-",
+  "templateOrDocument": {
+    "creativeCloudFileId": "urn:aaid:sc:AP:59a259d1-5c1e-3110-a6fb-00a00000000"
+  },
+  "pages": "1",
   "options": {
-    "format": "image/jpeg"
+    "type": "image",
+    "mediaType": "image/jpeg"
   }
 }
 ```
@@ -412,18 +440,18 @@ async function makeApiRequest() {
     if (!response.ok) {
       const errorData = await response.json();
 
-      switch (errorData.error_code) {
-        case "401":
+      switch (response.status) {
+        case 401: // error_code: "unauthorized_error"
           // Handle authentication error
           await refreshToken();
           return makeApiRequest();
-        case "429":
+        case 429: // error_code: "rate_limited"
           // Handle rate limiting
-          const retryAfter = response.headers.get("Retry-After");
+          const retryAfter = Number(response.headers.get("Retry-After") ?? 60);
           await delay(retryAfter * 1000);
           return makeApiRequest();
         default:
-          throw new Error(`API Error: ${errorData.message}`);
+          throw new Error(`API Error (${errorData.error_code}): ${errorData.message}`);
       }
     }
 
@@ -479,25 +507,21 @@ def make_api_request():
 ### Error Handling
 
 1. **Always Include Required Headers**
-
    - Authorization token
    - x-request-id for request tracking
    - Content-Type for POST/PUT requests
 
 2. **Implement Retry Logic**
-
    - Use exponential backoff for rate limits
    - Handle token refresh automatically
    - Set maximum retry attempts
 
 3. **Log Error Details**
-
    - Include error code and message
    - Log request ID for tracking
    - Record timestamp and context
 
 4. **Validate Input**
-
    - Check required parameters
    - Validate data formats
    - Handle edge cases
@@ -505,13 +529,11 @@ def make_api_request():
 ### Security Considerations
 
 1. **Token Management**
-
    - Store tokens securely
    - Refresh before expiration
    - Never log sensitive data
 
 2. **Error Messages**
-
    - Don't expose internal details
    - Use generic messages for users
    - Log detailed errors server-side
