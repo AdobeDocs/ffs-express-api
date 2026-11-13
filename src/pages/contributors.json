@@ -73,16 +73,12 @@
     },
     {
       "page": "/getting-started/metering/",
-      "avatars": [
-        "https://avatars.githubusercontent.com/u/5939127?v=4"
-      ],
+      "avatars": ["https://avatars.githubusercontent.com/u/5939127?v=4"],
       "lastUpdated": "11/3/2026"
     },
     {
       "page": "/getting-started/preparing-for-production/",
-      "avatars": [
-        "https://avatars.githubusercontent.com/u/5939127?v=4"
-      ],
+      "avatars": ["https://avatars.githubusercontent.com/u/5939127?v=4"],
       "lastUpdated": "11/16/2026"
     },
     {
@@ -96,16 +92,12 @@
     },
     {
       "page": "/getting-started/support/",
-      "avatars": [
-        "https://avatars.githubusercontent.com/u/195011431?v=4"
-      ],
+      "avatars": ["https://avatars.githubusercontent.com/u/195011431?v=4"],
       "lastUpdated": "4/17/2026"
     },
     {
       "page": "/getting-started/support/best-practices/",
-      "avatars": [
-        "https://avatars.githubusercontent.com/u/195011431?v=4"
-      ],
+      "avatars": ["https://avatars.githubusercontent.com/u/195011431?v=4"],
       "lastUpdated": "4/17/2026"
     },
     {
@@ -146,30 +138,22 @@
     },
     {
       "page": "/guides/how-to/create-variation",
-      "avatars": [
-        "https://avatars.githubusercontent.com/u/5939127?v=4"
-      ],
+      "avatars": ["https://avatars.githubusercontent.com/u/5939127?v=4"],
       "lastUpdated": "11/5/2026"
     },
     {
       "page": "/guides/how-to/create-variation-with-bulk",
-      "avatars": [
-        "https://avatars.githubusercontent.com/u/5939127?v=4"
-      ],
+      "avatars": ["https://avatars.githubusercontent.com/u/5939127?v=4"],
       "lastUpdated": "11/3/2026"
     },
     {
       "page": "/guides/how-to/e2e-generate-edit-variant-oauth-s2s",
-      "avatars": [
-        "https://avatars.githubusercontent.com/u/5939127?v=4"
-      ],
+      "avatars": ["https://avatars.githubusercontent.com/u/5939127?v=4"],
       "lastUpdated": "10/27/2026"
     },
     {
       "page": "/guides/how-to/e2e-generate-edit-variant-oauth-web-app",
-      "avatars": [
-        "https://avatars.githubusercontent.com/u/5939127?v=4"
-      ],
+      "avatars": ["https://avatars.githubusercontent.com/u/5939127?v=4"],
       "lastUpdated": "10/27/2026"
     },
     {
@@ -210,16 +194,12 @@
     },
     {
       "page": "/guides/how-to/handle-webhook-events",
-      "avatars": [
-        "https://avatars.githubusercontent.com/u/5939127?v=4"
-      ],
+      "avatars": ["https://avatars.githubusercontent.com/u/5939127?v=4"],
       "lastUpdated": "11/3/2026"
     },
     {
       "page": "/guides/how-to/handle-webhook-events-api",
-      "avatars": [
-        "https://avatars.githubusercontent.com/u/5939127?v=4"
-      ],
+      "avatars": ["https://avatars.githubusercontent.com/u/5939127?v=4"],
       "lastUpdated": "10/27/2026"
     },
     {
@@ -234,9 +214,7 @@
     },
     {
       "page": "/guides/migration-beta-to-v1",
-      "avatars": [
-        "https://avatars.githubusercontent.com/u/5939127?v=4"
-      ],
+      "avatars": ["https://avatars.githubusercontent.com/u/5939127?v=4"],
       "lastUpdated": "11/16/2026"
     },
     {
