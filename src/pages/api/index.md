@@ -5,4 +5,4 @@ layout: none
 hideBreadcrumbNav: true
 ---
 
-<RedoclyAPIBlock src="/firefly-services/docs/express-api/ffs-express-api.json" hideTryItPanel scrollYOffset={64} generateCodeSamples="languages: [{ lang: 'curl' }, { lang: 'Node.js' }, { lang: 'JavaScript' }, {lang: 'Python'}]" />
+<RedoclyAPIBlock src="/firefly-services/docs/express-api/ffs-express-api.json" scrollYOffset={64} generateCodeSamples="languages: [{ lang: 'curl' }, { lang: 'Node.js' }, { lang: 'JavaScript' }, {lang: 'Python'}]" />

@@ -1,7 +1,7 @@
 {
-  "total": 22,
+  "total": 25,
   "offset": 0,
-  "limit": 22,
+  "limit": 25,
   "data": [
     {
       "page": "/",
@@ -20,7 +20,7 @@
         "https://avatars.githubusercontent.com/u/195011431?v=4",
         "https://avatars.githubusercontent.com/u/41382203?v=4"
       ],
-      "lastUpdated": "4/24/2026"
+      "lastUpdated": "7/2/2026"
     },
     {
       "page": "/config",
@@ -31,7 +31,7 @@
         "https://avatars.githubusercontent.com/u/359935?v=4",
         "https://avatars.githubusercontent.com/u/41382203?v=4"
       ],
-      "lastUpdated": "5/15/2026"
+      "lastUpdated": "9/4/2026"
     },
     {
       "page": "/getting-started/",
@@ -45,10 +45,12 @@
     {
       "page": "/getting-started/changelog/",
       "avatars": [
+        "https://avatars.githubusercontent.com/u/5939127?v=4",
+        "https://avatars.githubusercontent.com/u/113968869?v=4",
         "https://avatars.githubusercontent.com/u/77717258?v=4",
         "https://avatars.githubusercontent.com/u/195011431?v=4"
       ],
-      "lastUpdated": "4/29/2026"
+      "lastUpdated": "10/23/2026"
     },
     {
       "page": "/getting-started/create-credentials/",
@@ -57,7 +59,7 @@
         "https://avatars.githubusercontent.com/u/77717258?v=4",
         "https://avatars.githubusercontent.com/u/195011431?v=4"
       ],
-      "lastUpdated": "5/15/2026"
+      "lastUpdated": "6/26/2026"
     },
     {
       "page": "/getting-started/error-logging/",
@@ -69,10 +71,11 @@
     {
       "page": "/getting-started/rate-limits/",
       "avatars": [
+        "https://avatars.githubusercontent.com/u/5939127?v=4",
         "https://avatars.githubusercontent.com/u/77717258?v=4",
         "https://avatars.githubusercontent.com/u/195011431?v=4"
       ],
-      "lastUpdated": "4/27/2026"
+      "lastUpdated": "6/22/2026"
     },
     {
       "page": "/getting-started/support/",
@@ -121,6 +124,13 @@
       "lastUpdated": "4/24/2026"
     },
     {
+      "page": "/guides/how-to/create-variation",
+      "avatars": [
+        "https://avatars.githubusercontent.com/u/5939127?v=4"
+      ],
+      "lastUpdated": "8/13/2026"
+    },
+    {
       "page": "/guides/how-to/e2e-generate-edit-variant-oauth-s2s",
       "avatars": [
         "https://avatars.githubusercontent.com/u/5939127?v=4"
@@ -146,18 +156,20 @@
     {
       "page": "/guides/how-to/export-document",
       "avatars": [
+        "https://avatars.githubusercontent.com/u/5939127?v=4",
         "https://avatars.githubusercontent.com/u/195011431?v=4",
         "https://avatars.githubusercontent.com/u/41382203?v=4"
       ],
-      "lastUpdated": "4/17/2026"
+      "lastUpdated": "8/13/2026"
     },
     {
       "page": "/guides/how-to/generate-variations",
       "avatars": [
+        "https://avatars.githubusercontent.com/u/5939127?v=4",
         "https://avatars.githubusercontent.com/u/195011431?v=4",
         "https://avatars.githubusercontent.com/u/41382203?v=4"
       ],
-      "lastUpdated": "4/17/2026"
+      "lastUpdated": "8/13/2026"
     },
     {
       "page": "/guides/how-to/get-tagged-documents",
@@ -166,6 +178,20 @@
         "https://avatars.githubusercontent.com/u/41382203?v=4"
       ],
       "lastUpdated": "4/17/2026"
+    },
+    {
+      "page": "/guides/how-to/handle-webhook-events",
+      "avatars": [
+        "https://avatars.githubusercontent.com/u/5939127?v=4"
+      ],
+      "lastUpdated": "10/13/2026"
+    },
+    {
+      "page": "/guides/how-to/handle-webhook-events-api",
+      "avatars": [
+        "https://avatars.githubusercontent.com/u/5939127?v=4"
+      ],
+      "lastUpdated": "10/13/2026"
     },
     {
       "page": "/guides/how-to/tag-documents",

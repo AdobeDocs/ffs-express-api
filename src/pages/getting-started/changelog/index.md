@@ -23,12 +23,48 @@ keywords:
   - Authentication and authorization
 contributors:
   - https://github.com/nimithajalal
+  - https://github.com/undavide
 hideBreadcrumbNav: true
 ---
 
 # Changelog
 
-A list of updates to Adobe Express API.
+Release notes for the Adobe Express API, with the newest release first.\<br>\<br>\<a href="https://raw.githubusercontent.com/AdobeDocs/ffs-express-api/refs/heads/main/src/pages/feed.xml" style="display: inline-flex; align-items: center; gap: 6px;">\<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20">\<circle cx="6.18" cy="17.82" r="2.18" fill="#eb1000"/>\<path d="M4 4.44v2.83c7.03 0 12.73 5.7 12.73 12.73h2.83c0-8.59-6.97-15.56-15.56-15.56zm0 5.66v2.83c3.9 0 7.07 3.17 7.07 7.07h2.83c0-5.47-4.43-9.9-9.9-9.9z" fill="#eb1000"/>\</svg>\<span>Subscribe via RSS\</span>\</a>
+
+## 2026-10-16
+
+### Changed
+
+- **Webhook support** has evolved, moving from status-based to operation-based events. Please see the [updated guide](../../guides/how-to/handle-webhook-events-api.md) for details.
+
+<InlineAlert variant="warning" slots="text" />
+
+You will need to update your Events registration if you were using the previous status-based webhooks.
+
+## 2026-09-11
+
+### Added
+
+- **Webhook support**: Register a webhook to receive real-time job status notifications for **Create Variation** (`POST /beta/create-variation`) and **Export Rendition** (`POST /beta/export-rendition`). See the new [Handle Webhook Events guide](../../guides/how-to/handle-webhook-events-api.md).
+
+## 2026-08-13
+
+### Added
+
+- **Create Variation API (beta)**: New `POST /beta/create-variation` endpoint that creates a document variation and returns one or more outputs in a single asynchronous call.
+  - **Typed element mappings**: replace text, image, and video elements via `textMappings`, `imageMappings`, and `videoMappings`.
+  - **Per-page overrides**: apply different values to specific pages with `pageOverrides`.
+  - **Multiple output formats in one request**: request any combination of `image`, `document`, `pdf`, and `video` outputs from the same variation, each with its own page range and format options.
+  - Returns a `jobId` and `statusUrl`; poll `GET /status/{jobId}` for results. Rate-limited to 5 requests per minute (rpm) by default during beta.
+  - See the new [Create Document Variations guide](../../guides/how-to/create-variation.md) and the [API reference](../../api/index.md).
+
+<InlineAlert variant="warning" slots="text" />
+
+Please note that the Create Variation API is currently in beta and may be subject to changes before general availability.
+
+### Deprecated
+
+- **Generate Variation**: The [Generate Variation](../../guides/how-to/generate-variations.md) (`POST /beta/generate-variation`) endpoint is deprecated in favor of Create Variation, which folds document creation and rendition export into a single call. It remains available during beta; plan to migrate to `create-variation` ahead of general availability.
 
 ## 2026-04-24
 
@@ -73,7 +109,6 @@ A list of updates to Adobe Express API.
   - Enhanced error logging documentation to include video format validation
 
 - **API Specification Updates**: All OpenAPI specifications now include consistent video support
-
   - `beta-generate-variation.json`: Video tag type and mapping support
   - `beta-tagged-documents.json` and `beta-tagged-documents-documentId.json`: Video tag type support
   - `beta-export-rendition.json`: Already had comprehensive video support

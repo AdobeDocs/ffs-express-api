@@ -71,7 +71,7 @@ A sample `curl` request and response is included below.
 curl --request POST \
   --url 'https://express-api.adobe.io/beta/export-rendition' \
   -H 'Accept: */*' \
-  -H 'Authorization: Bearer YOUR_AUTH_TOKEN_HERE' \  
+  -H 'Authorization: Bearer YOUR_AUTH_TOKEN_HERE' \
   -H 'X-Api-Key: YOUR_API_KEY_HERE' \
   --data '{
       "id": "<documentId>",
@@ -104,7 +104,7 @@ Now, use the [/status](../../api/index.md) endpoint to check the status of the e
 ```sh
 curl -i -X GET \
   --url 'https://express-api.adobe.io/status/6db69b7c-e3fc-46ef-bdde-b5314d04f1fd' \
-  -H 'Authorization: Bearer YOUR_AUTH_TOKEN_HERE' \  
+  -H 'Authorization: Bearer YOUR_AUTH_TOKEN_HERE' \
   -H 'X-Api-Key: YOUR_API_KEY_HERE' \
 ```
 
@@ -147,39 +147,37 @@ touch index.mjs
 Next, open the `index.mjs` and add the following code to export a document rendition with the supplied variation details. Replace the `id`, `pages` and `options` with your own values.
 
 ```js
-let BASE = 'https://express-api.adobe.io';
+let BASE = "https://express-api.adobe.io";
 
 async function exportRendition(id, pages, options) {
+  let body = {
+    id,
+    pages,
+    options,
+  };
 
-    let body = {
-        id, 
-        pages,
-        options     
-    }
-    
-    let resp = await fetch(`${BASE}/beta/export-rendition`, {
-        method:'POST',
-        headers: {
-            'Authorization': `Bearer ${process.env.AUTH_TOKEN}`,
-            'X-API-KEY': process.env.API_KEY,
-            'Content-Type':'application/json'
-        }, 
-        body: JSON.stringify(body)
-    });
-    
-    return await resp.json();
+  let resp = await fetch(`${BASE}/beta/export-rendition`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${process.env.AUTH_TOKEN}`,
+      "X-API-KEY": process.env.API_KEY,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+
+  return await resp.json();
 }
 
 const id = "urn:aaid:sc:VA6C2:4e4cccff-055f-3b57-8196-607cc3a1e4f2";
 const pages = "1-3";
-const options = {        
-    "format": "image/jpeg",
-    "size": 1024
+const options = {
+  format: "image/jpeg",
+  size: 1024,
 };
 
 let result = await exportRendition(id, pages, options);
 console.log(result);
-
 ```
 
 ### Step 3: Run the Script
@@ -198,45 +196,50 @@ Next, update your `index.mjs` file with the following code, which polls for the 
 ```js
 // If the status URL is present, poll the job until it is complete
 if (result.statusUrl) {
-    let jobResult = await pollJob(result.statusUrl, process.env.API_KEY, process.env.AUTH_TOKEN);
-    console.log(jobResult);
-    if (jobResult.status === 'succeeded') {
-        console.log(`Rendition URL: ${jobResult.pageRenditionsResult[0].renditionUrl}`);
-        open(jobResult.pageRenditionsResult[0].renditionUrl);
-    } else {
-        console.log(`Job failed with status: ${jobResult.status}`);
-    }
+  let jobResult = await pollJob(
+    result.statusUrl,
+    process.env.API_KEY,
+    process.env.AUTH_TOKEN,
+  );
+  console.log(jobResult);
+  if (jobResult.status === "succeeded") {
+    console.log(
+      `Rendition URL: ${jobResult.pageRenditionsResult[0].renditionUrl}`,
+    );
+    open(jobResult.pageRenditionsResult[0].renditionUrl);
+  } else {
+    console.log(`Job failed with status: ${jobResult.status}`);
+  }
 }
 
 async function delay(x) {
-    return new Promise(resolve => {
-        setTimeout(() => {
-            resolve();
-        }, x);
-    });
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, x);
+  });
 }
 
 async function pollJob(jobUrl, id, token) {
-    let status = '';
+  let status = "";
 
-    while(status !== 'succeeded' && status !== 'failed') {
+  while (status !== "succeeded" && status !== "failed") {
+    let resp = await fetch(jobUrl, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "x-api-key": id,
+      },
+    });
 
-        let resp = await fetch(jobUrl, {
-            headers: {
-                'Authorization':`Bearer ${token}`,
-                'x-api-key': id
-            }
-        });
+    let data = await resp.json();
+    status = data.status;
 
-        let data = await resp.json();
-        status = data.status;
+    // delay is a utility to 'pause' for X ms
+    if (status !== "succeeded" && status !== "failed") await delay(1000);
+    if (status === "succeeded") return data;
+  }
 
-        // delay is a utility to 'pause' for X ms
-        if (status !== 'succeeded' && status !== 'failed') await delay(1000);
-        if (status === 'succeeded') return data;
-    }
-
-    return status;
+  return status;
 }
 ```
 
@@ -245,81 +248,85 @@ async function pollJob(jobUrl, id, token) {
 Below is the complete script for exporting document renditions in Node.js:
 
 ```js
-import open from 'open';
+import open from "open";
 
-let BASE = 'https://express-api.adobe.io';
+let BASE = "https://express-api.adobe.io";
 
 async function exportRendition(id, pages, options) {
+  let body = {
+    id,
+    pages,
+    options,
+  };
 
-    let body = {
-        id, 
-        pages,
-        options     
-    }
-    
-    let resp = await fetch(`${BASE}/beta/export-rendition`, {
-        method:'POST',
-        headers: {
-            'Authorization': `Bearer ${process.env.AUTH_TOKEN}`,
-            'X-API-KEY': process.env.API_KEY,
-            'Content-Type':'application/json'
-        }, 
-        body: JSON.stringify(body)
-    });
-    
-    return await resp.json();
+  let resp = await fetch(`${BASE}/beta/export-rendition`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${process.env.AUTH_TOKEN}`,
+      "X-API-KEY": process.env.API_KEY,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+
+  return await resp.json();
 }
 
 const id = "urn:aaid:sc:VA6C2:4e4cccff-055f-3b57-8196-607cc3a1e4f2";
 const pages = "1-3";
 const options = {
-    "format": "image/jpeg",
-    "size": 1024
+  format: "image/jpeg",
+  size: 1024,
 };
 
 let result = await exportRendition(id, pages, options);
 console.log(result);
 
 if (result.statusUrl) {
-    let jobResult = await pollJob(result.statusUrl, process.env.API_KEY, process.env.AUTH_TOKEN);
-    console.log(jobResult);
-    if (jobResult.status === 'succeeded') {
-        console.log(`Rendition URL: ${jobResult.pageRenditionsResult[0].renditionUrl}`);
-        open(jobResult.pageRenditionsResult[0].renditionUrl);
-    } else {
-        console.log(`Job failed with status: ${jobResult.status}`);
-    }
+  let jobResult = await pollJob(
+    result.statusUrl,
+    process.env.API_KEY,
+    process.env.AUTH_TOKEN,
+  );
+  console.log(jobResult);
+  if (jobResult.status === "succeeded") {
+    console.log(
+      `Rendition URL: ${jobResult.pageRenditionsResult[0].renditionUrl}`,
+    );
+    open(jobResult.pageRenditionsResult[0].renditionUrl);
+  } else {
+    console.log(`Job failed with status: ${jobResult.status}`);
+  }
 }
 
 async function delay(x) {
-    return new Promise(resolve => {
-        setTimeout(() => {
-            resolve();
-        }, x);
-    });
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, x);
+  });
 }
 
 async function pollJob(jobUrl, id, token) {
-    let status = '';
+  let status = "";
 
-    while(status !== 'succeeded' && status !== 'failed') {
+  while (status !== "succeeded" && status !== "failed") {
+    let resp = await fetch(jobUrl, {
+      headers: {
+        Authorization: `Bearer ${process.env.AUTH_TOKEN}`,
+        "x-api-key": process.env.API_KEY,
+      },
+    });
 
-        let resp = await fetch(jobUrl, {
-            headers: {
-                'Authorization': `Bearer ${process.env.AUTH_TOKEN}`,
-                'x-api-key': process.env.API_KEY,
-            }
-        });
+    let data = await resp.json();
+    status = data.status;
 
-        let data = await resp.json();
-        status = data.status;
+    // delay is a utility to 'pause' for X ms
+    if (status !== "succeeded" && status !== "failed") await delay(1000);
+    if (status === "succeeded") return data;
+  }
 
-        // delay is a utility to 'pause' for X ms
-        if (status !== 'succeeded' && status !== 'failed') await delay(1000);
-        if (status === 'succeeded') return data;
-    }
-
-    return status;
+  return status;
 }
 ```
 

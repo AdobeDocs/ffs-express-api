@@ -11,6 +11,7 @@ keywords:
   - Developer documentation
 contributors:
   - https://github.com/nimithajalal
+  - https://github.com/undavide
 hideBreadcrumbNav: true
 ---
 
@@ -38,7 +39,7 @@ Adobe Express API supports three authentication flows. Pick the one that matches
 | **OAuth Web App**               | Web apps with a frontend **and** a backend server | Yes (stored on your server) | End user          |
 | **OAuth Single-page App (SPA)** | Browser-only apps with no backend                 | No (uses PKCE)              | End user          |
 
-Learn more about [authentication](https://developer.adobe.com/developer-console/docs/guides/authentication/UserAuthentication/) in the Adobe Developer Console docs.
+Learn more about [authentication](https://developer.adobe.com/developer-console/docs/guides/authentication/UserAuthentication) in the Adobe Developer Console docs.
 
 ## Set up your project
 
@@ -52,8 +53,7 @@ Sign in at [Adobe Developer Console](https://developer.adobe.com/console/home), 
 
 On the Adobe Express API product card, click **Create project**.
 
-![Express API product card](../images/dev-console.png)
-_Adobe Express API product card in the Developer Console_
+![Express API product card](../images/create-credentials--developer-console.png)
 
 **3. Register your project name**
 
@@ -69,7 +69,7 @@ To call the Adobe Express API, developers need a valid client ID (API key) and a
 
 ### Server-to-Server
 
-Server-to-Server authentication lets your backend generate access tokens and call Adobe APIs on behalf of your organization using the OAuth 2.0 `client_credentials` grant. The steps below follow the same Developer Console pattern used across Firefly Services APIs. For the full walkthrough—including console access, scopes, and sample token requests—see [Getting started with Adobe Firefly Services](https://developer.adobe.com/firefly-services/docs/guides/get-started/).
+Server-to-Server authentication lets your backend generate access tokens and call Adobe APIs on behalf of your organization using the OAuth 2.0 `client_credentials` grant. The steps below follow the same Developer Console pattern used across Firefly Services APIs. For the full walkthrough—including console access, scopes, and sample token requests—see [Getting started with Adobe Firefly Services](https://developer.adobe.com/firefly-services/docs/guides/get-started).
 
 **1. Add the Adobe Express API**
 
@@ -80,16 +80,32 @@ Server-to-Server authentication lets your backend generate access tokens and cal
 
 Select the product profiles your admin assigned for Express. These control what the credential can access in your organization.
 
+![Server-to-Server Product Profiles](../images/create-credentials--product-profiles-1.png)
+
+<InlineAlert variant="info" slots="text" />
+
+Product profiles must include **Adobe Express**, **Adobe Firefly Services**, and **non-Premium Fonts** access. As shown below, a **Default Free Membership** and **Firefly Creative Production for Enterprise** configurations will suffice. Please note that access to Premium Fonts will cause a rejection.
+
+![Server-to-Server Product Profiles selection](../images/create-credentials--product-profiles-2.png)
+
+<InlineAlert variant="warning" slots="heading, text1, text2" />
+
+#### Admin Console Product Provisioning
+
+If you have problems finding the correct Product Profiles in the Developer Console, ask your administrator to verify that the correct Products have been assigned to your User in the Admin Console.
+
+![Admin Console User Products](../images/create-credentials--admin-console.png)
+
 **3. Save and retrieve credentials**
 
 Click **Save configured API**. On the credential overview, copy your **client ID (API key)** and **client secret**, and note the **technical account email**—you'll need it for document and asset access.
 
-![Server-to-Server Credentials](../images/server-credentials.png)
+![Server-to-Server Credentials](../images/create-credentials--server-credentials.png)
 _Server-to-Server credentials overview showing client ID (API key) and technical account email_
 
 **4. Generate access tokens**
 
-Use the token endpoint and scopes for your credential (see **Generate access token** in the [Firefly Services getting started](https://developer.adobe.com/firefly-services/docs/guides/get-started/) guide linked above). When calling Express API, send the token and client ID as described in [Authentication – Call the Express API](../index.md#call-the-express-api). Store your client secret only on the server.
+Use the token endpoint and scopes for your credential (see **Generate access token** in the [Firefly Services getting started](https://developer.adobe.com/firefly-services/docs/guides/get-started) guide linked above). When calling Express API, send the token and client ID as described in [Authentication – Call the Express API](../index.md#call-the-express-api). Store your client secret only on the server.
 
 **5. Grant the technical account access to documents and assets**
 
@@ -121,7 +137,7 @@ Provide a **Default Redirect URI** and a **Redirect URI pattern**. These are the
 - On the credential overview you'll see the **client ID (API key)**.
 - Select **OAuth Web App** from the left navigation to view or retrieve your **client secret**.
 
-![OAuth WebApp Credentials](../images/oauth-web-credentials.png)
+![OAuth WebApp Credentials](../images/create-credentials--oauth-web-credentials.png)
 _OAuth Web App credentials overview showing client ID (API key) and secret retrieval_
 
 **4. Manage beta access**
@@ -153,8 +169,7 @@ Provide a **Default Redirect URI** and a **Redirect URI pattern**. These are the
 
 Click **Save configured API**. On the next screen you'll see your **client ID (API key)**. No client secret is issued for SPA credentials.
 
-![OAuth SPA Credentials](../images/oauth-spa-credentials.png)
-_OAuth SPA credentials overview showing client ID (API key)_
+![OAuth SPA Credentials](../images/create-credentials--oauth-spa-credentials.png)
 
 **4. Manage beta access**
 
@@ -176,12 +191,10 @@ Once you push a Single-page App project to production, you cannot move it back i
 
 When you finish development, click **Push to production**.
 
-![Push to prod](../images/push-to-prod.png)
-_Project overview showing push to production button_
+![Push to prod](../images/create-credentials--spa-push-to-prod.png)
 
 ## User consent flow
 
 When users authenticate through OAuth Web App or OAuth Single-page App, they see a consent screen. Users must click **Allow Access** to grant the requested permissions.
 
-![OAuth Consent Screen](../images/oauth-consent.png)
-_Example of the OAuth consent screen shown to users_
+![OAuth Consent Screen](../images/create-credentials--oauth-consent.png)
