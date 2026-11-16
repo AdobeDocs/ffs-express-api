@@ -8,6 +8,7 @@ keywords:
 contributors:
   - https://github.com/hollyschinsky
   - https://github.com/nimithajalal
+  - https://github.com/undavide
 hideBreadcrumbNav: true
 ---
 
@@ -46,7 +47,7 @@ API rate limits control how many requests you can make and how frequently. Proce
 
 ### What is the Adobe Express API?
 
-The Adobe Express API is a set of RESTful APIs that let you interact with Adobe Express programmatically. Adobe Express is a web-based design tool for creating professional-quality graphics, videos, and web pages. The API provides endpoints for creating, updating, and managing documents, and for retrieving information about tagged elements.
+The Adobe Express API lets you bring Adobe Express creation capabilities into your applications and workflows through a REST API. Use it to enable self-service content creation, automate content production at scale, and integrate creation into broader workflows. This documentation covers how to get started, best practices, and the API's current limitations.
 
 ### What use cases does the Adobe Express API support?
 

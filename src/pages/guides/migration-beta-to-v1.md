@@ -30,7 +30,7 @@ V1 and Beta coexist during the transition: every `/beta/` endpoint stays callabl
 
 ## Before you start
 
-Your existing credentials keep working. V1 uses the same host (`https://express-api.adobe.io`), the same `X-API-KEY` and `Authorization: Bearer` headers, and the same access scopes as Beta, so you do not need to re-issue tokens or touch your auth code. See [Create credentials](../getting-started/create-credentials/index.md) if you need a new project.
+V1 uses the same host (`https://express-api.adobe.io`), the same `X-API-KEY` and `Authorization: Bearer` headers, and the same access scopes as Beta, so you do not need to touch your auth code. You will need to **create new credentials for V1 projects**, though, as existing Beta credentials will not automatically work for V1. See [Create credentials](../getting-started/create-credentials/index.md) for more information.
 
 Rate limits are not part of this migration and are not defined in the API spec itself; do not hard-code an assumption about V1 throughput. See [Rate limits](../getting-started/rate-limits/index.md) for the current limits.
 

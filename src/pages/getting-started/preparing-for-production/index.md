@@ -21,7 +21,7 @@ Before you deploy an Adobe Express API integration at scale, plan for both reque
 
 Access is self-service through the Adobe Developer Console; see [Create credentials](../create-credentials/index.md). Initial limits are **intentionally conservative** and **designed for evaluation and testing**.
 
-Test your integration first and validate its workflow and outputs. Before large-scale deployment, discuss your expected usage and capacity requirements with Adobe as part of launch planning—capacity increases are managed collaboratively.
+Test your integration first and validate its workflow and outputs. Before deploying at scale, please contact your account manager or email [`express-api-support@adobe.com`](mailto:express-api-support@adobe.com) to discuss moving your application to production. As part of launch planning, share your expected usage and capacity needs so we can work together to plan any capacity increases.
 
 ## Rate limits, processing capacity, and queues
 
@@ -53,9 +53,7 @@ These are _substitution_ limits, not _request-rate_ limits. For the mapping fiel
 
 ## Production workload discussions
 
-Before large-scale deployment, contact your account manager or use the [Express API Rate Limit Increase Form](https://www.adobe.com/go/express-api-ratelimiting) to discuss your expected usage and capacity needs.
-
-Useful details to share include your expected request volume, peak demand, output formats (especially PDF), and launch timing. Include what you learned from testing, such as processing times and errors. Some limits may be configurable for your organization as part of capacity-planning discussions with Adobe.
+Before large-scale deployment, contact your account manager or email [`express-api-support@adobe.com`](mailto:express-api-support@adobe.com) to discuss transitioning your application to production. Useful details to share include your expected request volume, peak demand, output formats (especially PDF), and launch timing. Include what you learned from testing, such as processing times and errors. Some limits may be configurable for your organization as part of capacity-planning discussions with Adobe.
 
 ## Related guides
 

@@ -30,7 +30,7 @@ If you're interested in using the Adobe Express APIs in production for new proje
 
 <Announcement slots="button" variant="secondary"/>
 
-- [Contact us here!](https://airtable.com/appu5RTWgdM95jynx/pagyuT1qspNJcPU2E/form)
+- [Contact us here!](https://airtable.com/appiNBn2w6uT0cpkR/pagqvW9TEvL8Tl4GE/form)
 
 <Resources slots="text, links"/>
 
