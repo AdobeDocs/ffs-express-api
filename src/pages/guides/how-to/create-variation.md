@@ -27,7 +27,7 @@ Learn how to create document variations by mapping tagged data fields, optionall
 
 #### V1 API
 
-Create Variation is available on the V1 endpoint, the generally-available-track successor to the Beta API. V1 and Beta coexist during the transition—see [Migrate from Beta to V1](../migration-beta-to-v1.md) if you have an existing Beta integration.
+Create Variation is available on the V1 endpoint, the generally-available-track successor to the Beta API. V1 endpoints support Server-to-Server authentication only; OAuth Web App and SPA user authentication work with Beta endpoints. V1 and Beta coexist during the transition—see [Migrate from Beta to V1](../migration-beta-to-v1.md) if you have an existing Beta integration.
 
 The Create Variation API (`POST /v1/create-variation`) takes a tagged Express template, replaces its tagged data fields with your values, and produces one or more outputs. The process is asynchronous:
 

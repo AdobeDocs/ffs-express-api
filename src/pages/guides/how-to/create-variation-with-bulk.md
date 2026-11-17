@@ -67,7 +67,7 @@ Generate Variation is deprecated in favor of Create Variation and has no V1 endp
 
 ## Prerequisites
 
-- An Adobe Developer Console project with the **Adobe Express API** added, and a valid access token plus API key. See [Create credentials](../../getting-started/create-credentials/index.md).
+- A valid Server-to-Server access token and API key for V1. See [Create credentials](../../getting-started/create-credentials/index.md).
 - At least one tagged Express document you own. Tag elements using **Data Fields**, as described [in this guide](./tag-documents.md).
 - For image and video mappings, pre-signed URLs on an allowed domain (AWS S3, Azure Blob Storage, or Dropbox).
 

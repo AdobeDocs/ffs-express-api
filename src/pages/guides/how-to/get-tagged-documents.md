@@ -38,7 +38,7 @@ https://express.adobe.com/id/urn:aaid:sc:...
 
 **Prepare the Request Payload**:
 
-Use the following `curl` command to fetch tagged documents:
+Use the following `curl` command with a Server-to-Server access token for this V1 request:
 
 <CodeBlock slots="heading, code" repeat="2" languages="CURL, JSON" />
 

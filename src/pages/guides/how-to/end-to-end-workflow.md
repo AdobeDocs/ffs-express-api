@@ -44,7 +44,7 @@ The example script provided performs the following tasks:
 ## Prerequisites
 
 - Node.js 18+ installed on your machine (the script uses built-in `fetch`).
-- Environment variables `AUTH_TOKEN` and `API_KEY` set with appropriate values.
+- Environment variables `AUTH_TOKEN` (a Server-to-Server access token for V1) and `API_KEY` set with appropriate values.
 
 ## Steps
 

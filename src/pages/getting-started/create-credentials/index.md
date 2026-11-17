@@ -39,6 +39,10 @@ Adobe Express API supports three authentication flows. Pick the one that matches
 | **OAuth Web App**               | Web apps with a frontend **and** a backend server | Yes (stored on your server) | End user          |
 | **OAuth Single-page App (SPA)** | Browser-only apps with no backend                 | No (uses PKCE)              | End user          |
 
+<InlineAlert variant="warning" slots="text" />
+
+V1 endpoints support Server-to-Server authentication only. OAuth Web App and SPA user authentication work with Beta endpoints; V1 support may return in the future.
+
 Learn more about [authentication](https://developer.adobe.com/developer-console/docs/guides/authentication/UserAuthentication) in the Adobe Developer Console docs.
 
 ## Set up your project

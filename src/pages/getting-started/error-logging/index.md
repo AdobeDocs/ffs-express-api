@@ -265,7 +265,7 @@ GET /v1/tagged-documents
 }
 ```
 
-**Solution:** Include a valid authentication token in the request header.
+**Solution:** Include a valid Server-to-Server access token in the request header. User authentication tokens work with Beta endpoints only.
 
 **Corrected Request:**
 

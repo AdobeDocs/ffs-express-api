@@ -36,7 +36,7 @@ The Express API endpoints currently only operate on the Express documents tagged
 Before you begin:
 
 1. **Adobe Express Account**: Ensure you have access to [Adobe Express](https://new.express.adobe.com/)
-2. **Authentication**: Obtain an access token with `openid`, `AdobeID`, and `ee.express_api` scopes. See [authentication documentation](../getting-started/index.md)
+2. **Authentication**: V1 endpoints support Server-to-Server authentication only. OAuth Web App and SPA user authentication work with Beta endpoints; V1 support may return in the future. See [authentication documentation](../getting-started/index.md).
 3. **API Key**: [Register your application](https://developer.adobe.com/console) to receive an API key
 4. **Required Headers**: Include these in every API request:
 

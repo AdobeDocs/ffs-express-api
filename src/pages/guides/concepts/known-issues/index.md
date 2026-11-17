@@ -26,7 +26,7 @@ This document outlines specific considerations, known issues, and limitations as
 
 ### Authentication
 
-The APIs require an API key (`X-API-KEY`) and bearer token for authentication.
+V1 endpoints require an API key (`X-API-KEY`) and a Server-to-Server bearer token. OAuth Web App and SPA user authentication work with Beta endpoints only.
 
 - _Example_: When making a request, include the following headers:
 

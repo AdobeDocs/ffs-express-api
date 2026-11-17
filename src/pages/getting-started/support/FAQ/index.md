@@ -29,7 +29,7 @@ Answers to the most common questions about the Adobe Express API. If you don't s
 
 ### How do I use the Adobe Express API?
 
-First, get your API key and access token. Then send requests to the API endpoints using the appropriate HTTP methods and parameters. See the [Getting Started](../../../guides/index.md) guide for step-by-step instructions.
+For V1 endpoints, use a Server-to-Server access token. OAuth Web App and SPA user authentication work with Beta endpoints only. See the [Getting Started](../../../guides/index.md) guide for step-by-step instructions.
 
 ### Can I request a higher rate limit?
 

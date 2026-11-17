@@ -24,13 +24,13 @@ Move your Adobe Express API integration from the `/beta/` endpoints to the gener
 
 #### What's changing
 
-V1 is the GA successor to the Beta API. Migrating is mostly a one-segment path change (`/beta/` to `/v1/`) plus a few request- and response-field renames. Authentication, the host, and every query and path parameter are unchanged.
+V1 is the GA successor to the Beta API. Migrating is mostly a one-segment path change (`/beta/` to `/v1/`) plus a few request- and response-field renames. V1 supports Server-to-Server authentication only; OAuth Web App and SPA user authentication work with Beta endpoints and may return to V1 in the future.
 
 V1 and Beta coexist during the transition: every `/beta/` endpoint stays callable (the V1 spec marks them `deprecated`), so you can migrate one call at a time. Beta will be removed after V1 is generally available, with advance notice, in the future.
 
 ## Before you start
 
-V1 uses the same host (`https://express-api.adobe.io`), the same `X-API-KEY` and `Authorization: Bearer` headers, and the same access scopes as Beta, so you do not need to touch your auth code. You will need to **create new credentials for V1 projects**, though, as existing Beta credentials will not automatically work for V1. See [Create credentials](../getting-started/create-credentials/index.md) for more information.
+V1 uses the same host (`https://express-api.adobe.io`) and request headers as Beta. Create new Server-to-Server credentials for V1; existing Beta credentials do not automatically work for V1. See [Create credentials](../getting-started/create-credentials/index.md) for more information.
 
 Rate limits are not part of this migration and are not defined in the API spec itself; do not hard-code an assumption about V1 throughput. See [Rate limits](../getting-started/rate-limits/index.md) for the current limits.
 

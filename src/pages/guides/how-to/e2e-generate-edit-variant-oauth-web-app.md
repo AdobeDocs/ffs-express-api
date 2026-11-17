@@ -21,6 +21,10 @@ hideBreadcrumbNav: true
 
 This guide walks through a complete end-to-end workflow using OAuth Web App authentication, covering template selection, variation generation, and final editing in Adobe Express using the Embed SDK.
 
+<InlineAlert variant="warning" slots="text" />
+
+OAuth Web App user authentication works with Beta endpoints only. V1 endpoints support Server-to-Server authentication; user authentication may return to V1 in the future.
+
 ## Overview
 
 In this workflow, we present a Web App-based scenario where a user:
