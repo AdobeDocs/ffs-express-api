@@ -31,6 +31,16 @@ hideBreadcrumbNav: true
 
 Release notes for the Adobe Express API, with the newest release first.\<br>\<br>\<a href="https://raw.githubusercontent.com/AdobeDocs/ffs-express-api/refs/heads/main/src/pages/feed.xml" style="display: inline-flex; align-items: center; gap: 6px;">\<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20">\<circle cx="6.18" cy="17.82" r="2.18" fill="#eb1000"/>\<path d="M4 4.44v2.83c7.03 0 12.73 5.7 12.73 12.73h2.83c0-8.59-6.97-15.56-15.56-15.56zm0 5.66v2.83c3.9 0 7.07 3.17 7.07 7.07h2.83c0-5.47-4.43-9.9-9.9-9.9z" fill="#eb1000"/>\</svg>\<span>Subscribe via RSS\</span>\</a>
 
+<InlineAlert variant="success" slots="heading, text" />
+
+### The Express API is now generally available!
+
+The Adobe Express API has reached V1 general availability, providing a stable and fully supported set of features. Use it to enable self-service content creation, automate content production at scale, and integrate creation into broader workflows.
+
+## 2026-12-02
+
+### Express API V1 General Availability
+
 ## 2026-10-16
 
 ### Changed

@@ -17,7 +17,7 @@ The Express API provides powerful functionality for developers to integrate crea
 
 ## Authentication
 
-- Use OAuth 2.0 for authentication to ensure secure access to API resources.
+- Use Server-to-Server authentication for V1 endpoints. OAuth Web App and SPA user authentication work with Beta endpoints only.
 - Store client credentials securely and never expose them in client-side code.
 
 ## API Requests
