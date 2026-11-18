@@ -45,11 +45,11 @@ Plan your templates around these default substitution limits, and discuss capaci
 
 | Replacement type | Limit                                                 |
 | ---------------- | ----------------------------------------------------- |
-| Images           | 10 image substitutions per template.                  |
+| Images           | Up to 25 image substitutions per template; 400 MB size limit. |
 | Text             | Unlimited text replacements.                          |
-| Video            | 2 video replacements per template; 250 MB size limit. |
+| Video            | Up to 5 video substitutions per template; 500 MB size limit. |
 
-These are _substitution_ limits, not _request-rate_ limits. For the mapping fields, see [Replace text, images, and videos](../../guides/how-to/create-variation.md#replace-text-images-and-videos). Limits can change over time.
+These are _substitution_ limits, not _request-rate_ limits. Adobe may increase them for your organization based on a review of your capacity requirements. Contact your account manager or email [`express-api-support@adobe.com`](mailto:express-api-support@adobe.com) to discuss a request. For current defaults and more about limits, see [Rate Limits](../rate-limits/index.md#template-substitution-limits). For the mapping fields, see [Replace text, images, and videos](../../guides/how-to/create-variation.md#replace-text-images-and-videos).
 
 ## Production workload discussions
 

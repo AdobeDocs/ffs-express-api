@@ -224,23 +224,23 @@ These errors indicate issues with the request made by the client.
 
 In a `422` error, you will get validation errors specific to different endpoints.
 
-| Endpoint                                     | Validation Error Messages                                                                                                                                                                                       | What to Do?                                                                                                                                   |
-| -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `GET /v1/tagged-documents`                   | `json { "error_code": "validation_error", "message": "Validation error", "validation_errors": [ "start must not be less than 0" ] }`                                                                            | Check for the page index and ensure that it is valid.                                                                                         |
-| `GET /v1/tagged-documents/{documentId}`      | `json { "error_code": "validation_error", "message": "Validation error", "validation_errors": [ "The 'start' value must be greater than or equal to 1", "start must be a positive number"] }`                   | Check whether the index is valid.                                                                                                             |
-| `POST /v1/export-rendition`                  | `json { "error_code": "validation_error", "message": "Invalid start page. Document contains 1 pages" }`                                                                                                         | Check whether the request page index is valid.                                                                                                |
-| `POST /beta/generate-variation` (deprecated) | `json { "error_code": "validation_error", "message": "Validation error", "validation_errors": [ "property variationDetail should not exist", "variationDetails must be a non-empty object"] }`                  | Check that the request body has the correct fields.                                                                                           |
-| `POST /beta/export-rendition` (deprecated)   | `json { "error_code": "validation_error", "message": "Validation error", "validation_errors": [ "options.format must be one of the following values: image/jpeg, image/png, video/mp4, or application/pdf" ] }` | Check the chosen format is correct. In V1, `options.format` is replaced by `options.type` and `options.mediaType`.                            |
+| Endpoint                                     | Validation Error Messages                                                                                                                                                                                       | What to Do?                                                                                                                               |
+| -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `GET /v1/tagged-documents`                   | `json { "error_code": "validation_error", "message": "Validation error", "validation_errors": [ "start must not be less than 0" ] }`                                                                            | Check for the page index and ensure that it is valid.                                                                                     |
+| `GET /v1/tagged-documents/{documentId}`      | `json { "error_code": "validation_error", "message": "Validation error", "validation_errors": [ "The 'start' value must be greater than or equal to 1", "start must be a positive number"] }`                   | Check whether the index is valid.                                                                                                         |
+| `POST /v1/export-rendition`                  | `json { "error_code": "validation_error", "message": "Invalid start page. Document contains 1 pages" }`                                                                                                         | Check whether the request page index is valid.                                                                                            |
+| `POST /beta/generate-variation` (deprecated) | `json { "error_code": "validation_error", "message": "Validation error", "validation_errors": [ "property variationDetail should not exist", "variationDetails must be a non-empty object"] }`                  | Check that the request body has the correct fields.                                                                                       |
+| `POST /beta/export-rendition` (deprecated)   | `json { "error_code": "validation_error", "message": "Validation error", "validation_errors": [ "options.format must be one of the following values: image/jpeg, image/png, video/mp4, or application/pdf" ] }` | Check the chosen format is correct. In V1, `options.format` is replaced by `options.type` and `options.mediaType`.                        |
 | `GET /status/{jobId}`                        | `json { "error_code": "unknown_job_id", "message": "Unknown job Id" }`                                                                                                                                          | Check the `jobId` requested is a valid id returned by an asynchronous endpoint, such as `/v1/create-variation` or `/v1/export-rendition`. |
 
 ### Server Errors (5xx)
 
 These errors indicate issues with the server.
 
-| Error Code | Name                  | Message                                                  | What to Do?                                                                                                                   |
-| ---------- | --------------------- | -------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| `500`      | Internal Server Error | The server had an unexpected error.                      | Ensure the request was sent with the `x-request-id` header. Check server logs for more details and fix any underlying issues. |
-| `503`      | Service Unavailable   | The service is temporarily unable to handle the request. | Retry the request after some time or check the server status.                                                                 |
+| Error Code | Name                  | Message                                                  | What to Do?                                                                                                                 |
+| ---------- | --------------------- | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `500`      | Internal Server Error | The server had an unexpected error.                      | Ensure the request was sent with the `x-request-id` header. Check server logs for more details and fix and contact support. |
+| `503`      | Service Unavailable   | The service is temporarily unable to handle the request. | Retry the request after some time or check the server status.                                                               |
 
 ## Developer-Specific examples
 
@@ -451,7 +451,9 @@ async function makeApiRequest() {
           await delay(retryAfter * 1000);
           return makeApiRequest();
         default:
-          throw new Error(`API Error (${errorData.error_code}): ${errorData.message}`);
+          throw new Error(
+            `API Error (${errorData.error_code}): ${errorData.message}`,
+          );
       }
     }
 

@@ -30,9 +30,9 @@ V1 and Beta coexist during the transition: every `/beta/` endpoint stays callabl
 
 ## Before you start
 
-V1 uses the same host (`https://express-api.adobe.io`) and request headers as Beta. Create new Server-to-Server credentials for V1; existing Beta credentials do not automatically work for V1. See [Create credentials](../getting-started/create-credentials/index.md) for more information.
+V1 uses the same host (`https://express-api.adobe.io`) and request headers as Beta.
 
-Rate limits are not part of this migration and are not defined in the API spec itself; do not hard-code an assumption about V1 throughput. See [Rate limits](../getting-started/rate-limits/index.md) for the current limits.
+Rate limits are not part of this migration and are not defined in the API spec itself; do not hard-code an assumption about V1 throughput. See [Rate limits](../getting-started/rate-limits/index.md) for the current limits. Existing Beta credentials do not automatically work for V1. See [Create credentials](../getting-started/create-credentials/index.md) for instructions.
 
 ## What changes at a glance
 
@@ -63,6 +63,10 @@ The field renames you will make:
 | `POST /beta/export-rendition`             | `POST /v1/export-rendition`             | Update path; switch `id` to `templateOrDocument` and `format` to `type` + `mediaType`                                                                |
 | `POST /beta/generate-variation`           | None (deprecated)                       | Move to `create-variation`, its successor                                                                                                            |
 | `GET /status/{jobId}`                     | `GET /status/{jobId}`                   | Path unchanged; V1 export-rendition results carry `templateOrDocument` instead of `id`                                                               |
+
+## Get your V1 API key
+
+Before you update your requests, create new Server-to-Server credentials for V1 and get the API key. Existing Beta credentials do not automatically work for V1. See [Create credentials](../getting-started/create-credentials/index.md) for instructions.
 
 ## Update the base path
 

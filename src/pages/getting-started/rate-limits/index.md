@@ -38,10 +38,11 @@ hideBreadcrumbNav: true
 
 # Rate Limits
 
-Express API places two kinds of default limits on API usage:
+Express API places three kinds of default limits on API usage:
 
 - **Request rate limits** control how many requests you can make to each endpoint per minute.
 - **Usage limits** control how much your organization or account can use the [metered operations](#credit-metering).
+- **Template substitution limits** control how many images and videos you can replace in a template, and their size limits.
 
 ## Why do API rate limits exist?
 
@@ -69,6 +70,17 @@ Because rate limiting is enforced at the API route level, **image, PDF, and vide
 ### How to request a higher Rate Limit
 
 If you need additional capacity, contact your account manager to request a higher rate limit or fill out the [Express API Rate Limit Increase Form](https://www.adobe.com/go/express-api-ratelimiting).
+
+## Template substitution limits
+
+The following default limits apply to image and video substitutions in each template. Text replacements are unlimited.
+
+| Replacement type | Default limit |
+| --- | --- |
+| Images | Up to 25 image substitutions per template; 400 MB size limit. |
+| Videos | Up to 5 video substitutions per template; 500 MB size limit. |
+
+These are substitution limits, not request-rate limits. Adobe may increase them for your organization based on a review of your capacity requirements. Contact your account manager or email [`express-api-support@adobe.com`](mailto:express-api-support@adobe.com) to discuss a request. For production planning, see [Preparing for production](../preparing-for-production/index.md).
 
 ## Usage limits
 

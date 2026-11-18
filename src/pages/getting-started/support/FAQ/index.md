@@ -33,7 +33,7 @@ For V1 endpoints, use a Server-to-Server access token. OAuth Web App and SPA use
 
 ### Can I request a higher rate limit?
 
-Yes. Contact your account manager or fill out the [Express API Rate Limit Increase Form](https://www.adobe.com/go/express-api-ratelimiting), and we'll evaluate your request. See [Rate Limits](../../rate-limits/index.md) for current defaults.
+Yes. If you expect your production traffic to exceed a published request rate limit, contact your account manager or fill out the [Express API Rate Limit Increase Form](https://www.adobe.com/go/express-api-ratelimiting). Adobe will evaluate your request. Before you discuss production capacity, test your integration and prepare your expected request volume, peak demand, output formats, and launch timing. See [Rate Limits](../../rate-limits/index.md) for current defaults and [Preparing for production](../../preparing-for-production/index.md) for planning guidance.
 
 ### How do I plan for production usage?
 
@@ -121,7 +121,7 @@ Excess generation demand may queue rather than fail immediately, so jobs can tak
 
 ### How long are generated documents stored?
 
-Generated documents are stored in an **Express API Documents** folder for 30 days, after which they're deleted automatically. To keep a document longer, move or copy it to another location within the 30-day window.
+Generated documents are stored in an **Express API Documents** folder indefinitely.
 
 ### What is a document URN?
 
@@ -129,11 +129,11 @@ A document URN (Uniform Resource Name) is a unique, persistent identifier for a 
 
 ### What are the template substitution limits?
 
-- **Images**: 10 image substitutions per template.
+- **Images**: Up to 25 image substitutions per template; 400 MB size limit.
 - **Text**: Unlimited text replacements.
-- **Video**: 2 video replacements per template; 250 MB size limit.
+- **Video**: Up to 5 video substitutions per template; 500 MB size limit.
 
-These are substitution limits, not request-rate limits. See [Template substitution limits](../../preparing-for-production/index.md#template-substitution-limits).
+These are substitution limits, not request-rate limits. Adobe may increase them for your organization based on a review of your capacity requirements. See [Template substitution limits](../../rate-limits/index.md#template-substitution-limits) and [Preparing for production](../../preparing-for-production/index.md).
 
 ### What storage options are supported for tag mappings?
 

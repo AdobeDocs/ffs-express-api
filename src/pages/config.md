@@ -27,8 +27,8 @@
   - What's New header
   - [Changelog](getting-started/changelog/index.md)
   - Getting Started header
-  - [General Authentication](/getting-started/index.md)
   - [Create Credentials](/getting-started/create-credentials/index.md)
+  - [General Authentication](/getting-started/index.md)
   - [Error Logging](/getting-started/error-logging/index.md)
   - [Technical Usage Notes](/getting-started/usage/index.md)
   - [Rate Limits](/getting-started/rate-limits/index.md)
