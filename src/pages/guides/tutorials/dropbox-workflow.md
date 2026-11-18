@@ -5,7 +5,7 @@ keywords:
   - Dropbox
   - Dropbox API
   - Express API
-  - Generate variations
+  - Create variations
   - Export renditions
   - Status
 contributors:
@@ -31,7 +31,7 @@ The workflow will:
 
 This tutorial combines several key concepts from the How-to section, including:
 
-- [Generating variations](../how-to/generate-variations.md)
+- [Creating variations](../how-to/create-variation.md)
 - [Exporting renditions](../how-to/export-document.md)
 - Tracking job statuses
 - Dropbox API integration
@@ -41,16 +41,16 @@ This tutorial combines several key concepts from the How-to section, including:
 This tutorial assumes you have:
 
 - Access to the [Adobe Express API](../../getting-started/index.md), and know how to generate an API key and authorization token.
-- Familiarity with [Template tagging](../how-to/tag-documents.md), and the [Tag Elements Add-on](../index.md#overview).
-- Node.js installed on your machine (version 18 or later would be better).
+- Familiarity with [Template tagging](../how-to/tag-documents.md), and [Data Fields](../how-to/tag-documents.md).
+- Node.js 18 or later installed on your machine (the script uses built-in `fetch`).
 
 ## Step 1: Creating a tagged template
 
-First thing, our school's Art teacher will have created a beautiful business card template in Adobe Express. Using the [Tag Elements Add-on](../index.md#overview), we must tag elements that our automation script will later update. In our case, we'll tag Text nodes for the teacher's Name, Role, Email, Phone, and one Image node as their profile picture.
+First thing, our school's Art teacher will have created a beautiful business card template in Adobe Express. Using **Data Fields**, as explained in [this guide](../how-to/tag-documents.md), we must tag elements that our automation script will later update. In our case, we'll tag Text nodes for the teacher's Name, Role, Email, Phone, and one Image node as their profile picture.
 
 ![Tagging a template](./images/dropbox_tagging.png)
 
-Select each node, type the tag name, and don't forget to click the **Save** button on the add-on's footer to persist the changes!
+Select each node, type the tag name, and don't forget to click the **Done** button on the Data Fields panel to persist the changes!
 
 Copy the **DocumentId** (the string starting with `urn:`), which will be used later in the script to identify the template.
 
@@ -93,7 +93,7 @@ Remember to click **Submit** to save the changes!
 
 Back in the **Settings** tab, click on the **Generate** button in the **OAuth 2** section to create an Access Token. Save this token, as we'll use it in the next step.
 
-Please also note the **App folder name** (in our case, `Express API test`), because it's the only folder our app will be able to access in our Dropbox account. I've put the CSV and the JPG files in a `Apps/Express API test/pictures` folder there, so we're all set!
+Please also note the **App folder name** (in our case, `Express API test`), because it's the only folder our app will be able to access in our Dropbox account. Put `HR.csv` at the root of `Apps/Express API test` and the JPG files in its `pictures` subfolder, so the script can read `/HR.csv` and `/pictures`.
 
 ![Dropbox Apps folder with the Express API test app folder containing CSV and JPG files](./images/dropbox_content.png)
 
@@ -116,7 +116,7 @@ Our project folder should, eventually, look like this:
     └── express-api.js    📡 Express API functions
 ```
 
-<InlineAlert variant="info" slots="text1" />
+<InlineAlert variant="info" slots="text" />
 
 If you know what you're doing, you can skim this section—see you in the next one! Otherwise, we'll guide you step-by-step through the process of setting up the project.
 
@@ -126,7 +126,7 @@ Create a new Folder, and inside it, run `npm init -y` to create a `package.json`
 npm install dotenv dropbox papaparse
 ```
 
-Please note, if you're using Node.js v16 or earlier, you would need to additionally install `node-fetch` to make HTTP requests (from v18 ). A short explanation of the packages:
+A short explanation of the packages:
 
 - `dotenv`: To load environment variables from a `.env` file.
 - `dropbox`: Official Dropbox SDK for JavaScript.
@@ -142,12 +142,12 @@ Please note, if you're using Node.js v16 or earlier, you would need to additiona
 {
   "name": "tutorial-node-express-api",
   "version": "1.0.0",
-  "type": "module", // 👈 allows the use of JS modules (import syntax)
+  "type": "module",
   "description": "Sample code for a Node-based Express API tutorial",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js" // 👈 to run the script
+    "start": "node index.js"
   },
   "author": "Davide Barranca",
   "license": "ISC",
@@ -199,7 +199,7 @@ We'll create a set of utility functions in a `utils/helpers.js` file that will b
 - `verifyTemplateTags()`: Checks if a template has all the required tags; this ensures that our template can be used for generating variations.
 - `checkExpressJobs()` and `checkDropboxJobs()`: Check the status of multiple Express API or Dropbox jobs in parallel; this is used to monitor the progress of variation and export jobs.
 
-<InlineAlert variant="info" slots="text1" />
+<InlineAlert variant="info" slots="text" />
 
 To keep the page lean, we'll skip the implementation of the some of the functions in the following sections. You can find the complete code, thoroughly commented at [the end of this tutorial](#complete-example).
 
@@ -223,7 +223,7 @@ export const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
  * @param {Object} tagDetails - The tag details object from the Express API
  * @param {Array<string>} requiredTags - Array of required tag names
  * @returns {Array<string>} Array of tag names found in the template
- * @throws {Error} If no tagged elements are found or if a required tag is missing
+ * @throws {Error} If no data fields are found or if a required tag is missing
  */
 export const verifyTemplateTags = (tagDetails, requiredTags) => {
   /* ... */
@@ -282,7 +282,7 @@ These functions are enough to fetch the CSV file and the profile pictures. Later
 - `checkDropboxStatus()`: [Check the status](https://dropbox.github.io/dropbox-sdk-js/Dropbox.html#filesSaveUrlCheckJobStatus) of an async Dropbox job.
 - `downloadAndUploadFile()`: [Alternative upload method](https://dropbox.github.io/dropbox-sdk-js/Dropbox.html#filesUpload) (the fetching happens on the local machine).
 
-<InlineAlert variant="info" slots="text1" />
+<InlineAlert variant="info" slots="text" />
 
 As said before, check out the implementation of the functions in the [complete example](#complete-example).
 
@@ -437,11 +437,11 @@ If this is not the case, please double-check the code, and the presence of the `
 Now that we have the teachers' data and know how to fetch the profile pictures, we can move on to fetching the tagged template from Adobe Express and generating variations for each teacher. Create a new file `services/express-api.js`. This file contains the functions to interact with the Adobe Express API.
 
 - `retrieveTagDetails()`: Fetch the **list of tags** in a template. Useful to check the tags' names and types.
-- `generateVariations()`: **Generate variations** for a template. We'll use this to populate the template's tags with custom data from the CSV.
-- `exportRendition()`: **Export the rendition** of a template. We'll use this to save the business cards as PNG images (PDF is also supported if you prefer print-ready output).
+- `createVariation()`: **Create a variation** with `POST /v1/create-variation`. We'll use this to populate the template's data fields from the CSV and save a new Express document.
+- `exportRendition()`: **Export the rendition** of a document. We'll use this to save the business cards as PNG images.
 - `getExpressStatus()`: Get the **status of a job**. We'll use this to track the progress of both the generation and export jobs.
 
-<InlineAlert variant="info" slots="text1" />
+<InlineAlert variant="info" slots="text" />
 
 The functions are mostly wrappers around the [API endpoints](../../api/index.md), using `fetch` to make HTTP requests. Check out the implementation in the [complete example](#complete-example).
 
@@ -452,9 +452,6 @@ The functions are mostly wrappers around the [API endpoints](../../api/index.md)
 ```js
 import dotenv from "dotenv";
 dotenv.config();
-
-// Uncomment this line if you're using Node.js v16 or earlier
-// import fetch from "node-fetch";
 
 const API_KEY = process.env.EXPRESS_API_KEY || "";
 const EXPRESS_API_TOKEN = process.env.EXPRESS_API_TOKEN;
@@ -482,9 +479,10 @@ export async function getExpressStatus(jobId) {
  * This creates a downloadable version of the document
  *
  * @param {Object} requestBody - The export request parameters
- * @param {string} requestBody.id - The document ID to export
+ * @param {Object} requestBody.templateOrDocument - The document reference
+ * @param {string} requestBody.templateOrDocument.creativeCloudFileId - The document ID to export
  * @param {string} requestBody.pages - The pages to export (e.g., "1")
- * @param {Object} requestBody.options - Export options like format and size (or PDF settings)
+ * @param {Object} requestBody.options - Output type, mediaType, and size (or PDF settings)
  * @returns {Promise<Object>} The export job information
  */
 export async function exportRendition(requestBody) {
@@ -492,18 +490,16 @@ export async function exportRendition(requestBody) {
 }
 
 /**
- * Generates variations of a document using tag mappings
- * This creates a new document with the specified tag values
+ * Creates a variation using data-field mappings
+ * The requested document output persists the personalized document
  *
  * @param {Object} requestBody - The variation request parameters
- * @param {string} requestBody.id - The template document ID
- * @param {Object} requestBody.variationDetails - Details for the variation
- * @param {Object} requestBody.variationDetails.tagMappings - Values for each tag
- * @param {String} requestBody.variationDetails.pages - The pages to export (e.g., "1")
- * @param {String} requestBody.variationDetails.preferredDocumentName - The name of the document to save
+ * @param {Object} requestBody.templateOrDocument - The source template reference
+ * @param {Object} requestBody.input - Contains the dataFieldMappings array
+ * @param {Array<Object>} requestBody.outputs - Requested outputs, including a document
  * @returns {Promise<Object>} The variation job information
  */
-export async function generateVariations(requestBody) {
+export async function createVariation(requestBody) {
   /* ... */
 }
 
@@ -517,7 +513,7 @@ export async function generateVariations(requestBody) {
  */
 export async function retrieveTagDetails(
   documentId,
-  queryParams = { start: "1" }
+  queryParams = { start: "1" },
 ) {
   /* ... */
 }
@@ -535,7 +531,7 @@ import { retrieveTagDetails } from "./services/express-api.js";
 import { verifyTemplateTags } from "./utils/helpers.js";
 
 // Constants for easier reference
-const DOCUMENT_ID = "urn:aaid:sc:EU:cd9a3037-6583-56c4-b3e9-f393d95d43b9";
+const DOCUMENT_ID = "urn:aaid:sc:EU:6e1f27db-4202-543d-83d8-2b9583a3865e";
 const TAGS = ["Picture", "Name", "Role", "Phone", "Email"];
 
 async function main() {
@@ -547,8 +543,8 @@ async function main() {
     const tagDetails = await retrieveTagDetails(DOCUMENT_ID);
 
     // Use the utility function to verify template tags
-    const taggedElements = verifyTemplateTags(tagDetails, TAGS);
-    console.log("Tagged elements are OK:", taggedElements);
+    const dataFieldNames = verifyTemplateTags(tagDetails, TAGS);
+    console.log("Data fields are OK:", dataFieldNames);
   } catch (error) {
     console.error("Ouch!", error);
   }
@@ -561,16 +557,16 @@ Running `npm start` should now fetch the tagged template and check that it conta
 Reading CSV file from Dropbox /HR.csv:
 Found 6 records in CSV file
 Retrieving tag details from Express API:
-Tagged elements are OK: [ 'Picture', 'Name', 'Role', 'Phone', 'Email' ]
+Data fields are OK: [ 'Picture', 'Name', 'Role', 'Phone', 'Email' ]
 ```
 
 ## Step 8: Generating Variations
 
-Now that we have the teachers' data, the profile pictures, and the tagged template, we can move on to generating variations for each teacher. We'll use the `generateVariations()` function from the `express-api.js` file to populate the template's tags with the teachers' data. The function takes our template ID and a variationDetails object that includes:
+Now that we have the teachers' data, the profile pictures, and the tagged template, we can create a variation for each teacher. We'll use the `createVariation()` function from `express-api.js` to call `POST /v1/create-variation` with:
 
-- **Which page** to modify (in our case, just page `"1"`)
-- A **preferred name** for the new document
-- Most importantly, the **`tagMappings` object** that maps our template tags to the teacher's data
+- **`templateOrDocument.creativeCloudFileId`**: the template ID copied in Step 1. Replace the sample `DOCUMENT_ID` with your own ID in each example.
+- **`input.dataFieldMappings`**: an array of named replacements. Text fields use `type: "text"` and `text`; the Picture field uses `type: "image"` and `source.url`.
+- **`outputs`**: a `document` output with a preferred name. This saves a personalized Express document, which we'll export as a page-1 PNG in Step 9.
 
 <CodeBlock slots="heading, code" repeat="1" languages="javascript" />
 
@@ -580,7 +576,7 @@ Now that we have the teachers' data, the profile pictures, and the tagged templa
 import { readCsvFile, getPreSignedUrl } from "./services/dropbox.js";
 import {
   getExpressStatus,
-  generateVariations,
+  createVariation,
   retrieveTagDetails,
 } from "./services/express-api.js";
 import {
@@ -615,25 +611,33 @@ async function main() {
       // Get the teacher's profile picture
       const pictureURL = await getPreSignedUrl(`/pictures/${Picture}.jpg`);
 
-      const variationResponse = await generateVariations({
-        id: DOCUMENT_ID,
-        variationDetails: {
-          pages: "1",
-          preferredDocumentName: `Business Card - ${Name}`,
-          tagMappings: {
-            Picture: pictureURL,
-            Name,
-            Role,
-            Phone,
-            Email,
-          },
+      if (!pictureURL) {
+        throw new Error(`No profile picture URL for ${Name}`);
+      }
+
+      const variationResponse = await createVariation({
+        templateOrDocument: { creativeCloudFileId: DOCUMENT_ID },
+        input: {
+          dataFieldMappings: [
+            { name: "Picture", type: "image", source: { url: pictureURL } },
+            { name: "Name", type: "text", text: Name },
+            { name: "Role", type: "text", text: Role },
+            { name: "Phone", type: "text", text: Phone },
+            { name: "Email", type: "text", text: Email },
+          ],
         },
+        outputs: [
+          {
+            type: "document",
+            preferredDocumentName: `Business Card - ${Name}`,
+          },
+        ],
       });
 
       // Collect the Job ID
       variationJobIds.push(variationResponse.jobId);
       console.log(
-        `Submitted variation job for ${Name}, job ID: ${variationResponse.jobId}`
+        `Submitted variation job for ${Name}, job ID: ${variationResponse.jobId}`,
       );
     }
   } catch (error) {
@@ -642,7 +646,7 @@ async function main() {
 }
 ```
 
-<InlineAlert variant="warning" slots="header, text1" />
+<InlineAlert variant="warning" slots="heading, text" />
 
 Beware of forEach
 
@@ -668,10 +672,10 @@ async function main() {
     console.log("Checking variation job statuses...");
     let generationStatuses = await checkExpressJobs(
       variationJobIds,
-      getExpressStatus
+      getExpressStatus,
     );
     let runningCount = generationStatuses.filter(
-      ({ status }) => status === "running"
+      ({ status }) => status === "pending" || status === "running",
     ).length;
 
     while (runningCount > 0) {
@@ -679,23 +683,23 @@ async function main() {
       await sleep(STATUS_CHECK_INTERVAL);
       generationStatuses = await checkExpressJobs(
         variationJobIds,
-        getExpressStatus
+        getExpressStatus,
       );
       runningCount = generationStatuses.filter(
-        ({ status }) => status === "running"
+        ({ status }) => status === "pending" || status === "running",
       ).length;
     }
 
     console.log("All variation jobs completed!");
 
-    // Check for any failed jobs
+    // Report failures and partial results; the helper logs each output error
     const failedJobs = generationStatuses.filter(
-      ({ status }) => status !== "succeeded"
+      ({ status }) => status !== "succeeded",
     );
     if (failedJobs.length > 0) {
       console.warn(
-        `Warning: ${failedJobs.length} variation jobs failed:`,
-        failedJobs.map((status) => status.jobId)
+        `Warning: ${failedJobs.length} variation jobs did not fully succeed:`,
+        failedJobs.map((status) => status.jobId),
       );
     }
   } catch (error) {
@@ -710,6 +714,8 @@ The Express API processes our variation requests asynchronously, so we need to w
 - We count how many jobs are **still running**
 - If any jobs are still running, we **wait for a short interval** (defined by `STATUS_CHECK_INTERVAL`)
 - We **check again and repeat** until all jobs are completed
+
+Polling uses the unversioned `GET /status/{jobId}` endpoint. Keep waiting for `pending` or `running`. When the status is `succeeded` or `partially_succeeded`, read successful results from `outputs`; a document result contains `documentId.creativeCloudFileId`. On `partially_succeeded` or `failed`, `errors` contains output failures with `error_code` and optional `message`, `type`, and `pageNumber`. The complete `checkExpressJobs()` helper logs these errors. Step 9 only exports a returned document; failed jobs are skipped.
 
 Running `npm start` should now generate a variation for each teacher and log the Job IDs for each one. If everything is working correctly, you should see a list of Job IDs in the console.
 
@@ -732,7 +738,7 @@ All variation jobs completed!
 
 ## Step 9: Exporting Renditions
 
-After successfully generating variations for each teacher, we need to export these documents as PNG images that can be shared or printed. The Export Rendition API also supports PDF output (standard or print) if you want press-ready files. The code in this section handles the export process in several steps:
+After successfully creating variations for each teacher, we need to export these documents as PNG images that can be shared or printed. The code in this section handles the export process in several steps:
 
 ```javascript
 // ...
@@ -753,21 +759,25 @@ async function main() {
     console.log("Starting export jobs for successful variations...");
     for (let i = 0; i < generationStatuses.length; i++) {
       const status = generationStatuses[i];
-      if (status.status !== "succeeded") {
-        console.error(`Generation job failed for ${teacherNames[i]}:`, status);
+      const documentOutput = (status.outputs ?? []).find(
+        (output) => output.type === "document",
+      );
+      const documentId = documentOutput?.documentId?.creativeCloudFileId;
+      if (
+        !["succeeded", "partially_succeeded"].includes(status.status) ||
+        !documentId
+      ) {
+        console.warn(`No document to export for ${teacherNames[i]}:`, status);
         continue;
       }
 
       const exportResponse = await exportRendition({
-        id: status.document.id,
+        templateOrDocument: { creativeCloudFileId: documentId },
         pages: "1",
         options: {
-          format: "image/png",
+          type: "image",
+          mediaType: "image/png",
           size: 1000,
-          // For PDFs, use format: "application/pdf" and add options like:
-          // pdfType: "standard" | "print",
-          // downloadIndividualPdfFiles: true | false,
-          // config: { accessibilityTags: true, bleed: true, cropMargins: true, ... }
         },
       });
 
@@ -775,24 +785,28 @@ async function main() {
       documentIds.push({
         jobId: exportResponse.jobId,
         teacherName: teacherNames[i],
-        documentId: status.document.id,
+        documentId,
       });
 
       console.log(
-        `Submitted export job for ${teacherNames[i]}, job ID: ${exportResponse.jobId}`
+        `Submitted export job for ${teacherNames[i]}, job ID: ${exportResponse.jobId}`,
       );
     }
+  } catch (error) {
+    console.error("Error in main():", error);
+  }
+}
 ```
 
 In this section, we:
 
 - Create arrays to **track export job IDs** and document information
 - **Loop through each generation** status (from our previous step)
-- **Skip any failed generation jobs**
-- For successful generations, **call `exportRendition()`** with:
-  - The **document ID** from the generation step
+- **Skip jobs without a successful document output**, including failed jobs
+- For `succeeded` or `partially_succeeded` jobs with a document output, **call `exportRendition()`** with:
+  - **`templateOrDocument.creativeCloudFileId`** from the document output's `documentId.creativeCloudFileId`
   - The **page number** to export (just page "1" in our case)
-  - **Export options** specifying PNG format and a size of 1000 pixels
+  - **Export options** specifying `type: "image"`, `mediaType: "image/png"`, and a longest-side size of 1000 pixels
 - **Store the export job ID** and document information for later use
 - **Log a message** for each submitted export job
 
@@ -813,10 +827,10 @@ The `exportRendition()` function is another asynchronous operation that returns 
 console.log("Checking export job statuses...");
 let exportationStatuses = await checkExpressJobs(
   exportationJobIds,
-  getExpressStatus
+  getExpressStatus,
 );
 runningCount = exportationStatuses.filter(
-  ({ status }) => status === "running"
+  ({ status }) => status === "pending" || status === "running",
 ).length;
 
 while (runningCount > 0) {
@@ -824,21 +838,21 @@ while (runningCount > 0) {
   await sleep(STATUS_CHECK_INTERVAL);
   exportationStatuses = await checkExpressJobs(
     exportationJobIds,
-    getExpressStatus
+    getExpressStatus,
   );
   runningCount = exportationStatuses.filter(
-    ({ status }) => status === "running"
+    ({ status }) => status === "pending" || status === "running",
   ).length;
 }
 
 console.log("All export jobs completed!");
 const failedExports = exportationStatuses.filter(
-  ({ status }) => status !== "succeeded"
+  ({ status }) => status !== "succeeded",
 );
 if (failedExports.length > 0) {
   console.warn(
-    `Warning: ${failedExports.length} export jobs failed:`,
-    failedExports.map((status) => status.jobId)
+    `Warning: ${failedExports.length} export jobs did not fully succeed:`,
+    failedExports.map((status) => status.jobId),
   );
 }
 ```
@@ -849,7 +863,7 @@ This code follows the same polling pattern we used for variation jobs:
 - Count **how many are still running**
 - If any are running, **wait for a short interval and check again**
 - **Repeat** until all jobs are complete
-- We also check for any **failed export jobs** and log a warning if necessary.
+- We also report **failed or partially successful export jobs**. Unlike Create Variation, V1 Export Rendition returns `pageRenditionsResult`: successful entries have `pageNumber` and `renditionUrl`, while failed entries have `pageNumber` and `error`. The helper logs those page errors; the next block keeps any successful page-1 rendition from `succeeded` or `partially_succeeded` jobs.
 
 Once all export jobs are complete, we need to **collect the URLs of the exported renditions**:
 
@@ -858,14 +872,16 @@ Once all export jobs are complete, we need to **collect the URLs of the exported
 const renditionUrls = [];
 for (let i = 0; i < exportationStatuses.length; i++) {
   const status = exportationStatuses[i];
+  const pageRendition = (status.pageRenditionsResult ?? []).find(
+    (result) => result.pageNumber === 1 && result.renditionUrl,
+  );
   if (
-    status.status === "succeeded" &&
-    status.pageRenditionsResult &&
-    status.pageRenditionsResult.length > 0
+    ["succeeded", "partially_succeeded"].includes(status.status) &&
+    pageRendition
   ) {
     const teacherInfo = documentIds.find((doc) => doc.jobId === status.jobId);
     renditionUrls.push({
-      url: status.pageRenditionsResult[0].renditionUrl,
+      url: pageRendition.renditionUrl,
       teacherName: teacherInfo ? teacherInfo.teacherName : `unknown-${i}`,
       jobId: status.jobId,
     });
@@ -879,15 +895,15 @@ In this section, we:
 
 1. **Create an array to store rendition URLs** and associated teacher information
 2. **Loop through each export** status
-3. For successful exports with available rendition results, **find the matching teacher** information
+3. For jobs with a successful page-1 rendition, **find the matching teacher** information
 4. **Store the rendition URL**, teacher name, and job ID in our array
 5. **Log the number of rendition URLs** we've collected
 
-These rendition URLs are links to the exported PNG images (or PDFs if you choose `application/pdf`). In the next step, we'll use these URLs to download the files and upload them to Dropbox.
+These rendition URLs are links to the exported PNG images. In the next step, we'll use these URLs to download the files and upload them to Dropbox.
 
 ## Step 10: Uploading to Dropbox
 
-Now that we have successfully exported our business cards as PNG images, the final step is to upload them to Dropbox so they can be easily accessed by our school staff. If you export PDFs instead, update the file extension accordingly.
+Now that we have successfully exported our business cards as PNG images, the final step is to upload them to Dropbox so they can be easily accessed by our school staff.
 Before we start uploading files to Dropbox, we need to take a few preparatory steps:
 
 ```javascript
@@ -896,7 +912,7 @@ Before we start uploading files to Dropbox, we need to take a few preparatory st
 console.log(
   `Waiting ${
     INITIAL_WAIT_TIME / 1000
-  } seconds before starting uploads to ensure URLs are fully ready...`
+  } seconds before starting uploads to ensure URLs are fully ready...`,
 );
 await sleep(INITIAL_WAIT_TIME);
 console.log("Wait complete, starting upload process...");
@@ -906,7 +922,7 @@ try {
   console.log(`Ensuring output folder exists: ${OUTPUT_FOLDER}`);
   const folderResult = await createFolder(OUTPUT_FOLDER);
   console.log(
-    `Folder created or already exists at: ${folderResult.path_lower}`
+    `Folder created or already exists at: ${folderResult.path_lower}`,
   );
 } catch (error) {
   console.warn(`Warning: Could not create output folder: ${error.message}`);
@@ -936,7 +952,7 @@ const uploadPromises = renditionUrls.map(async (rendition) => {
     console.log(
       `Upload initiated for ${teacherName}, result type: ${
         saveResult[".tag"] || "unknown"
-      }`
+      }`,
     );
     return {
       teacherName,
@@ -948,7 +964,7 @@ const uploadPromises = renditionUrls.map(async (rendition) => {
   } catch (error) {
     console.error(
       `Failed to upload ${teacherName}'s business card:`,
-      error.message || error
+      error.message || error,
     );
     return {
       teacherName,
@@ -1015,7 +1031,7 @@ if (asyncJobs.length > 0) {
       console.log(
         `Job for ${job.teacherName}: ${
           job.isComplete ? "Complete" : job.isFailed ? "Failed" : "In Progress"
-        }`
+        }`,
       );
     });
 
@@ -1024,7 +1040,7 @@ if (asyncJobs.length > 0) {
 
     if (inProgressJobs.length > 0) {
       console.log(
-        `Still waiting for ${inProgressJobs.length} uploads to complete...`
+        `Still waiting for ${inProgressJobs.length} uploads to complete...`,
       );
       // Wait before checking again
       await sleep(STATUS_CHECK_INTERVAL);
@@ -1037,7 +1053,7 @@ if (asyncJobs.length > 0) {
       const failedUploads = jobStatuses.filter((job) => job.isFailed);
 
       console.log(
-        `Upload results: ${successfulUploads.length} successful, ${failedUploads.length} failed`
+        `Upload results: ${successfulUploads.length} successful, ${failedUploads.length} failed`,
       );
 
       if (failedUploads.length > 0 && retryCount < MAX_RETRIES - 1) {
@@ -1054,7 +1070,7 @@ if (asyncJobs.length > 0) {
       } else if (failedUploads.length > 0) {
         console.warn(
           "Failed uploads after maximum retries:",
-          failedUploads.map((job) => job.teacherName)
+          failedUploads.map((job) => job.teacherName),
         );
       }
     }
@@ -1077,7 +1093,7 @@ Here we:
    - When retrying, preserve job information but increment retry counts
    - After maximum retries, log a warning with the names of teachers whose uploads failed
 
-<InlineAlert variant="warning" slots="header, text1" />
+<InlineAlert variant="warning" slots="heading, text" />
 
 Fetching from the server or locally
 
@@ -1086,7 +1102,7 @@ Dropbox's `dbx.filesSaveUrl()`, which is the API call used internally by `saveUr
 ```javascript
 // STEP 11.5: Try alternative direct upload method for failed jobs
 console.log(
-  `Attempting direct upload method for ${failedUploads.length} failed jobs...`
+  `Attempting direct upload method for ${failedUploads.length} failed jobs...`,
 );
 
 const directUploadPromises = failedUploads.map(async (job) => {
@@ -1094,7 +1110,7 @@ const directUploadPromises = failedUploads.map(async (job) => {
     console.log(`Starting direct upload for ${job.teacherName}...`);
     const result = await downloadAndUploadFile(
       job.url,
-      job.path || `${OUTPUT_FOLDER}/${job.teacherName}.png`
+      job.path || `${OUTPUT_FOLDER}/${job.teacherName}.png`,
     );
     console.log(`Direct upload successful for ${job.teacherName}`);
     return {
@@ -1105,7 +1121,7 @@ const directUploadPromises = failedUploads.map(async (job) => {
   } catch (error) {
     console.error(
       `Direct upload failed for ${job.teacherName}:`,
-      error.message || error
+      error.message || error,
     );
     return {
       ...job,
@@ -1119,17 +1135,17 @@ const directUploadResults = await Promise.all(directUploadPromises);
 
 // Log the results of direct uploads
 const successfulDirectUploads = directUploadResults.filter(
-  (job) => job.directUploadSuccess
+  (job) => job.directUploadSuccess,
 );
 console.log(
   `Direct upload results: ${successfulDirectUploads.length} successful, ${
     directUploadResults.length - successfulDirectUploads.length
-  } failed`
+  } failed`,
 );
 
 if (successfulDirectUploads.length > 0) {
   console.log(
-    `Successfully uploaded ${successfulDirectUploads.length} files using direct upload method`
+    `Successfully uploaded ${successfulDirectUploads.length} files using direct upload method`,
   );
 }
 
@@ -1137,7 +1153,7 @@ if (successfulDirectUploads.length < directUploadResults.length) {
   console.error(
     `Failed to upload ${
       directUploadResults.length - successfulDirectUploads.length
-    } files even with direct upload method`
+    } files even with direct upload method`,
   );
 }
 ```
@@ -1160,9 +1176,9 @@ On Dropbox, we let the script save the files in a "Business Cards" folder instea
 
 ![Final result on Dropbox](./images/dropbox_dropbox-final.png)
 
-Here's the complete example for reference—check out all the tabs, which include `index.js`, `services/express.js`, `services/dropbox.js`, and `utils/helpers.js`.
+Here's the complete example for reference—save the four files as `index.js`, `services/express-api.js`, `services/dropbox.js`, and `utils/helpers.js`.
 
-<CodeBlock slots="heading, code" repeat="4" languages="index.js, services/express.js, services/dropbox.js, utils/helpers.js" />
+<CodeBlock slots="heading, code" repeat="4" languages="index.js, services/express-api.js, services/dropbox.js, utils/helpers.js" />
 
 #### index.js
 
@@ -1178,7 +1194,7 @@ import {
 import {
   getExpressStatus,
   exportRendition,
-  generateVariations,
+  createVariation,
   retrieveTagDetails,
 } from "./services/express-api.js";
 import {
@@ -1196,7 +1212,7 @@ const OUTPUT_FOLDER = "/Business Cards"; // Dropbox folder to save exported file
 // Configuration for Dropbox API methods
 const MAX_RETRIES = 3; // Number of retries for failed uploads
 const STATUS_CHECK_INTERVAL = 3000; // Time between status checks in milliseconds
-const INITIAL_WAIT_TIME = 10000; // Wait 5 seconds before starting Dropbox uploads
+const INITIAL_WAIT_TIME = 10000; // Wait 10 seconds before starting Dropbox uploads
 
 async function main() {
   try {
@@ -1215,8 +1231,8 @@ async function main() {
     const tagDetails = await retrieveTagDetails(DOCUMENT_ID);
 
     // Use the utility function to verify template tags
-    const taggedElements = verifyTemplateTags(tagDetails, TAGS);
-    console.log("Tagged elements are OK:", taggedElements);
+    const dataFieldNames = verifyTemplateTags(tagDetails, TAGS);
+    console.log("Data fields are OK:", dataFieldNames);
 
     // STEP 3: Generate variations for each teacher
     console.log("Generating variations for each teacher...");
@@ -1230,25 +1246,33 @@ async function main() {
 
       const pictureURL = await getPreSignedUrl(`/pictures/${Picture}.jpg`);
 
-      const variationResponse = await generateVariations({
-        id: DOCUMENT_ID,
-        variationDetails: {
-          pages: "1",
-          preferredDocumentName: `Business Card - ${Name}`,
-          tagMappings: {
-            Picture: pictureURL,
-            Name,
-            Role,
-            Phone,
-            Email,
-          },
+      if (!pictureURL) {
+        throw new Error(`No profile picture URL for ${Name}`);
+      }
+
+      const variationResponse = await createVariation({
+        templateOrDocument: { creativeCloudFileId: DOCUMENT_ID },
+        input: {
+          dataFieldMappings: [
+            { name: "Picture", type: "image", source: { url: pictureURL } },
+            { name: "Name", type: "text", text: Name },
+            { name: "Role", type: "text", text: Role },
+            { name: "Phone", type: "text", text: Phone },
+            { name: "Email", type: "text", text: Email },
+          ],
         },
+        outputs: [
+          {
+            type: "document",
+            preferredDocumentName: `Business Card - ${Name}`,
+          },
+        ],
       });
 
       // Collect the Job ID
       variationJobIds.push(variationResponse.jobId);
       console.log(
-        `Submitted variation job for ${Name}, job ID: ${variationResponse.jobId}`
+        `Submitted variation job for ${Name}, job ID: ${variationResponse.jobId}`,
       );
     }
 
@@ -1256,10 +1280,10 @@ async function main() {
     console.log("Checking variation job statuses...");
     let generationStatuses = await checkExpressJobs(
       variationJobIds,
-      getExpressStatus
+      getExpressStatus,
     );
     let runningCount = generationStatuses.filter(
-      ({ status }) => status === "running"
+      ({ status }) => status === "pending" || status === "running",
     ).length;
 
     while (runningCount > 0) {
@@ -1267,30 +1291,30 @@ async function main() {
       await sleep(STATUS_CHECK_INTERVAL);
       generationStatuses = await checkExpressJobs(
         variationJobIds,
-        getExpressStatus
+        getExpressStatus,
       );
       runningCount = generationStatuses.filter(
-        ({ status }) => status === "running"
+        ({ status }) => status === "pending" || status === "running",
       ).length;
     }
 
     console.log("All variation jobs completed!");
 
-    // Check for any failed jobs
+    // Report failures and partial results; the helper logs each output error
     const failedJobs = generationStatuses.filter(
-      ({ status }) => status !== "succeeded"
+      ({ status }) => status !== "succeeded",
     );
     if (failedJobs.length > 0) {
       console.warn(
-        `Warning: ${failedJobs.length} variation jobs failed:`,
-        failedJobs.map((status) => status.jobId)
+        `Warning: ${failedJobs.length} variation jobs did not fully succeed:`,
+        failedJobs.map((status) => status.jobId),
       );
     }
     // waiting before starting exports
     console.log(
       `Waiting ${
         INITIAL_WAIT_TIME / 1000
-      } seconds before starting Exportation to ensure URLs are fully ready...`
+      } seconds before starting Exportation to ensure URLs are fully ready...`,
     );
     await sleep(INITIAL_WAIT_TIME);
 
@@ -1301,16 +1325,24 @@ async function main() {
     console.log("Starting export jobs for successful variations...");
     for (let i = 0; i < generationStatuses.length; i++) {
       const status = generationStatuses[i];
-      if (status.status !== "succeeded") {
-        console.error(`Generation job failed for ${teacherNames[i]}:`, status);
+      const documentOutput = (status.outputs ?? []).find(
+        (output) => output.type === "document",
+      );
+      const documentId = documentOutput?.documentId?.creativeCloudFileId;
+      if (
+        !["succeeded", "partially_succeeded"].includes(status.status) ||
+        !documentId
+      ) {
+        console.warn(`No document to export for ${teacherNames[i]}:`, status);
         continue;
       }
 
       const exportResponse = await exportRendition({
-        id: status.document.id,
+        templateOrDocument: { creativeCloudFileId: documentId },
         pages: "1",
         options: {
-          format: "image/png",
+          type: "image",
+          mediaType: "image/png",
           size: 1000,
         },
       });
@@ -1319,11 +1351,11 @@ async function main() {
       documentIds.push({
         jobId: exportResponse.jobId,
         teacherName: teacherNames[i],
-        documentId: status.document.id,
+        documentId,
       });
 
       console.log(
-        `Submitted export job for ${teacherNames[i]}, job ID: ${exportResponse.jobId}`
+        `Submitted export job for ${teacherNames[i]}, job ID: ${exportResponse.jobId}`,
       );
     }
 
@@ -1331,10 +1363,10 @@ async function main() {
     console.log("Checking export job statuses...");
     let exportationStatuses = await checkExpressJobs(
       exportationJobIds,
-      getExpressStatus
+      getExpressStatus,
     );
     runningCount = exportationStatuses.filter(
-      ({ status }) => status === "running"
+      ({ status }) => status === "pending" || status === "running",
     ).length;
 
     while (runningCount > 0) {
@@ -1342,23 +1374,23 @@ async function main() {
       await sleep(STATUS_CHECK_INTERVAL);
       exportationStatuses = await checkExpressJobs(
         exportationJobIds,
-        getExpressStatus
+        getExpressStatus,
       );
       runningCount = exportationStatuses.filter(
-        ({ status }) => status === "running"
+        ({ status }) => status === "pending" || status === "running",
       ).length;
     }
 
     console.log("All export jobs completed!");
 
-    // Check for any failed export jobs
+    // Report failures and partial results; the helper logs each page error
     const failedExports = exportationStatuses.filter(
-      ({ status }) => status !== "succeeded"
+      ({ status }) => status !== "succeeded",
     );
     if (failedExports.length > 0) {
       console.warn(
-        `Warning: ${failedExports.length} export jobs failed:`,
-        failedExports.map((status) => status.jobId)
+        `Warning: ${failedExports.length} export jobs did not fully succeed:`,
+        failedExports.map((status) => status.jobId),
       );
     }
 
@@ -1366,16 +1398,18 @@ async function main() {
     const renditionUrls = [];
     for (let i = 0; i < exportationStatuses.length; i++) {
       const status = exportationStatuses[i];
+      const pageRendition = (status.pageRenditionsResult ?? []).find(
+        (result) => result.pageNumber === 1 && result.renditionUrl,
+      );
       if (
-        status.status === "succeeded" &&
-        status.pageRenditionsResult &&
-        status.pageRenditionsResult.length > 0
+        ["succeeded", "partially_succeeded"].includes(status.status) &&
+        pageRendition
       ) {
         const teacherInfo = documentIds.find(
-          (doc) => doc.jobId === status.jobId
+          (doc) => doc.jobId === status.jobId,
         );
         renditionUrls.push({
-          url: status.pageRenditionsResult[0].renditionUrl,
+          url: pageRendition.renditionUrl,
           teacherName: teacherInfo ? teacherInfo.teacherName : `unknown-${i}`,
           jobId: status.jobId,
         });
@@ -1383,14 +1417,14 @@ async function main() {
     }
 
     console.log(
-      `Got ${renditionUrls.length} rendition URLs to upload to Dropbox`
+      `Got ${renditionUrls.length} rendition URLs to upload to Dropbox`,
     );
 
     // STEP 8: Wait before starting uploads to ensure URLs are ready
     console.log(
       `Waiting ${
         INITIAL_WAIT_TIME / 1000
-      } seconds before starting uploads to ensure URLs are fully ready...`
+      } seconds before starting uploads to ensure URLs are fully ready...`,
     );
     await sleep(INITIAL_WAIT_TIME);
     console.log("Wait complete, starting upload process...");
@@ -1400,7 +1434,7 @@ async function main() {
       console.log(`Ensuring output folder exists: ${OUTPUT_FOLDER}`);
       const folderResult = await createFolder(OUTPUT_FOLDER);
       console.log(
-        `Folder created or already exists at: ${folderResult.path_lower}`
+        `Folder created or already exists at: ${folderResult.path_lower}`,
       );
     } catch (error) {
       console.warn(`Warning: Could not create output folder: ${error.message}`);
@@ -1421,7 +1455,7 @@ async function main() {
         console.log(
           `Upload initiated for ${teacherName}, result type: ${
             saveResult[".tag"] || "unknown"
-          }`
+          }`,
         );
         return {
           teacherName,
@@ -1433,7 +1467,7 @@ async function main() {
       } catch (error) {
         console.error(
           `Failed to upload ${teacherName}'s business card:`,
-          error.message || error
+          error.message || error,
         );
         return {
           teacherName,
@@ -1470,7 +1504,7 @@ async function main() {
 
     if (asyncJobs.length > 0) {
       console.log(
-        `Monitoring ${asyncJobs.length} async Dropbox upload jobs...`
+        `Monitoring ${asyncJobs.length} async Dropbox upload jobs...`,
       );
 
       // Using the simplified checkDropboxJobs function for job monitoring
@@ -1481,7 +1515,7 @@ async function main() {
         // Check all job statuses at once
         const jobStatuses = await checkDropboxJobs(
           asyncJobs,
-          checkDropboxStatus
+          checkDropboxStatus,
         );
 
         // Log the current status of each job
@@ -1491,9 +1525,9 @@ async function main() {
               job.isComplete
                 ? "Complete"
                 : job.isFailed
-                ? "Failed"
-                : "In Progress"
-            }`
+                  ? "Failed"
+                  : "In Progress"
+            }`,
           );
         });
 
@@ -1502,7 +1536,7 @@ async function main() {
 
         if (inProgressJobs.length > 0) {
           console.log(
-            `Still waiting for ${inProgressJobs.length} uploads to complete...`
+            `Still waiting for ${inProgressJobs.length} uploads to complete...`,
           );
           // Wait before checking again
           await sleep(STATUS_CHECK_INTERVAL);
@@ -1515,7 +1549,7 @@ async function main() {
           const failedUploads = jobStatuses.filter((job) => job.isFailed);
 
           console.log(
-            `Upload results: ${successfulUploads.length} successful, ${failedUploads.length} failed`
+            `Upload results: ${successfulUploads.length} successful, ${failedUploads.length} failed`,
           );
 
           if (failedUploads.length > 0 && retryCount < MAX_RETRIES - 1) {
@@ -1532,12 +1566,12 @@ async function main() {
           } else if (failedUploads.length > 0) {
             console.warn(
               "Failed uploads after maximum retries:",
-              failedUploads.map((job) => job.teacherName)
+              failedUploads.map((job) => job.teacherName),
             );
 
             // STEP 11.5: Try alternative direct upload method for failed jobs
             console.log(
-              `Attempting direct upload method for ${failedUploads.length} failed jobs...`
+              `Attempting direct upload method for ${failedUploads.length} failed jobs...`,
             );
 
             const directUploadPromises = failedUploads.map(async (job) => {
@@ -1545,7 +1579,7 @@ async function main() {
                 console.log(`Starting direct upload for ${job.teacherName}...`);
                 const result = await downloadAndUploadFile(
                   job.url,
-                  job.path || `${OUTPUT_FOLDER}/${job.teacherName}.png`
+                  job.path || `${OUTPUT_FOLDER}/${job.teacherName}.png`,
                 );
                 console.log(`Direct upload successful for ${job.teacherName}`);
                 return {
@@ -1556,7 +1590,7 @@ async function main() {
               } catch (error) {
                 console.error(
                   `Direct upload failed for ${job.teacherName}:`,
-                  error.message || error
+                  error.message || error,
                 );
                 return {
                   ...job,
@@ -1570,19 +1604,19 @@ async function main() {
 
             // Log the results of direct uploads
             const successfulDirectUploads = directUploadResults.filter(
-              (job) => job.directUploadSuccess
+              (job) => job.directUploadSuccess,
             );
             console.log(
               `Direct upload results: ${
                 successfulDirectUploads.length
               } successful, ${
                 directUploadResults.length - successfulDirectUploads.length
-              } failed`
+              } failed`,
             );
 
             if (successfulDirectUploads.length > 0) {
               console.log(
-                `Successfully uploaded ${successfulDirectUploads.length} files using direct upload method`
+                `Successfully uploaded ${successfulDirectUploads.length} files using direct upload method`,
               );
             }
 
@@ -1590,7 +1624,7 @@ async function main() {
               console.error(
                 `Failed to upload ${
                   directUploadResults.length - successfulDirectUploads.length
-                } files even with direct upload method`
+                } files even with direct upload method`,
               );
             }
           }
@@ -1603,7 +1637,7 @@ async function main() {
     // STEP 12: Process completed
     console.log("Process completed!");
     console.log(
-      `Generated and uploaded business cards to Dropbox folder: ${OUTPUT_FOLDER}`
+      `Generated and uploaded business cards to Dropbox folder: ${OUTPUT_FOLDER}`,
     );
   } catch (error) {
     console.error("Error in main():", error);
@@ -1614,7 +1648,7 @@ async function main() {
 main();
 ```
 
-#### services/express.js
+#### services/express-api.js
 
 ```js
 /**
@@ -1627,8 +1661,6 @@ main();
 
 import dotenv from "dotenv";
 dotenv.config();
-
-import fetch from "node-fetch"; // or rely on Node 18+ global if you prefer
 
 const API_KEY = process.env.EXPRESS_API_KEY || "";
 const EXPRESS_API_TOKEN = process.env.EXPRESS_API_TOKEN;
@@ -1653,6 +1685,11 @@ export async function getExpressStatus(jobId) {
     headers,
   });
   const data = await resp.json();
+  if (!resp.ok) {
+    throw new Error(
+      `Status request failed: ${data.error_code} ${data.message ?? ""}`,
+    );
+  }
   return data;
 }
 
@@ -1661,40 +1698,49 @@ export async function getExpressStatus(jobId) {
  * This creates a downloadable version of the document
  *
  * @param {Object} requestBody - The export request parameters
- * @param {string} requestBody.id - The document ID to export
+ * @param {Object} requestBody.templateOrDocument - The document reference
+ * @param {string} requestBody.templateOrDocument.creativeCloudFileId - The document ID to export
  * @param {string} requestBody.pages - The pages to export (e.g., "1")
- * @param {Object} requestBody.options - Export options like format and size
+ * @param {Object} requestBody.options - Output type, mediaType, and size (or PDF settings)
  * @returns {Promise<Object>} The export job information
  */
 export async function exportRendition(requestBody) {
-  const resp = await fetch(`${EXPRESS_ENDPOINT}/beta/export-rendition`, {
+  const resp = await fetch(`${EXPRESS_ENDPOINT}/v1/export-rendition`, {
     method: "POST",
     headers,
     body: JSON.stringify(requestBody),
   });
   const data = await resp.json();
+  if (!resp.ok) {
+    throw new Error(
+      `Export request failed: ${data.error_code} ${data.message ?? ""}`,
+    );
+  }
   return data;
 }
 
 /**
- * Generates variations of a document using tag mappings
- * This creates a new document with the specified tag values
+ * Creates a variation using data-field mappings
+ * The requested document output persists the personalized document
  *
  * @param {Object} requestBody - The variation request parameters
- * @param {string} requestBody.id - The template document ID
- * @param {Object} requestBody.variationDetails - Details for the variation
- * @param {Object} requestBody.variationDetails.tagMappings - Values for each tag
- * @param {String} requestBody.variationDetails.pages - The pages to export (e.g., "1")
- * @param {String} requestBody.variationDetails.preferredDocumentName - The name of the document to save
+ * @param {Object} requestBody.templateOrDocument - The source template reference
+ * @param {Object} requestBody.input - Contains the dataFieldMappings array
+ * @param {Array<Object>} requestBody.outputs - Requested outputs, including a document
  * @returns {Promise<Object>} The variation job information
  */
-export async function generateVariations(requestBody) {
-  const resp = await fetch(`${EXPRESS_ENDPOINT}/beta/generate-variation`, {
+export async function createVariation(requestBody) {
+  const resp = await fetch(`${EXPRESS_ENDPOINT}/v1/create-variation`, {
     method: "POST",
     headers,
     body: JSON.stringify(requestBody),
   });
   const data = await resp.json();
+  if (!resp.ok) {
+    throw new Error(
+      `Variation request failed: ${data.error_code} ${data.message ?? ""}`,
+    );
+  }
   return data;
 }
 
@@ -1708,17 +1754,22 @@ export async function generateVariations(requestBody) {
  */
 export async function retrieveTagDetails(
   documentId,
-  queryParams = { start: "1" }
+  queryParams = { start: "1" },
 ) {
   const queryString = new URLSearchParams(queryParams).toString();
   const resp = await fetch(
-    `${EXPRESS_ENDPOINT}/beta/tagged-documents/${documentId}?${queryString}`,
+    `${EXPRESS_ENDPOINT}/v1/tagged-documents/${documentId}?${queryString}`,
     {
       method: "GET",
       headers,
-    }
+    },
   );
   const data = await resp.json();
+  if (!resp.ok) {
+    throw new Error(
+      `Tag request failed: ${data.error_code} ${data.message ?? ""}`,
+    );
+  }
   return data;
 }
 ```
@@ -1815,7 +1866,7 @@ export async function readCsvFile(path) {
     const buffer = Buffer.from(response.result.fileBinary);
     const csvText = buffer.toString("utf8");
 
-    const parsed = Papa.parse(csvText, { header: true });
+    const parsed = Papa.parse(csvText, { header: true, skipEmptyLines: true });
     return parsed.data;
   } catch (error) {
     console.error("Error reading CSV file:", error?.error || error);
@@ -1886,7 +1937,7 @@ export async function downloadAndUploadFile(url, dropboxPath) {
     const response = await fetch(url);
     if (!response.ok) {
       throw new Error(
-        `Failed to download file: ${response.status} ${response.statusText}`
+        `Failed to download file: ${response.status} ${response.statusText}`,
       );
     }
 
@@ -1894,7 +1945,7 @@ export async function downloadAndUploadFile(url, dropboxPath) {
     const fileBuffer = await response.arrayBuffer();
 
     console.log(
-      `Downloaded ${fileBuffer.byteLength} bytes, uploading to ${dropboxPath}`
+      `Downloaded ${fileBuffer.byteLength} bytes, uploading to ${dropboxPath}`,
     );
 
     // Upload the file to Dropbox
@@ -1905,7 +1956,7 @@ export async function downloadAndUploadFile(url, dropboxPath) {
     });
 
     console.log(
-      `Direct upload complete: ${JSON.stringify(uploadResponse.result)}`
+      `Direct upload complete: ${JSON.stringify(uploadResponse.result)}`,
     );
     return uploadResponse.result;
   } catch (error) {
@@ -1941,27 +1992,25 @@ export const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
  * @param {Object} tagDetails - The tag details object from the Express API
  * @param {Array<string>} requiredTags - Array of required tag names
  * @returns {Array<string>} Array of tag names found in the template
- * @throws {Error} If no tagged elements are found or if a required tag is missing
+ * @throws {Error} If no data fields are found or if a required tag is missing
  */
 export const verifyTemplateTags = (tagDetails, requiredTags) => {
-  // Extracting only the names of the tagged elements
-  const taggedElements = tagDetails?.documentPages[0].taggedElements.map(
-    (element) => element.name
-  );
+  // This tutorial uses page 1 of the template
+  const page = tagDetails?.documentPages?.find((page) => page.pageNumber === 1);
+  const dataFieldNames = (page?.dataFields ?? []).map((field) => field.name);
 
-  // Check if the tagged elements array is empty
-  if (!taggedElements) {
-    throw new Error("No tagged elements found in the Template.");
+  if (dataFieldNames.length === 0) {
+    throw new Error("No data fields found on page 1 of the template.");
   }
 
-  // Check if the tagged elements array contains all the required tags
+  // Check that page 1 contains all the required data fields
   requiredTags.forEach((tag) => {
-    if (!taggedElements.includes(tag)) {
+    if (!dataFieldNames.includes(tag)) {
       throw new Error(`Missing required tag: ${tag}`);
     }
   });
 
-  return taggedElements;
+  return dataFieldNames;
 };
 
 /**
@@ -1978,6 +2027,31 @@ export const verifyTemplateTags = (tagDetails, requiredTags) => {
  */
 export const checkExpressJobs = async (jobIds, getStatusFn) => {
   const statuses = await Promise.all(jobIds.map((jobId) => getStatusFn(jobId)));
+  for (const result of statuses) {
+    if (
+      ![
+        "pending",
+        "running",
+        "succeeded",
+        "partially_succeeded",
+        "failed",
+      ].includes(result.status)
+    ) {
+      throw new Error(
+        `Unexpected job status for ${result.jobId}: ${result.status}`,
+      );
+    }
+    // Create Variation reports output failures in errors[]
+    for (const error of result.errors ?? []) {
+      console.warn(`Output error for job ${result.jobId}:`, error);
+    }
+    // Export Rendition reports failures per page, not in outputs[]
+    for (const page of result.pageRenditionsResult ?? []) {
+      if (page.error) {
+        console.warn(`Export error on page ${page.pageNumber}:`, page.error);
+      }
+    }
+  }
   return statuses;
 };
 

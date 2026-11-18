@@ -1,6 +1,6 @@
 ---
-title: Adobe Express API (beta) API Reference
-description: The Adobe Express(beta) API reference documentation.
+title: Adobe Express API API Reference
+description: The Adobe Expres API reference documentation.
 layout: none
 hideBreadcrumbNav: true
 ---

@@ -41,6 +41,10 @@ How you obtain `<access_token>` depends on your credential type (user-based vs s
 
 ### User authentication (OAuth Web App or SPA)
 
+<InlineAlert variant="warning" slots="text" />
+
+OAuth Web App and SPA user authentication work with Beta endpoints only. V1 endpoints support Server-to-Server authentication only. User authentication may return to V1 in the future.
+
 The user signs in with their Adobe ID and consents to your app. Use the OAuth 2.0 **authorization code** flow (Web App) or **PKCE** (SPA). Implementation steps are in Adobe’s [User authentication](https://developer.adobe.com/developer-console/docs/guides/authentication/UserAuthentication/) documentation; Console setup for Express API is in [Create credentials – User Authentication](create-credentials/index.md#user-authentication).
 
 You can sanity-check Web App credentials with a sample such as [this OAuth 2.0 Web App client](https://github.com/theManikJindal/adobe-oauth-web-app-client).
@@ -66,11 +70,11 @@ Tokens expire; refresh or re-issue them according to Adobe’s documentation for
 
 ### Example: list tagged documents
 
-Endpoint: [/beta/tagged-documents](../api/index.md)
+Endpoint: [/v1/tagged-documents](../api/index.md)
 
 ```bash
 curl -i -X GET \
-  'https://express-api.adobe.io/beta/tagged-documents?start=0&limit=5&sortBy=name' \
+  'https://express-api.adobe.io/v1/tagged-documents?start=0&limit=5&sortBy=name' \
   -H 'Authorization: Bearer <ACCESS_TOKEN>' \
   -H 'X-API-KEY: <CLIENT_ID>'
 ```
@@ -81,7 +85,9 @@ Example response shape:
 {
   "documents": [
     {
-      "id": "string",
+      "templateOrDocument": {
+        "creativeCloudFileId": "string"
+      },
       "name": "string",
       "thumbnailUrl": "string"
     }
