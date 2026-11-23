@@ -69,7 +69,7 @@ Generate Variation is deprecated in favor of Create Variation and has no V1 endp
 
 - A valid Server-to-Server access token and API key for V1. See [Create credentials](../../getting-started/create-credentials/index.md).
 - At least one tagged Express document you own. Tag elements using **Data Fields**, as described [in this guide](./tag-documents.md).
-- For image and video mappings, pre-signed URLs on an allowed domain (AWS S3, Azure Blob Storage, or Dropbox).
+- For image and video mappings, pre-signed HTTPS URLs from a supported source, including AWS S3, Azure Blob Storage, Dropbox, Google Cloud Storage, or Adobe Stock.
 
 ## Get your document ID
 
@@ -223,7 +223,7 @@ When some outputs succeed and others do not, `status` is `partially_succeeded` a
 ]
 ```
 
-Image and video URLs must be pre-signed and served from an allowed domain (AWS S3, Azure Blob Storage, or Dropbox).
+Image and video URLs must be pre-signed HTTPS URLs from a supported source, including AWS S3, Azure Blob Storage, Dropbox, Google Cloud Storage, or Adobe Stock.
 
 <InlineAlert variant="warning" slots="text" />
 

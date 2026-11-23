@@ -56,7 +56,7 @@ The Tagged Documents API retrieves a list of all tagged documents accessible to 
 
 ### Create Variation
 
-The Create Variation API enables you to create document variations based on provided input parameters. The document can be exported on-the-fly, or stored temporarily, and remains available in your designated folder for 30 days, after which it is automatically removed. The API ensures proper document creation and accessibility within your directory.
+The Create Variation API allows you to generate document variations based on the provided input parameters. The resulting document can be exported on the fly or stored for future access, remaining available until it is moved or deleted.
 
 ### Export Rendition
 

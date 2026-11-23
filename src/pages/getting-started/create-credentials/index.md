@@ -140,9 +140,9 @@ If documents or assets are still inaccessible, confirm sharing with the technica
 
 OAuth Web App authentication is ideal for applications with both frontend and backend components. This method uses the OAuth 2.0 `authorization_code` grant type to obtain an access token on behalf of the user.
 
-**1. Add the Adobe Express API**
+**1. Add the Adobe Express API - Firefly Services (Beta)**
 
-- In your project, click **Add API** and select **Adobe Express API - Firefly Services**.
+- In your project, click **Add API** and select **Adobe Express API - Firefly Services (Beta)** (the V1 endpoint does not provide user authentication yet).
 - Choose **OAuth Web App** as the authentication method.
 
 **2. Configure redirect URIs**
@@ -174,10 +174,10 @@ _OAuth Web App credentials overview showing client ID (API key) and secret retri
 
 OAuth Single-page App authentication is designed for JavaScript applications that run entirely in the browser. This method uses the OAuth 2.0 PKCE (Proof Key for Code Exchange) flow to obtain tokens securely without requiring a client secret.
 
-**1. Add the Adobe Express API**
+**1. Add the Adobe Express API - Firefly Services (Beta)**
 
-- In your project, click **Add API** and select **Adobe Express API - Firefly Services**.
-- Choose **OAuth Single-page App** as the authentication method.
+- In your project, click **Add API** and select **Adobe Express API - Firefly Services (Beta)** (the V1 endpoint does not provide user authentication yet).
+- Choose **OAuth Single-page App** as the authentication method for the Beta API.
 
 **2. Configure redirect URIs**
 

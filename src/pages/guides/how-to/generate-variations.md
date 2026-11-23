@@ -8,6 +8,7 @@ keywords:
 contributors:
   - https://github.com/hollyschinsky
   - https://github.com/nimithajalal
+  - https://github.com/undavide
 hideBreadcrumbNav: true
 ---
 
@@ -28,7 +29,7 @@ The Generate Variation API lets you create document variations by modifying tagg
 1. Submit variation details
 2. Get a `jobId` for tracking
 3. Use the `/status` API to get the variation URL
-4. Access your variation (available for 30 days)
+4. Access your generated variation
 
 ## Quick Start
 
@@ -360,10 +361,10 @@ For more details, check out the [API Reference](../../api/index.md).
 
 ## Finding Your Generated Documents
 
-Generated documents are temporarily stored and remain available for **30 days**, after which they are automatically removed. Find them in Adobe Express:
+Generated documents remain in the **Express API Documents** folder until you manage or remove them. Find them in Adobe Express:
 
-1. Go to **Your Stuff**
-2. Select **Express API Documents**
-3. View or modify your API-generated documents within the 30-day window
+1. Go to **Your Stuff**.
+2. Select **Express API Documents**.
+3. View or modify your API-generated documents.
 
 ![Location of Express API Documents in Adobe Express](../how-to/images/express-api-documents-location.png)

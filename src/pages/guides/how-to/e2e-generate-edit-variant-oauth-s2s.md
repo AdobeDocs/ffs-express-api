@@ -41,7 +41,7 @@ Steps 1–5 below (token, list templates, inspect tags, generate, poll) work wit
 
 You can complete all of this yourself, no Admin Console rights required:
 
-- An Adobe Developer Console project with the **Adobe Express API** added and an [OAuth Server-to-Server credential](../../getting-started/create-credentials/index.md#server-to-server).
+- An Adobe Developer Console project with the **Adobe Express API - Firefly Services** added and an [OAuth Server-to-Server credential](../../getting-started/create-credentials/index.md#server-to-server).
 - Your `client_id` (API key), `client_secret`, and the **technical account email**—all visible on the credential overview page.
 - Scopes such as `openid`, `AdobeID`, `read_organizations`, and `ee.express_api`.
 - At least one tagged Express template **shared with the Technical Account**. In Adobe Express, open the doc → **Share** → paste the technical account email → **Can edit**. Tag elements using **Data Fields**, as described [in this guide](./tag-documents.md).
@@ -233,7 +233,7 @@ detail = requests.get(url, headers={
 }).json()
 ```
 
-The response lists each page and its `dataFields`. Each field's `name` and `type` identify the mapping to submit in step 4: `text` takes replacement text; `image` and `video` take a pre-signed HTTPS `source.url` from a supported cloud storage provider (AWS S3, Dropbox, or Azure Blob Storage). Text fields also return their current value in `text`.
+The response lists each page and its `dataFields`. Each field's `name` and `type` identify the mapping to submit in step 4: `text` takes replacement text; `image` and `video` take a pre-signed HTTPS `source.url` from a supported source, including AWS S3, Azure Blob Storage, Dropbox, Google Cloud Storage, or Adobe Stock. Text fields also return their current value in `text`.
 
 This endpoint is paginated by page: append `?start=<n>` to fetch tagged elements starting at page `n` if the template has more pages than the default page size returns.
 
@@ -250,20 +250,23 @@ This endpoint is paginated by page: append `?start=<n>` to fetch tagged elements
       "size": { "width": 1080, "height": 1350 },
       "dataFields": [
         {
-          "name": "use-case", "type": "text",
+          "name": "use-case",
+          "type": "text",
           "position": { "x": 151, "y": 407 },
           "size": { "width": 662, "height": 93 },
           "text": "PRODUCTIVITY"
         },
         {
-          "name": "price", "type": "text",
+          "name": "price",
+          "type": "text",
           "position": { "x": 611, "y": 1016 },
           "size": { "width": 301, "height": 93 },
           "text": "$875"
         },
         {
-          "name": "product-image", "type": "image",
-          "position": { "x":  257, "y":  358 },
+          "name": "product-image",
+          "type": "image",
+          "position": { "x": 257, "y": 358 },
           "size": { "width": 648, "height": 546 }
         }
       ],
@@ -328,16 +331,21 @@ const resp = await fetch("https://express-api.adobe.io/v1/create-variation", {
         { name: "use-case", type: "text", text: "EVERYDAY" },
         { name: "price", type: "text", text: "$520" },
         {
-          name: "product-image", type: "image",
+          name: "product-image",
+          type: "image",
           source: { url: process.env.PRODUCT_IMAGE_URL },
         },
       ],
     },
-    outputs: [{
-      type: "document",
-      preferredDocumentName: "Macbook Neo",
-      destinationFolder: { creativeCloudProjectId: process.env.SHARED_PROJECT_ID },
-    }],
+    outputs: [
+      {
+        type: "document",
+        preferredDocumentName: "Macbook Neo",
+        destinationFolder: {
+          creativeCloudProjectId: process.env.SHARED_PROJECT_ID,
+        },
+      },
+    ],
   }),
 });
 const { jobId, statusUrl } = await resp.json();
@@ -418,7 +426,11 @@ async function pollJob(jobId, accessToken, clientId) {
         },
       },
     ).then((r) => r.json());
-    if (["succeeded", "failed", "partially_succeeded", "cancelled"].includes(r.status))
+    if (
+      ["succeeded", "failed", "partially_succeeded", "cancelled"].includes(
+        r.status,
+      )
+    )
       return r;
     await new Promise((res) => setTimeout(res, 3000));
   }
@@ -428,7 +440,9 @@ const result = await pollJob(jobId, accessToken, clientId);
 if (["failed", "cancelled"].includes(result.status))
   throw new Error(`Job ${result.status}: ${JSON.stringify(result.errors)}`);
 if (result.status === "partially_succeeded") console.warn(result.errors);
-const documentOutput = result.outputs?.find((output) => output.type === "document");
+const documentOutput = result.outputs?.find(
+  (output) => output.type === "document",
+);
 if (!documentOutput) throw new Error("No document output was returned");
 const variationDocumentId = documentOutput.documentId.creativeCloudFileId;
 ```

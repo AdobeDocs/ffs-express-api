@@ -69,16 +69,16 @@ Because rate limiting is enforced at the API route level, **image, PDF, and vide
 
 ### How to request a higher Rate Limit
 
-If you need additional capacity, contact your account manager to request a higher rate limit or fill out the [Express API Rate Limit Increase Form](https://www.adobe.com/go/express-api-ratelimiting).
+If you need additional capacity, contact your account manager to request a higher rate limit or fill out the [Express API Rate Limit Increase Form](https://www.adobe.com/go/express-api-ratelimiting). Please also check the [Preparing for production](../preparing-for-production/index.md) guide for best practices.
 
 ## Template substitution limits
 
 The following default limits apply to image and video substitutions in each template. Text replacements are unlimited.
 
-| Replacement type | Default limit |
-| --- | --- |
-| Images | Up to 25 image substitutions per template; 400 MB size limit. |
-| Videos | Up to 5 video substitutions per template; 500 MB size limit. |
+| Replacement type | Default limit                                                 |
+| ---------------- | ------------------------------------------------------------- |
+| Images           | Up to 25 image substitutions per template; 400 MB size limit. |
+| Videos           | Up to 5 video substitutions per template; 500 MB size limit.  |
 
 These are substitution limits, not request-rate limits. Adobe may increase them for your organization based on a review of your capacity requirements. Contact your account manager or email [`express-api-support@adobe.com`](mailto:express-api-support@adobe.com) to discuss a request. For production planning, see [Preparing for production](../preparing-for-production/index.md).
 
@@ -104,11 +104,11 @@ Credits measure the work an Express API operation performs, not the number of HT
 
 Metered work uses these operation-specific units:
 
-| Metered operation | Work counted |
-| --- | --- |
-| Create Variation (`POST /v1/create-variation`) | Modified pages, plus JPG/PNG output images or PDF output pages. |
-| Export Rendition (`POST /v1/export-rendition`) | JPG/PNG output images or PDF output pages. |
-| Tagged-document details (`GET /v1/tagged-documents/{documentId}`) | Each document whose details you retrieve. |
+| Metered operation                                                 | Work counted                                                    |
+| ----------------------------------------------------------------- | --------------------------------------------------------------- |
+| Create Variation (`POST /v1/create-variation`)                    | Modified pages, plus JPG/PNG output images or PDF output pages. |
+| Export Rendition (`POST /v1/export-rendition`)                    | JPG/PNG output images or PDF output pages.                      |
+| Tagged-document details (`GET /v1/tagged-documents/{documentId}`) | Each document whose details you retrieve.                       |
 
 For Create Variation, credits for modified pages and generated outputs are calculated separately and added together. For example, a request that modifies two pages and produces two PNG images consumes credits for both the two modified pages and the two output images. PDF output is counted per output page, not per PDF file.
 

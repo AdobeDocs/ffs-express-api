@@ -50,7 +50,7 @@ Create Variation calculates credit use for modified pages and generated outputs 
 
 - An Adobe Developer Console project with the **Adobe Express API** added, and a valid access token plus API key. See [Create credentials](../../getting-started/create-credentials/index.md).
 - At least one tagged Express document you own. Tag elements using **Data Fields**, as described [in this guide](./tag-documents.md).
-- For image and video mappings, pre-signed HTTPS URLs from a supported cloud storage provider (AWS S3, Azure Blob Storage, or Dropbox).
+- For image and video mappings, pre-signed HTTPS URLs from a supported source, including AWS S3, Azure Blob Storage, Dropbox, Google Cloud Storage, or Adobe Stock.
 
 ## Get your document ID
 
@@ -204,7 +204,7 @@ When some outputs succeed and others do not, `status` is `partially_succeeded` a
 ]
 ```
 
-Image and video URLs must be pre-signed HTTPS URLs from a supported cloud storage provider (AWS S3, Azure Blob Storage, or Dropbox); other URLs are rejected.
+Image and video URLs must be pre-signed HTTPS URLs from a supported source, including AWS S3, Azure Blob Storage, Dropbox, Google Cloud Storage, or Adobe Stock.
 
 <InlineAlert variant="warning" slots="text" />
 

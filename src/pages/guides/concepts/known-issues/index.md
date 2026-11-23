@@ -85,9 +85,9 @@ Impact:
 
 - **Generate Variation**: The Generate Variation API (`POST /beta/generate-variation`) is deprecated and has no V1 endpoint. Use the Create Variation API (`POST /v1/create-variation`) instead.
 
-- **Document Availability**: Generated documents are temporarily stored in a folder named **"Express API Documents"**. They remain accessible for **30 days**, after which the system automatically removes them.
+- **Document Availability**: Generated documents are stored in the **Express API Documents** folder indefinitely. You are responsible for managing or removing them.
 
-- **Data Field Mappings**: Image and video mappings in `input.dataFieldMappings` accept pre-signed HTTPS URLs from `AWS`, `Dropbox`, and `Azure (windows.net)`; other URLs are rejected.
+- **Data Field Mappings**: Image and video mappings in `input.dataFieldMappings` accept pre-signed HTTPS URLs from supported sources, including AWS S3, Azure Blob Storage, Dropbox, Google Cloud Storage, and Adobe Stock.
   - _Example_: A set of data field mappings might look like this:
 
     ```json
