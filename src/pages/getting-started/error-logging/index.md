@@ -237,10 +237,10 @@ In a `422` error, you will get validation errors specific to different endpoints
 
 These errors indicate issues with the server.
 
-| Error Code | Name                  | Message                                                  | What to Do?                                                                                                                 |
-| ---------- | --------------------- | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| `500`      | Internal Server Error | The server had an unexpected error.                      | Ensure the request was sent with the `x-request-id` header. Check server logs for more details and fix and contact support. |
-| `503`      | Service Unavailable   | The service is temporarily unable to handle the request. | Retry the request after some time or check the server status.                                                               |
+| Error Code | Name                  | Message                                                  | What to Do?                                                                                                                                                 |
+| ---------- | --------------------- | -------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `500`      | Internal Server Error | The server had an unexpected error.                      | Ensure the request was sent with the `x-request-id` header. Check server logs for more details and [contact support](mailto:express-api-support@adobe.com). |
+| `503`      | Service Unavailable   | The service is temporarily unable to handle the request. | Retry the request after some time or check the server status.                                                                                               |
 
 ## Developer-Specific examples
 
