@@ -27,17 +27,19 @@
   - What's New header
   - [Changelog](getting-started/changelog/index.md)
   - Getting Started header
-  - [General Authentication](/getting-started/index.md)
   - [Create Credentials](/getting-started/create-credentials/index.md)
+  - [General Authentication](/getting-started/index.md)
   - [Error Logging](/getting-started/error-logging/index.md)
   - [Technical Usage Notes](/getting-started/usage/index.md)
   - [Rate Limits](/getting-started/rate-limits/index.md)
+  - [Preparing for Production](/getting-started/preparing-for-production/index.md)
   - Support header
   - [FAQ](getting-started/support/FAQ/index.md)
   - [Best Practices](/getting-started/support/best-practices/index.md)
   - [Overview](index.md)
   - Guides header
   - [Express API Quickstart](guides/index.md)
+  - [Migrate from Beta to V1](guides/migration-beta-to-v1.md)
   - How Tos header
   - [Tag Documents](guides/how-to/tag-documents.md)
   - [Get Tagged Documents](guides/how-to/get-tagged-documents.md)

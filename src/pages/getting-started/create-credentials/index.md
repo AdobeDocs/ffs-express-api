@@ -19,14 +19,14 @@ hideBreadcrumbNav: true
 
 <InlineAlert variant="warning" slots="text" />
 
-This guide is for admins creating a client ID (API key) and client secret for their teams. If you are a developer and your admin has already shared a valid client ID and secret with you, head over to the [Authentication](../index.md) guide.
+This guide is for System Admins or Developers who have access to create credentials using the Adobe Developer Console. If you are a Developer and your Admin has already shared a valid Client ID and Client Secret with you, head over to the [Authentication](../index.md) guide.
 
 ## Before you begin
 
 By the end of this guide you will have:
 
 - Chosen the authentication type that matches your application architecture.
-- Created a project in Adobe Developer Console with the Adobe Express API added.
+- Created a project in Adobe Developer Console with the **Adobe Express API - Firefly Services** added.
 - Generated the client ID (API key) and, where applicable, the client secret needed to call the Adobe Express API.
 
 ## Choose an authentication type
@@ -39,6 +39,10 @@ Adobe Express API supports three authentication flows. Pick the one that matches
 | **OAuth Web App**               | Web apps with a frontend **and** a backend server | Yes (stored on your server) | End user          |
 | **OAuth Single-page App (SPA)** | Browser-only apps with no backend                 | No (uses PKCE)              | End user          |
 
+<InlineAlert variant="warning" slots="text" />
+
+V1 endpoints support Server-to-Server authentication only. OAuth Web App and SPA user authentication work with Beta endpoints; V1 support may return in the future.
+
 Learn more about [authentication](https://developer.adobe.com/developer-console/docs/guides/authentication/UserAuthentication) in the Adobe Developer Console docs.
 
 ## Set up your project
@@ -47,11 +51,11 @@ Complete these steps once, regardless of which authentication flow you use. You'
 
 **1. Log in to the Adobe Developer Console**
 
-Sign in at [Adobe Developer Console](https://developer.adobe.com/console/home), open the **APIs & Services** catalog, and locate **Adobe Express API**.
+Sign in at [Adobe Developer Console](https://developer.adobe.com/console/home), open the **APIs & Services** catalog, and locate **Adobe Express API - Firefly Services**.
 
 **2. Create a new project**
 
-On the Adobe Express API product card, click **Create project**.
+On the Adobe Express API - Firefly Services product card, click **Create project**.
 
 ![Express API product card](../images/create-credentials--developer-console.png)
 
@@ -73,7 +77,7 @@ Server-to-Server authentication lets your backend generate access tokens and cal
 
 **1. Add the Adobe Express API**
 
-- In your project, click **Add API** and select **Adobe Express API**.
+- In your project, click **Add API** and select **Adobe Express API - Firefly Services**.
 - When prompted for a credential type, keep **OAuth Server-to-Server**, name the credential, and continue.
 
 **2. Assign product profiles**
@@ -82,17 +86,28 @@ Select the product profiles your admin assigned for Express. These control what 
 
 ![Server-to-Server Product Profiles](../images/create-credentials--product-profiles-1.png)
 
-<InlineAlert variant="info" slots="text" />
+<InlineAlert variant="info" slots="header, text, text2" />
 
-Product profiles must include **Adobe Express**, **Adobe Firefly Services**, and **non-Premium Fonts** access. As shown below, a **Default Free Membership** and **Firefly Creative Production for Enterprise** configurations will suffice. Please note that access to Premium Fonts will cause a rejection.
+### Product Profiles and Entitlements
+
+Product profiles must include **Adobe Express**, **Adobe Firefly Services**, and **non-Premium Fonts** access—Premium Fonts such as Typekit will [result in an error](#access-to-premium-fonts-will-cause-a-rejection). As shown below, a **Default Free Membership** and **Firefly Creative Production for Enterprise** configurations will suffice.
 
 ![Server-to-Server Product Profiles selection](../images/create-credentials--product-profiles-2.png)
 
-<InlineAlert variant="warning" slots="heading, text1, text2" />
+<InlineAlert variant="error" slots="header, text, text1" />
 
-#### Admin Console Product Provisioning
+### Access to Premium Fonts will cause a rejection
 
-If you have problems finding the correct Product Profiles in the Developer Console, ask your administrator to verify that the correct Products have been assigned to your User in the Admin Console.
+The technical account you're using **must not have any Premium entitlements**, for example, Typekit Fonts. Access to Premium Fonts will cause a rejection with the following error:
+
+```json
+{
+  "error_code": "access_error",
+  "message": "The account associated with the provided access token has 'typekit' entitlements beyond the free tier, which is not permitted for API access"
+}
+```
+
+If you have problems finding the correct Product Profiles in the Developer Console, **ask your administrator to verify that the correct Products have been assigned to your User in the Admin Console**.
 
 ![Admin Console User Products](../images/create-credentials--admin-console.png)
 
@@ -109,22 +124,25 @@ Use the token endpoint and scopes for your credential (see **Generate access tok
 
 **5. Grant the technical account access to documents and assets**
 
-API calls run as the **technical account** tied to your OAuth Server-to-Server credential—not as an end user. Anything your integration must read or edit (templates, Express documents, cloud assets) must be reachable by that technical account.
+API calls run as the **technical account** tied to your OAuth Server-to-Server credential—not as an end user. Anything your integration must read or edit (templates, Express documents, cloud assets) must be reachable by that technical account. Choose the narrowest access model that fits the workflow:
 
-| Approach                             | When to use                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Share in Express**                 | You need access to specific Express documents or projects. Open the share experience for the doc or project, paste the **technical account email** from the credential overview into the share field, and grant at least **Can edit** (or the minimum permission your workflow needs). This is the most direct way to give the technical account access to a given asset.                                                                                                                                                                                                                                                |
-| **Storage administrator (org-wide)** | You need the technical account to work across Adobe cloud storage in your organization (for example, broader asset management). In [Adobe Admin Console](https://adminconsole.adobe.com/), an org administrator must grant the technical account **Storage administrator** and ensure it has a product license that includes Enterprise Storage where required. Follow [Technical account setup for Adobe Cloud Storage](https://developer.adobe.com/cloud-storage/guides/getting-started/technical-account-setup)—including verifying the identity is a **Technical Account** (Enterprise ID), not a personal Adobe ID. |
+| Approach                                  | When to use                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Share individual documents in Express** | Best for a small workflow that uses one or two documents. Share each document with the **technical account email** from the credential overview, and grant **Can edit** or the minimum permission your workflow needs.                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| **Share an Express project**              | Best when a team works with multiple templates. Put the templates in a shared Express project, then share the project with the technical account so you don't have to share each document separately.                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| **Storage administrator (org-wide)**      | Recommended for enterprise-scale or mass template generation across multiple teams when templates and assets are stored in your organization's Adobe cloud storage. In [Adobe Admin Console](https://adminconsole.adobe.com/), an org administrator must grant the technical account **Storage administrator** and ensure it has a product license that includes Enterprise Storage where required. Follow [Technical account setup for Adobe Cloud Storage](https://developer.adobe.com/cloud-storage/guides/getting-started/technical-account-setup)—including verifying the identity is a **Technical Account** (Enterprise ID), not a personal Adobe ID. |
+
+Sharing an Express project or document controls which assets the technical account can access; Server-to-Server API calls still run as the technical account, not as the people who share or manage the project.
 
 If documents or assets are still inaccessible, confirm sharing with the technical account email, product profile assignment in Developer Console, and (for cloud storage) Storage administrator assignment and Enterprise Storage licensing per the guide above.
 
-### OAuth Web App
+### OAuth Web App (Beta only)
 
 OAuth Web App authentication is ideal for applications with both frontend and backend components. This method uses the OAuth 2.0 `authorization_code` grant type to obtain an access token on behalf of the user.
 
-**1. Add the Adobe Express API**
+**1. Add the Adobe Express API - Firefly Services (Beta)**
 
-- In your project, click **Add API** and select **Adobe Express API**.
+- In your project, click **Add API** and select **Adobe Express API - Firefly Services (Beta)** (the V1 endpoint does not provide user authentication yet).
 - Choose **OAuth Web App** as the authentication method.
 
 **2. Configure redirect URIs**
@@ -140,11 +158,11 @@ Provide a **Default Redirect URI** and a **Redirect URI pattern**. These are the
 ![OAuth WebApp Credentials](../images/create-credentials--oauth-web-credentials.png)
 _OAuth Web App credentials overview showing client ID (API key) and secret retrieval_
 
-**4. Manage beta access**
+**4. Manage access**
 
-- For projects in beta, add the users who can access your application.
-- In your project, navigate to **Credentials > OAuth Web App > Beta users**.
-- Add the email addresses of users who should have access. It may take a few minutes for beta user access to sync.
+- For projects in development, add the beta users who can access your application.
+- In your project, navigate to **Credentials > OAuth Web App > users**.
+- Add the email addresses of users who should have access. It may take a few minutes for user access to sync.
 
 **5. Use the client ID and client secret**
 
@@ -152,14 +170,14 @@ _OAuth Web App credentials overview showing client ID (API key) and secret retri
 - Store the client secret only on your backend server and fetch tokens from there, so credentials are never exposed in the frontend.
 - For end-to-end guidance, see the [OAuth Web App implementation guide](https://developer.adobe.com/developer-console/docs/guides/authentication/UserAuthentication/implementation#oauth-web-app-credential).
 
-### OAuth Single-page App
+### OAuth Single-page App (Beta only)
 
 OAuth Single-page App authentication is designed for JavaScript applications that run entirely in the browser. This method uses the OAuth 2.0 PKCE (Proof Key for Code Exchange) flow to obtain tokens securely without requiring a client secret.
 
-**1. Add the Adobe Express API**
+**1. Add the Adobe Express API - Firefly Services (Beta)**
 
-- In your project, click **Add API** and select **Adobe Express API**.
-- Choose **OAuth Single-page App** as the authentication method.
+- In your project, click **Add API** and select **Adobe Express API - Firefly Services (Beta)** (the V1 endpoint does not provide user authentication yet).
+- Choose **OAuth Single-page App** as the authentication method for the Beta API.
 
 **2. Configure redirect URIs**
 
@@ -171,11 +189,11 @@ Click **Save configured API**. On the next screen you'll see your **client ID (A
 
 ![OAuth SPA Credentials](../images/create-credentials--oauth-spa-credentials.png)
 
-**4. Manage beta access**
+**4. Manage access**
 
-- For projects in beta, add the users who can access your application.
-- In your project, navigate to **Credentials > OAuth Single-page App > Beta users**.
-- Add the email addresses of users who should have access. It may take a few minutes for beta user access to sync.
+- For projects in development, add the beta users who can access your application.
+- In your project, navigate to **Credentials > OAuth Single-page App > users**.
+- Add the email addresses of users who should have access. It may take a few minutes for user access to sync.
 
 **5. Use the client ID with the PKCE flow**
 
@@ -187,13 +205,13 @@ Click **Save configured API**. On the next screen you'll see your **client ID (A
 
 <InlineAlert variant="warning" slots="text" />
 
-Once you push a Single-page App project to production, you cannot move it back into development. Your app will be open to everyone and the beta users list will no longer apply.
+Once you push a Single-page App project to production, you cannot move it back into development. Your app will be open to everyone and users list will no longer apply.
 
 When you finish development, click **Push to production**.
 
 ![Push to prod](../images/create-credentials--spa-push-to-prod.png)
 
-## User consent flow
+### User consent flow
 
 When users authenticate through OAuth Web App or OAuth Single-page App, they see a consent screen. Users must click **Allow Access** to grant the requested permissions.
 

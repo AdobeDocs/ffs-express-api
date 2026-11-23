@@ -17,9 +17,15 @@ contributors:
 hideBreadcrumbNav: true
 ---
 
-# Generate and Edit a Variant (OAuth Web App)
+# Generate and Edit a Variant (OAuth Web App - Beta only)
 
 This guide walks through a complete end-to-end workflow using OAuth Web App authentication, covering template selection, variation generation, and final editing in Adobe Express using the Embed SDK.
+
+<InlineAlert variant="warning" slots="text, text1" />
+
+This workflow uses Beta endpoints, as OAuth Web App user authentication is not supported on V1 endpoints yet. For Server-to-Server authentication, see this [guide](./e2e-generate-edit-variant-oauth-s2s.md).
+
+Please also note that the (Beta) Generate Variation endpoint used here is deprecated. See [Migrate from Beta to V1](../migration-beta-to-v1.md) for the V1 migration guidance. This guide will be updated once the V1 endpoints support OAuth Web App authentication.
 
 ## Overview
 
@@ -32,15 +38,15 @@ In this workflow, we present a Web App-based scenario where a user:
 
 ## Prerequisites
 
-- An Adobe Developer Console project with the **Adobe Express API** added and an [OAuth Web App credential](../../getting-started/create-credentials/index.md#oauth-web-app).
+- An Adobe Developer Console project with the **Adobe Express API - Firefly Services (Beta)** and an [OAuth Web App credential](../../getting-started/create-credentials/index.md#oauth-web-app-beta-only).
   - Make sure to have `openid`, `AdobeID`, and `ee.express_api` scopes added to the credential.
 - A redirect URI registered on the credential.
   - Use, e.g., `https://localhost:4000/callback` for local development (Adobe IMS requires HTTPS for redirect URIs even on localhost). Set this as both the **Default Redirect URI** and as the **Redirect URI pattern** (`https://localhost:4000/callback$`) on the credential.
 - Your `client_id` (API key) and `client_secret` from the credential overview page.
-- At least one tagged Express document the signed-in user owns. Tag it with the [Tag Elements add-on](https://adobesparkpost.app.link/TR9Mb7TXFLb?mode=private&claimCode=wjmj67nj9:PLYN7XLJ).
+- At least one tagged Express document the signed-in user owns. Tag elements using **Data Fields**, as described in [Tag documents](./tag-documents.md).
 - Node.js 18+ (or any backend that can do an HTTPS POST and run a small redirect handler).
 
-The cURL and Python tabs in the steps below assume you already have an `ACCESS_TOKEN` from the OAuth flow in the [first step](#1-authenticate-the-user). During development, log it from your `/callback` handler the first time it succeeds and reuse it for the day. Tokens are valid roughly 24 hours; once a token expires the user must sign in again. If your credential has the `offline_access` scope available (check the **Available Scopes** section of your OAuth Web App credential in the Developer Console), you can also receive a refresh token.
+The cURL and Python tabs in the steps below assume you already have an `ACCESS_TOKEN` from the OAuth flow in the [first step](#1-authenticate-the-user). Use the token response's `expires_in` value to track its expiry. If your credential has the `offline_access` scope available, you can also receive a refresh token; check the **Available Scopes** section of your OAuth Web App credential in the Developer Console.
 
 ## 1. Authenticate the user
 
@@ -90,15 +96,15 @@ curl -s -X POST 'https://ims-na1.adobelogin.com/ims/token/v3' \
 
 ```js
 const body = new URLSearchParams({
-  grant_type: 'authorization_code',
+  grant_type: "authorization_code",
   code,
   client_id: process.env.CLIENT_ID,
   client_secret: process.env.CLIENT_SECRET,
 });
 
-const resp = await fetch('https://ims-na1.adobelogin.com/ims/token/v3', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+const resp = await fetch("https://ims-na1.adobelogin.com/ims/token/v3", {
+  method: "POST",
+  headers: { "Content-Type": "application/x-www-form-urlencoded" },
   body,
 });
 const tokens = await resp.json();
@@ -122,7 +128,7 @@ resp = requests.post(
 tokens = resp.json()
 ```
 
-Store `access_token`, `refresh_token`, and the absolute expiry time (`Date.now() + (expires_in - 60) * 1000`) in the user's session.
+Store `access_token` and the absolute expiry time (`Date.now() + (expires_in - 60) * 1000`) in the user's server-side session. If the response includes a `refresh_token`, store it there too.
 
 ## 2. List the user's tagged templates
 
@@ -146,13 +152,13 @@ curl -s 'https://express-api.adobe.io/beta/tagged-documents?start=0&limit=25&sor
 
 ```js
 const resp = await fetch(
-  'https://express-api.adobe.io/beta/tagged-documents?start=0&limit=25&sortBy=-modifiedDate',
+  "https://express-api.adobe.io/beta/tagged-documents?start=0&limit=25&sortBy=-modifiedDate",
   {
     headers: {
       Authorization: `Bearer ${accessToken}`,
-      'X-API-KEY': clientId,
+      "X-API-KEY": clientId,
     },
-  }
+  },
 );
 const { documents, paging } = await resp.json();
 ```
@@ -183,9 +189,9 @@ Response shape:
     }
   ],
   "paging": {
-		"totalRecords": 1,
-		"nextUrl": ""
-	}
+    "totalRecords": 1,
+    "nextUrl": ""
+  }
 }
 ```
 
@@ -215,9 +221,9 @@ const resp = await fetch(
   {
     headers: {
       Authorization: `Bearer ${accessToken}`,
-      'X-API-KEY': clientId,
+      "X-API-KEY": clientId,
     },
-  }
+  },
 );
 const detail = await resp.json();
 ```
@@ -233,7 +239,7 @@ detail = requests.get(url, headers={
 }).json()
 ```
 
-The response lists each page and its `taggedElements`. The `type` of each tag tells you what input to render: `text` accepts a plain string; `image` and `video` accept a pre-signed URL on an allowed domain (AWS, Dropbox, Azure).
+The response lists each page and its `taggedElements`. The `type` of each tag tells you what input to render: `text` accepts a plain string; `image` and `video` accept a pre-signed HTTPS URL from a supported source, including AWS S3, Azure Blob Storage, Dropbox, Google Cloud Storage, or Adobe Stock.
 
 This endpoint is paginated by page: append `?start=<n>` to fetch tagged elements starting at page `n` if the template has more pages than the default page size returns.
 
@@ -248,13 +254,15 @@ This endpoint is paginated by page: append `?start=<n>` to fetch tagged elements
       "size": { "width": 662, "height": 289 },
       "taggedElements": [
         {
-          "name": "title", "type": "text",
+          "name": "title",
+          "type": "text",
           "position": { "x": 209, "y": 185 },
           "size": { "width": 662, "height": 289 }
         },
         {
-          "name": "product-image", "type": "image",
-          "position": { "x":  346, "y":  -131 },
+          "name": "product-image",
+          "type": "image",
+          "position": { "x": 346, "y": -131 },
           "size": { "width": 493, "height": 963 }
         }
       ],
@@ -268,7 +276,7 @@ This endpoint is paginated by page: append `?start=<n>` to fetch tagged elements
 
 ## 4. Generate the variation
 
-Submit the user's values as `tagMappings`. The keys are the tag names from step 3; the values are strings (text) or pre-signed URLs (images, videos).
+Submit the user's values as `tagMappings`. The keys are the tag names from step 3; the values are strings (text) or pre-signed URLs (images, videos). Set the `PRODUCT_IMAGE_URL` environment variable to a full pre-signed HTTPS URL for the replacement image before running the examples.
 
 <CodeBlock slots="heading, code" repeat="3" languages="bash, javascript, python" />
 
@@ -285,7 +293,7 @@ curl -s -X POST 'https://express-api.adobe.io/beta/generate-variation' \
       "preferredDocumentName": "Apple green",
       "tagMappings": {
         "title": "APPLE GREEN",
-        "product-image": "https://uc4fcd1dc97e1127dcb839ff192c.dl..."
+        "product-image": "'"$PRODUCT_IMAGE_URL"'"
       }
     }
   }'
@@ -294,24 +302,27 @@ curl -s -X POST 'https://express-api.adobe.io/beta/generate-variation' \
 #### JavaScript (fetch)
 
 ```js
-const resp = await fetch('https://express-api.adobe.io/beta/generate-variation', {
-  method: 'POST',
-  headers: {
-    Authorization: `Bearer ${accessToken}`,
-    'X-API-KEY': clientId,
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({
-    id: documentId,
-    variationDetails: {
-      preferredDocumentName: 'Apple green',
-      tagMappings: {
-        title: 'APPLE GREEN',
-        'product-image': 'https://uc4fcd1dc97e1127dcb839ff192c.dl...',
-      },
+const resp = await fetch(
+  "https://express-api.adobe.io/beta/generate-variation",
+  {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "X-API-KEY": clientId,
+      "Content-Type": "application/json",
     },
-  }),
-});
+    body: JSON.stringify({
+      id: documentId,
+      variationDetails: {
+        preferredDocumentName: "Apple green",
+        tagMappings: {
+          title: "APPLE GREEN",
+          "product-image": process.env.PRODUCT_IMAGE_URL,
+        },
+      },
+    }),
+  },
+);
 const { jobId, statusUrl } = await resp.json();
 ```
 
@@ -331,7 +342,7 @@ resp = requests.post(
             "preferredDocumentName": "Apple green",
             "tagMappings": {
                 "title": "APPLE GREEN",
-                "product-image": "https://uc4fcd1dc97e1127dcb839ff192c.dl...",
+                "product-image": os.environ["PRODUCT_IMAGE_URL"],
             },
         },
     },
@@ -354,7 +365,7 @@ Hold on to `jobId` — that's the handle you'll poll in the next step.
 
 ## 5. Poll the job
 
-`GET /status/{jobId}` returns `running` until the variation is ready, then `succeeded` (or `failed`/`partially_succeeded`). Poll every few seconds.
+Poll `GET /status/{jobId}` every few seconds until the job reaches a terminal status: `succeeded`, `partially_succeeded`, `failed`, or `cancelled`. An unfinished job can report `pending`, `running`, or `cancel_requested`.
 
 <CodeBlock slots="heading, code" repeat="3" languages="bash, javascript, python" />
 
@@ -371,13 +382,21 @@ curl -s "https://express-api.adobe.io/status/$JOB_ID" \
 ```js
 async function pollJob(jobId, accessToken, clientId) {
   while (true) {
-    const r = await fetch(`https://express-api.adobe.io/status/${encodeURIComponent(jobId)}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        'X-API-KEY': clientId,
+    const r = await fetch(
+      `https://express-api.adobe.io/status/${encodeURIComponent(jobId)}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "X-API-KEY": clientId,
+        },
       },
-    }).then((r) => r.json());
-    if (['succeeded', 'failed', 'partially_succeeded'].includes(r.status)) return r;
+    ).then((r) => r.json());
+    if (
+      ["succeeded", "failed", "partially_succeeded", "cancelled"].includes(
+        r.status,
+      )
+    )
+      return r;
     await new Promise((res) => setTimeout(res, 3000));
   }
 }
@@ -397,12 +416,12 @@ def poll_job(job_id, access_token, client_id):
                 "X-API-KEY": client_id,
             },
         ).json()
-        if r["status"] in ("succeeded", "failed", "partially_succeeded"):
+        if r["status"] in ("succeeded", "failed", "partially_succeeded", "cancelled"):
             return r
         time.sleep(3)
 ```
 
-When the job succeeds, you get the new document back:
+After the job succeeds, get the generated document URN from `document.id` in the status response. For example:
 
 ```json
 {
@@ -439,17 +458,17 @@ Load the SDK script, then call `CCEverywhere.initialize` once with the Embed SDK
 The Embed SDK and Express API rely on **different Client IDs**. Both are generated when you create credentials in the Developer Console, but the Projects that contain them are independent.
 
 ```js
-  await import('https://cc-embed.adobe.com/sdk/v4/CCEverywhere.js');
+await import("https://cc-embed.adobe.com/sdk/v4/CCEverywhere.js");
 
-  const hostInfo = {
-    clientId: '<CLIENT_ID>',
-    appName: 'Embed SDK & Express API integration',
-  };
+const hostInfo = {
+  clientId: "<CLIENT_ID>",
+  appName: "Embed SDK & Express API integration",
+};
 
-  // lets the user start interacting with the embedded editor; sign-in is only prompted when they save or export.
-  const configParams = { loginMode: 'delayed' };
+// lets the user start interacting with the embedded editor; sign-in is only prompted when they save or export.
+const configParams = { loginMode: "delayed" };
 
-  const { editor } = await window.CCEverywhere.initialize(hostInfo, configParams);
+const { editor } = await window.CCEverywhere.initialize(hostInfo, configParams);
 ```
 
 ### 6.2 Open the variation for editing
@@ -457,9 +476,9 @@ The Embed SDK and Express API rely on **different Client IDs**. Both are generat
 Pass the variation URN from step 5 as `documentId` and call `editor.edit()`:
 
 ```js
-const docConfig = { documentId: '<DOCUMENT_URN>' };
-const appConfig = {};       // optional editor configuration
-const exportConfig = [];    // optional export targets
+const docConfig = { documentId: "<DOCUMENT_URN>" };
+const appConfig = {}; // optional editor configuration
+const exportConfig = []; // optional export targets
 const containerConfig = {}; // optional container configuration
 editor.edit(docConfig, appConfig, exportConfig);
 ```
@@ -476,6 +495,6 @@ Alternatively, you can open the variation in Adobe Express (in a new Browser tab
 
 ## Next steps
 
-- Run the full flow end to end with the [companion sample app](https://github.com/AdobeDocs/express-api-samples/tree/main/oauth-web-app) (Node/Express backend + a single static HTML page).
-- Need to export the variation as JPG/PNG/MP4/PDF programmatically rather than handing it back to the user? Add a [rendition export step](./export-document.md) right after step 5.
-- Building the company-owned-templates variant of this workflow with **Server-to-Server** auth instead of OAuth Web App? See [Generate and Edit a Variant (Server-to-Server)](./e2e-generate-edit-variant-oauth-s2s.md); steps 2 through 6 stay the same, only the first step changes.
+- Run the full flow end to end with the [companion sample app](https://github.com/AdobeDocs/express-api-samples/tree/main/oauth-web-app) (Node/Express backend + a single static HTML page). The sample mentions the older Tag Elements add-on; use [Data Fields](./tag-documents.md) instead. It also logs tokens for debugging; remove token logging before using it beyond development.
+- To export a generated document programmatically with V1, see [Export Document Renditions](./export-document.md). V1 requests require Server-to-Server credentials and V1 request fields, not the Beta OAuth token and request fields used in this guide.
+- For a company-owned template workflow using **Server-to-Server** authentication and V1 endpoints, see [Generate and Edit a Variant (Server-to-Server)](./e2e-generate-edit-variant-oauth-s2s.md). Its credentials, request and response fields, and document-sharing setup differ from this Beta workflow.
